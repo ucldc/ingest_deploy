@@ -1,8 +1,8 @@
 ingest_deploy
 =============
 
-Ansible project for building and running ingest environment on AWS
-
+Ansible, packer and vagrant project for building and running ingest environment
+on AWS and locally.
 
 
 License
