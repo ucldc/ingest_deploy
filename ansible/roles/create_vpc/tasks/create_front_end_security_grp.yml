@@ -1,0 +1,24 @@
+---
+- name: create front end security group
+  local_action:
+    module: ec2_group
+    region: us-east-1
+    description: "Access to ssh and https proxy server"
+    name: "{{ name_env }}-front"
+    state: present
+    vpc_id: "{{ vpc.vpc_id }}"
+    rules:
+      - proto: tcp
+        from_port: 22
+        to_port: 22
+        cidr_ip: 128.48.204.0/24  #CDLIB subnet
+      - proto: tcp
+        from_port: 22
+        to_port: 22
+        cidr_ip: 128.48.120.185/32 #registry.cdlib.org
+      - proto: tcp
+        from_port: 22
+        to_port: 22
+        cidr_ip: 192.35.209.136/32 #sb.cdlib.org
+  register: sec_grp_front
+- debug: var=sec_grp_front

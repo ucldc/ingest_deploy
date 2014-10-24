@@ -1,0 +1,56 @@
+---
+- hosts: all
+  sudo: yes
+  gather_facts: yes
+  tasks:
+    - name: update packages
+      yum: pkg=* state=latest
+    - name: install httpd
+      yum: pkg=httpd state=present
+    - name: install mod_ssl
+      yum: pkg=mod_ssl state=present
+    - name: add ssl rewrite/forwarding conf
+      copy: src=templates/ingestfront/ssl.conf dest=/etc/httpd/conf.d/ssl.conf
+    - name: start apache
+      service: name=httpd enabled=yes state=started
+#    - name: Display all variables/facts known for a host
+#      debug: var=hostvars
+    - name: install pip
+      yum: pkg=python-pip state=latest
+    - name: install virtualenv
+      yum: pkg=python-virtualenv state=latest
+    - name: install docker-py
+      pip: name=docker-py state=present
+    # install docker
+    - name: install centos docker io
+      yum: pkg=docker-io state=latest
+      when: ansible_distribution == "CentOS",
+    - name: install amazon linux docker io
+      yum: pkg=docker state=latest
+      when: ansible_distribution == "Amazon"
+    - name: start docker
+      service: name=docker enabled=yes state=started
+#    - name: get couchdb docker image
+#      shell: docker pull tutum/couchdb
+    - name: get redis docker image
+      shell: docker pull redis
+    - name: get rq-dashboard docker image
+      shell: docker pull mredar/rq-dashboard
+#    - name: run couchdb docker
+#      docker: image=tutum/couchdb command=/run.sh ports=5984
+    - name: generate unique password for redis
+      shell: echo ABC
+      register: redis_pswd
+    - debug: var=redis_pswd.stdout
+    - name: run redis docker
+      docker:
+        image: redis
+        ports: 6379
+        name: redis
+        command: "redis --requirepass {{ redis_pswd }}"
+    - name: run rq-dashboard docker
+      docker: 
+        image: mredar/rq-dashboard
+        command: /run.sh ports=9181
+        name: rq-dashboard
+        env: "REDIS_HOST={{ ansible_default_ipv4.address }},REDIS_PSWD={{ redis_pswd.stdout}}"

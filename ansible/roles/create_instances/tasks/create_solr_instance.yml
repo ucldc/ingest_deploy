@@ -1,0 +1,25 @@
+---
+- name: create the solr ingest instance
+  local_action:
+    module: ec2
+    count: 1
+    state: present #safe?
+    region: us-east-1
+    key_name: "{{ key_name_private }}"
+    image: "{{ image_hvm }}"
+    instance_type: "{{ instance_type }}"
+    wait: yes
+    wait_timeout: 500
+    vpc_subnet_id: "{{ subnet_id_private }}"
+    instance_tags:
+        project: ucldc
+        Name: "{{ name_env }}-solr"
+    volumes:
+    - device_name: /dev/sdb
+      device_type: gp2
+      volume_size: "{{ extra_volume_size }}"
+      delete_on_termination: "{{ dev }}"
+      virtual_name: /data
+  register: ec2_ingest_solr
+- { include: protect_instance_from_termination.yml, instance_id: "{{ ec2_ingest_solr.instance_ids[0] }}", root_device_name: "{{ ec2_ingest_solr.instances[0].root_device_name }}", when: not dev }
+

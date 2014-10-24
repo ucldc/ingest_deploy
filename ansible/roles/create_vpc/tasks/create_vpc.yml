@@ -1,0 +1,48 @@
+---
+- name: create vpc, subnets, igw, and route tables
+  local_action:
+    module: ec2_vpc
+    state: present
+    wait: true
+    wait_timeout: 500
+    cidr_block: 10.0.0.0/16
+    region: us-east-1
+    resource_tags: {"project": "{{ project_name }}", "Name":"{{ name_env }}"}
+    subnets:
+        - cidr: 10.0.0.0/24
+          az: us-east-1c
+          state: present
+          resource_tags: {"project": "{{ project_name }}", "Name":"{{name_env}}-public" }
+        - cidr: 10.0.1.0/24
+          az: us-east-1c
+          state: present
+          resource_tags: {"project": "{{ project_name }}", "Name":"{{ name_env }}-private" }
+    internet_gateway: True
+    route_tables:
+        - subnets:
+            - 10.0.0.0/24
+          routes:
+            - dest: 0.0.0.0/0 #outgoing, to internet gateway -- NAT?
+              gw: igw
+    dns_support: yes
+    dns_hostnames: yes
+    instance_tenancy: default
+  register: vpc
+- debug: var=vpc
+- pause: minutes=2
+- name: get public subnet id
+  set_fact: subnet_id_public={{ item.id }}
+  when: item.resource_tags.Name == "{{ name_env }}-public"
+  with_items: vpc.subnets
+- debug: var=subnet_id_public
+- name: get private subnet id
+  set_fact: subnet_id_private={{ item.id }}
+  when: item.resource_tags.Name == "{{ name_env }}-private"
+  with_items: vpc.subnets
+- debug: var=subnet_id_private
+- name: get default security group id
+  shell: /usr/local/bin/aws ec2 describe-security-groups --filters Name=vpc-id,Values={{ vpc.vpc_id }} | jq '.SecurityGroups[0].GroupId'
+  register: sec_grp_default
+- name: get default route table id
+  shell: /usr/local/bin/aws ec2 describe-route-tables --filters Name=vpc-id,Values={{ vpc.vpc_id }} Name=association.main,Values=true | jq '.RouteTables[0].RouteTableId'
+  register: main_route_table_id

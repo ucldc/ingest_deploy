@@ -1,0 +1,7 @@
+---
+# tasks file for create_instances
+- { include: create_front_end_instance.yml }
+- { include: create_solr_instance.yml }
+- { include: create_couchdb_instance.yml }
+- name: save instance variables
+  template: src=save_instance_variables.j2 dest=./instance-vars.yml 

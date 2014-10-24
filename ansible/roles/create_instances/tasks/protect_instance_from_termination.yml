@@ -1,0 +1,8 @@
+---
+# protect the instance from termination
+# and root volume from deletion on termination
+- name: disable api termination for {{ instance_id }}
+  shell: /usr/local/bin/aws ec2 modify-instance-attribute --disable-api-termination --instance-id {{ instance_id }}
+# NOTE: hvm instances seem to get /dev/xvda for root
+- name: disable delete on termination for {{ instance_id }} root volume
+  shell: 'aws ec2 modify-instance-attribute --block-device-mappings "[{\"DeviceName\": \"{{ root_device_name }}\",\"Ebs\":{\"DeleteOnTermination\":false}}]"  --instance-id {{ instance_id }}'

@@ -1,0 +1,33 @@
+---
+# tasks file for create_instances
+- name: create the front end instance with NAT
+  local_action:
+    module: ec2
+    count: 1
+    state: present
+    region: us-east-1
+    key_name: "{{ key_name }}"
+    image: "{{ image_nat }}"
+    instance_type: m3.medium
+    instance_profile_name: ingest-control
+    group_id: [ "{{ sec_grp_default.stdout | regex_replace('\"','')}}",  "{{ sec_grp_front.group_id }}" ]
+    wait: yes
+    wait_timeout: 500
+    vpc_subnet_id: "{{ subnet_id_public }}"
+    assign_public_ip: yes
+    instance_tags:
+        project: ucldc
+        Name: "{{ name_env}}-front"
+    volumes:
+    - device_name: /dev/sdb
+      device_type: gp2
+      volume_size: "{{ extra_volume_size }}"
+      delete_on_termination: "{{ dev }}"
+      virtual_name: /data
+  register: ec2_front
+- debug: var=ec2_front
+- name: disable source/dest check for NAT instance
+  shell: /usr/local/bin/aws ec2 modify-instance-attribute --no-source-dest-check --instance-id {{ ec2_front.instance_ids[0] }}
+- name: add route to NAT from main route table
+  shell: /usr/local/bin/aws ec2 create-route --route-table-id  "{{ main_route_table_id.stdout | regex_replace('\"','')}}" --destination-cidr-block 0.0.0.0/0 --instance-id {{ ec2_front.instance_ids[0] }}
+- { include: protect_instance_from_termination.yml, instance_id: "{{ ec2_front.instance_ids[0] }}", root_device_name: "{{ ec2_front.instances[0].root_device_name }}", when: not dev }

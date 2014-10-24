@@ -1,0 +1,8 @@
+---
+# defaults file for create_instances
+image_hvm: ami-b66ed3de
+image_nat: ami-6e9e4b06
+instance_type: m3.large
+key_name: UCLDC_keypair_0
+key_name_private: UCLDC-ingest-private
+extra_volume_size: 48
