@@ -22,6 +22,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     ingestfront.vm.provision "ansible" do |ansible|
       ansible.playbook = "ansible/ingestfront.yml"
     end
+
+    ingestfront.vm.synced_folder ".", "/home/vagrant/ingest_deploy", create:true
   end
 
 ###  config.vm.define "couchdb" do |couchdb|
