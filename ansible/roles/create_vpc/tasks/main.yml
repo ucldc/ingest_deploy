@@ -4,4 +4,4 @@
 - { include: create_vpc.yml }
 - { include: create_front_end_security_grp.yml }
 - name: save network information
-  template: src=save_vpc_create_vars.j2 dest=./vpc_vars.out
+  template: src=save_vpc_create_vars.j2 dest=./vpc-vars.yml
