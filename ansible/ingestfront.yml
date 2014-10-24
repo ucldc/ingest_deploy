@@ -45,12 +45,13 @@
     - name: run redis docker
       docker:
         image: redis
-        ports: 6379
+        ports: "6379:6379"
         name: redis
-        command: "redis --requirepass {{ redis_pswd }}"
+        command: "/entrypoint.sh redis-server --requirepass {{ redis_pswd }}"
     - name: run rq-dashboard docker
       docker: 
         image: mredar/rq-dashboard
         command: /run.sh ports=9181
+        ports: "9181:9181"
         name: rq-dashboard
         env: "REDIS_HOST={{ ansible_default_ipv4.address }},REDIS_PSWD={{ redis_pswd.stdout}}"
