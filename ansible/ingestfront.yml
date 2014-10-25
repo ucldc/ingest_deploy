@@ -47,7 +47,7 @@
         image: redis
         ports: "6379:6379"
         name: redis
-        command: "/entrypoint.sh redis-server --requirepass {{ redis_pswd }}"
+        command: "/entrypoint.sh redis-server --requirepass {{ redis_pswd.stdout }}"
     - name: run rq-dashboard docker
       docker: 
         image: mredar/rq-dashboard
