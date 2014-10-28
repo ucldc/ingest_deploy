@@ -11,6 +11,8 @@
   yum: pkg=mod_ssl state=present
 - name: add ssl rewrite/forwarding conf
   template: src=ssl.conf dest=/etc/httpd/conf.d/ssl.conf
+- name: remove port 80
+  lineinfile: dest=/etc/httpd/conf/httpd.conf state=absent line="Listen 80"
 - name: start apache
   service: name=httpd enabled=yes state=started
 #    - name: Display all variables/facts known for a host
