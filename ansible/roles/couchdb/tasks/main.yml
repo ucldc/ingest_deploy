@@ -1,0 +1,12 @@
+---
+- name: get couchdb docker image
+  shell: docker pull mredar/couchdb
+- name: run couchdb docker
+  docker:
+    state: running
+    image: tutum/couchdb
+    name: couchdb
+    ports: 5984:5984
+    env: COUCHDB_PASS={{ COUCHDB_PSWD }}
+    volumes: /var/lib/couchdb:/var/lib/couchdb
+#TODO: need to get the password or create it....
