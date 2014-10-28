@@ -60,3 +60,4 @@ packer/packer_cache/
 packer/builds/
 packer/output-virtualbox-iso/
 
+.vagrant/
