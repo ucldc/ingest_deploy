@@ -10,7 +10,7 @@
 - name: install mod_ssl
   yum: pkg=mod_ssl state=present
 - name: add ssl rewrite/forwarding conf
-  copy: src=templates/ssl.conf dest=/etc/httpd/conf.d/ssl.conf
+  template: src=ssl.conf dest=/etc/httpd/conf.d/ssl.conf
 - name: start apache
   service: name=httpd enabled=yes state=started
 #    - name: Display all variables/facts known for a host
@@ -21,21 +21,20 @@
   shell: docker pull mredar/rq-dashboard
 #    - name: run couchdb docker
 #      docker: image=tutum/couchdb command=/run.sh ports=5984
-- name: generate unique password for redis
-  shell: echo ABC
-  register: redis_pswd
-- debug: var=redis_pswd.stdout
+- debug: var=REDIS_PSWD
 #TODO: setup stunnel and run redis on remote ???
 - name: run redis docker
   docker:
+    state: running
     image: redis
-    ports: "6379:6379"
     name: redis
-    command: "/entrypoint.sh redis-server --requirepass {{ redis_pswd.stdout }}"
+    ports: "6379:6379"
+    command: "/entrypoint.sh redis-server --requirepass {{ REDIS_PSWD }}"
 - name: run rq-dashboard docker
   docker: 
+    state: running
     image: mredar/rq-dashboard
-    command: /run.sh ports=9181
-    ports: "9181:9181"
     name: rq-dashboard
-    env: "REDIS_HOST={{ ansible_default_ipv4.address }},REDIS_PSWD={{ redis_pswd.stdout}}"
+    ports: "9181:9181"
+    command: /run.sh ports=9181
+    env: "REDIS_HOST={{ ansible_default_ipv4.address }},REDIS_PSWD={{ REDIS_PSWD }}"

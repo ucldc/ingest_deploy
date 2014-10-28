@@ -1,4 +1,6 @@
 ---
+  - name: include vaulted passwords
+    include_vars: all_secrets.yml
   - name: update packages
     yum: pkg=* state=latest
   - include: install_docker.yml
