@@ -8,6 +8,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # All Vagrant configuration is done here. The most common configuration
   # options are documented and commented below. For a complete reference,
   # please see the online documentation at vagrantup.com.
+  $front_ip = "10.0.0.10"
+  $couchdb_ip = "10.0.0.11"
+  $solr_ip = "10.0.0.12"
+
+  $record_ips = <<FOO
+  echo #{$front_ip} > /ip-front
+  echo #{$couchdb_ip} > /ip-couchdb
+  echo #{$solr_ip} > /ip-solr
+FOO
 
   config.vm.define "ingestfront", primary: true do |ingestfront|
     # Every Vagrant virtual environment requires a box to build off of.
@@ -15,9 +24,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     # Create a private network, which allows host-only access to the machine
     # using a specific IP.
-    ingestfront.vm.network "private_network", ip: "10.0.0.10"
+    ingestfront.vm.network "private_network", ip: $front_ip
 
     ingestfront.vm.provision "shell", inline: "yum -y install ansible"
+    ingestfront.vm.provision "shell", inline: $record_ips
 
     ingestfront.vm.provision "ansible" do |ansible|
       ansible.playbook = "ansible/provision_ingest_front.yml"
@@ -28,8 +38,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.define "couchdb" do |couchdb|
     couchdb.vm.box = "ingest_base"
-    couchdb.vm.network "private_network", ip: "10.0.0.11"
+    couchdb.vm.network "private_network", ip: $couchdb_ip
     couchdb.vm.provision "shell", inline: "yum -y install ansible"
+    couchdb.vm.provision "shell", inline: $record_ips
 
     couchdb.vm.provision "ansible" do |ansible|
       ansible.playbook = "ansible/provision_couchdb.yml"
@@ -40,9 +51,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.define "solr" do |solr|
     solr.vm.box = "ingest_base"
-    solr.vm.network "private_network", ip: "10.0.0.12"
-
+    solr.vm.network "private_network", ip: $solr_ip
     solr.vm.provision "shell", inline: "yum -y install ansible"
+    solr.vm.provision "shell", inline: $record_ips
 
     solr.vm.provision "ansible" do |ansible|
       ansible.playbook = "ansible/provision_solr.yml"
