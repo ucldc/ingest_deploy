@@ -1,9 +1,9 @@
 ---
 - name: get ip of couchdb
-  shell: echo /ip-couchdb
+  shell: cat /ip-couchdb
   register: ip_couchdb
 - name: get ip of solr
-  shell: echo /ip-solr
+  shell: cat /ip-solr
   register: ip_solr
 - name: install httpd
   yum: pkg=httpd state=present
