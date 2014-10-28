@@ -31,7 +31,7 @@ FOO
 
     ingestfront.vm.provision "ansible" do |ansible|
       ansible.playbook = "ansible/provision_ingest_front.yml"
-      ansible.ask_vault_pass = true
+      ansible.vault_password_file = "~/.ingest_vault_pswd"
     end
 
     ingestfront.vm.synced_folder ".", "/home/vagrant/ingest_deploy", create:true
@@ -45,7 +45,7 @@ FOO
 
     couchdb.vm.provision "ansible" do |ansible|
       ansible.playbook = "ansible/provision_couchdb.yml"
-      ansible.ask_vault_pass = true
+      ansible.vault_password_file = "~/.ingest_vault_pswd"
     end
 
     couchdb.vm.synced_folder ".", "/home/vagrant/ingest_deploy", create:true
@@ -59,7 +59,7 @@ FOO
 
     solr.vm.provision "ansible" do |ansible|
       ansible.playbook = "ansible/provision_solr.yml"
-      ansible.ask_vault_pass = true
+      ansible.vault_password_file = "~/.ingest_vault_pswd"
     end
 
     solr.vm.synced_folder ".", "/home/vagrant/ingest_deploy", create:true
