@@ -20,25 +20,40 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     ingestfront.vm.provision "shell", inline: "yum -y install ansible"
 
     ingestfront.vm.provision "ansible" do |ansible|
-      ansible.playbook = "ansible/ingestfront.yml"
+      ansible.playbook = "ansible/provision_ingest_front.yml"
     end
 
     ingestfront.vm.synced_folder ".", "/home/vagrant/ingest_deploy", create:true
   end
 
-###  config.vm.define "couchdb" do |couchdb|
-###    couchdb.vm.box = "ingest_base"
-###    couchdb.vm.network "private_network", ip: "10.0.0.11"
-###    couchdb.vm.provision "shell", inline: "yum -y install ansible"
-###  end
-###
-###  config.vm.define "solr" do |solr|
-###    solr.vm.box = "ingest_base"
-###    solr.vm.network "private_network", ip: "10.0.0.12"
-###    solr.vm.provision "shell", inline: "yum -y install ansible"
-###  end
+  config.vm.define "couchdb" do |couchdb|
+    couchdb.vm.box = "ingest_base"
+    couchdb.vm.network "private_network", ip: "10.0.0.11"
+    couchdb.vm.provision "shell", inline: "yum -y install ansible"
+
+    couchdb.vm.provision "ansible" do |ansible|
+      ansible.playbook = "ansible/provision_couchdb.yml"
+    end
+
+    couchdb.vm.synced_folder ".", "/home/vagrant/ingest_deploy", create:true
+  end
+
+  config.vm.define "solr" do |solr|
+    solr.vm.box = "ingest_base"
+    solr.vm.network "private_network", ip: "10.0.0.12"
+
+    solr.vm.provision "shell", inline: "yum -y install ansible"
+
+    solr.vm.provision "ansible" do |ansible|
+      ansible.playbook = "ansible/provision_solr.yml"
+    end
+
+    solr.vm.synced_folder ".", "/home/vagrant/ingest_deploy", create:true
+  end
 
   # box for rqworker & akara?
+  # worker needs to know the solr ip, couchdb ip and ingest front ip
+  # how to communicate across the ansible playbooks?
   # for now, like current on ingestfront
 
 

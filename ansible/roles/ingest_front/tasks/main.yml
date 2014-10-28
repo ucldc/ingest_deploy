@@ -1,0 +1,41 @@
+---
+- name: get ip of couchdb
+  shell: echo /ip-couchdb
+  register: ip_couchdb
+- name: get ip of solr
+  shell: echo /ip-solr
+  register: ip_solr
+- name: install httpd
+  yum: pkg=httpd state=present
+- name: install mod_ssl
+  yum: pkg=mod_ssl state=present
+- name: add ssl rewrite/forwarding conf
+  copy: src=templates/ssl.conf dest=/etc/httpd/conf.d/ssl.conf
+- name: start apache
+  service: name=httpd enabled=yes state=started
+#    - name: Display all variables/facts known for a host
+#      debug: var=hostvars
+- name: get redis docker image
+  shell: docker pull redis
+- name: get rq-dashboard docker image
+  shell: docker pull mredar/rq-dashboard
+#    - name: run couchdb docker
+#      docker: image=tutum/couchdb command=/run.sh ports=5984
+- name: generate unique password for redis
+  shell: echo ABC
+  register: redis_pswd
+- debug: var=redis_pswd.stdout
+#TODO: setup stunnel and run redis on remote ???
+- name: run redis docker
+  docker:
+    image: redis
+    ports: "6379:6379"
+    name: redis
+    command: "/entrypoint.sh redis-server --requirepass {{ redis_pswd.stdout }}"
+- name: run rq-dashboard docker
+  docker: 
+    image: mredar/rq-dashboard
+    command: /run.sh ports=9181
+    ports: "9181:9181"
+    name: rq-dashboard
+    env: "REDIS_HOST={{ ansible_default_ipv4.address }},REDIS_PSWD={{ redis_pswd.stdout}}"

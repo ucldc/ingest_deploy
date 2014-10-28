@@ -1,0 +1,14 @@
+---
+# Install docker-py in order to use ansible docker modules
+- name: install pip
+  yum: pkg=python-pip state=latest
+- name: install docker-py
+  pip: name=docker-py state=present
+- name: install centos docker io
+  yum: pkg=docker-io state=latest
+  when: ansible_distribution == "CentOS",
+- name: install amazon linux docker io
+  yum: pkg=docker state=latest
+  when: ansible_distribution == "Amazon"
+- name: start docker
+  service: name=docker enabled=yes state=started
