@@ -1,0 +1,16 @@
+---
+# tasks file for provision_solr
+# already have setup solr from geerlinguy, now customize
+- name: pull ingest solr code to local box
+  sudo: no
+  local_action: git repo=https://github.com/ucldc/solr_api.git dest={{ dir_code }}/solr_api
+- name: copy solr.xml
+  copy: src={{ dir_code }}/solr_api/solr.xml dest={{ solr_path }} force=yes backup=yes
+- name: copy zoo.cfg
+  copy: src={{ dir_code }}/solr_api/zoo.cfg dest={{ solr_path }}/solr force=yes backup=yes
+- name: copy example collection files to dc-collection
+  shell: >
+    cp -rp {{ solr_path }}example/solr/collection1/* {{ solr_path }}/solr/dc-collection
+    creates={{ solr_path }}/cores/README.txt
+    cp -R {{ solr_path }}/example/multicore {{ solr_path }}/cores
+  notify: restart tomcat

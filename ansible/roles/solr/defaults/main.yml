@@ -1,0 +1,3 @@
+---
+# defaults file for provision_solr
+dir_code: ./workspace/code
