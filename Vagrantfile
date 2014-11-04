@@ -35,6 +35,29 @@ FOO
     end
 
     ingestfront.vm.synced_folder ".", "/home/vagrant/ingest_deploy", create:true
+
+    ingestfront.vm.provider :virtualbox do |vbox|
+        vbox.name = 'ingestfront'
+    end
+    
+    ingestfront.vm.provider :aws do |aws, override|
+      #aws.id = "i-7591c898"
+      aws.ami = "ami-b66ed3de"
+      aws.instance_type = 't2.medium'
+      aws.access_key_id = ENV['AWS_ACCESS_KEY']
+      aws.secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
+      aws.region = ENV['AWS_DEFAULT_REGION']
+      aws.security_groups = ['default', 'ingest-front']
+      aws.subnet_id = "subnet-54427312"
+      aws.associate_public_ip = true
+      aws.tags = { 'project' => 'ucldc',
+                   'Name' => 'ingestfront-dev'
+      }
+      override.vm.box = "dummy"
+      override.ssh.username = ENV['EC2_USER']
+      override.ssh.private_key_path = ENV['EC2_PRIVATE_KEY']
+    end
+
   end
 
   config.vm.define "couchdb" do |couchdb|
@@ -49,6 +72,30 @@ FOO
     end
 
     couchdb.vm.synced_folder ".", "/home/vagrant/ingest_deploy", create:true
+
+    couchdb.vm.provider :virtualbox do |vbox|
+        vbox.name = 'couchdb'
+    end
+    
+    couchdb.vm.provider :aws do |aws, override|
+      #aws.id = "i-7591c898"
+      aws.ami = "ami-b66ed3de"
+      aws.instance_type = 't2.medium'
+      aws.access_key_id = ENV['AWS_ACCESS_KEY']
+      aws.secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
+      aws.region = ENV['AWS_DEFAULT_REGION']
+      aws.security_groups = ['default', 'ingest-front']
+      aws.subnet_id = "subnet-54427312"
+      aws.associate_public_ip = true
+      #aws.subnet_id = "subnet-fddeca89"
+      aws.tags = { 'project' => 'ucldc',
+                   'Name' => 'couchdb-dev'
+      }
+      override.vm.box = "dummy"
+      override.ssh.username = ENV['EC2_USER']
+      override.ssh.private_key_path = ENV['EC2_PRIVATE_KEY']
+    end
+
   end
 
   config.vm.define "solr" do |solr|
@@ -63,6 +110,30 @@ FOO
     end
 
     solr.vm.synced_folder ".", "/home/vagrant/ingest_deploy", create:true
+
+    solr.vm.provider :virtualbox do |vbox|
+        vbox.name = 'solr'
+    end
+    
+    solr.vm.provider :aws do |aws, override|
+      #aws.id = "i-7591c898"
+      aws.ami = "ami-b66ed3de"
+      aws.instance_type = 't2.medium'
+      aws.access_key_id = ENV['AWS_ACCESS_KEY']
+      aws.secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
+      aws.region = ENV['AWS_DEFAULT_REGION']
+      aws.security_groups = ['default', 'ingest-front']
+      aws.subnet_id = "subnet-54427312"
+      aws.associate_public_ip = true
+      #aws.subnet_id = "subnet-fddeca89"
+      aws.tags = { 'project' => 'ucldc',
+                   'Name' => 'solr-dev'
+      }
+      override.vm.box = "dummy"
+      override.ssh.username = ENV['EC2_USER']
+      override.ssh.private_key_path = ENV['EC2_PRIVATE_KEY']
+    end
+
   end
 
   # box for rqworker & akara?
@@ -71,16 +142,6 @@ FOO
   # for now, like current on ingestfront
 
 
-  config.vm.provider :aws do |aws, override|
-      aws.id = "i-7591c898"
-      #aws.ami = "ami-b66ed3de"
-      #aws.instance_type = 't2.micro'
-      override.ssh.username = ENV['EC2_USER']
-      override.ssh.private_key_path = ENV['EC2_PRIVATE_KEY']
-      aws.access_key_id = ENV['AWS_ACCESS_KEY']
-      aws.secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
-      aws.region = ENV['AWS_DEFAULT_REGION']
-  end
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.
