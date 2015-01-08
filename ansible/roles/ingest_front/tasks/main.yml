@@ -27,6 +27,7 @@
 #TODO: setup stunnel and run redis on remote ???
 - name: run redis docker
   docker:
+    #docker_api_version: docker_server_api_version.stdout
     state: running
     image: redis
     name: redis
@@ -34,6 +35,7 @@
     command: "/entrypoint.sh redis-server --requirepass {{ REDIS_PSWD }}"
 - name: run rq-dashboard docker
   docker: 
+    #docker_api_version: docker_server_api_version.stdout
     state: running
     image: mredar/rq-dashboard
     name: rq-dashboard
