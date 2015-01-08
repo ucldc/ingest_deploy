@@ -1,12 +1,22 @@
 ---
 # tasks file for provision_worker
+- name: install git
+  sudo: yes
+  yum: name=git state=latest
 - name: pull ingest harvester code to local box
-  sudo: no
-  local_action: git repo=https://github.com/mredar/harvester.git dest={{ dir_code }}/harvester
+  git: repo=https://github.com/mredar/harvester.git dest={{ dir_code }}/harvester
+- name: include vaulted passwords from all_secrets.yml
+  include_vars: vaulted.yml
 - name: install ssh private key for bitbucket
   template: src=id_rsa mode=600 dest=~/.ssh/id_rsa 
 - name: install ssh pub key for bitbucket
   template: src=id_rsa.pub mode=600 dest=~/.ssh/id_rsa.pub 
 - name: pull dpla based code to local box
   sudo: no
-  local_action: git repo=git@bitbucket.org:mredar/dpla-ingestion.git dest={{ dir_code }}/dpla-ingestion
+  git: 
+    repo: git@bitbucket.org:mredar/dpla-ingestion.git
+    dest: "{{ dir_code }}/dpla-ingestion"
+    accept_hostkey: yes
+# install harvesting and dpla-ingestion code
+# configure and start akara
+# start worker pointed at couchdb and local akara

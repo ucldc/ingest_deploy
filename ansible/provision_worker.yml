@@ -1,7 +1,6 @@
 ---
 - hosts: all
-  sudo: yes
   gather_facts: yes
   roles:
-    - common
+    - { role: common, sudo: yes }
     - worker
