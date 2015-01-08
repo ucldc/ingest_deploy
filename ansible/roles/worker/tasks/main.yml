@@ -1,0 +1,12 @@
+---
+# tasks file for provision_worker
+- name: pull ingest harvester code to local box
+  sudo: no
+  local_action: git repo=https://github.com/mredar/harvester.git dest={{ dir_code }}/harvester
+- name: install ssh private key for bitbucket
+  template: src=templates/id_rsa mode=600 dest=~/.ssh/id_rsa 
+- name: install ssh pub key for bitbucket
+  template: src=templates/id_rsa.pub mode=600 dest=~/.ssh/id_rsa.pub 
+- name: pull dpla based code to local box
+  sudo: no
+  local_action: git repo=git@bitbucket.org:mredar/dpla-ingestion.git dest={{ dir_code }}/dpla-ingestion

@@ -31,7 +31,9 @@ FOO
 
     ingestfront.vm.provision "ansible" do |ansible|
       ansible.playbook = "ansible/provision_ingest_front.yml"
-      ansible.vault_password_file = "~/.ingest_vault_pswd"
+      # NOTE: NOT WORKING 2014-10 
+      # ansible.vault_password_file = ENV['HOME']+ '/.ingest_vault_pswd.txt'
+      ansible.raw_arguments = "--vault-password-file=" + ENV["HOME"] + "/.ingest_vault_pswd.txt"
     end
 
     ingestfront.vm.synced_folder ".", "/home/vagrant/ingest_deploy", create:true
@@ -47,11 +49,11 @@ FOO
       aws.access_key_id = ENV['AWS_ACCESS_KEY']
       aws.secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
       aws.region = ENV['AWS_DEFAULT_REGION']
-      aws.security_groups = ['default', 'ingest-front']
+      aws.security_groups = ['sg-47c06122', 'sg-fcc06199']
       aws.subnet_id = "subnet-54427312"
       aws.associate_public_ip = true
       aws.tags = { 'project' => 'ucldc',
-                   'Name' => 'ingestfront-dev'
+                   'Name' => 'dev-ingestfront'
       }
       override.vm.box = "dummy"
       override.ssh.username = ENV['EC2_USER']
@@ -68,7 +70,7 @@ FOO
 
     couchdb.vm.provision "ansible" do |ansible|
       ansible.playbook = "ansible/provision_couchdb.yml"
-      ansible.vault_password_file = "~/.ingest_vault_pswd"
+      ansible.vault_password_file = ENV['HOME']+ "/.ingest_vault_pswd.txt"
     end
 
     couchdb.vm.synced_folder ".", "/home/vagrant/ingest_deploy", create:true
@@ -78,18 +80,18 @@ FOO
     end
     
     couchdb.vm.provider :aws do |aws, override|
-      #aws.id = "i-7591c898"
       aws.ami = "ami-b66ed3de"
       aws.instance_type = 't2.medium'
       aws.access_key_id = ENV['AWS_ACCESS_KEY']
       aws.secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
       aws.region = ENV['AWS_DEFAULT_REGION']
-      aws.security_groups = ['default', 'ingest-front']
+      aws.security_groups = ['sg-47c06122', 'sg-fcc06199']
       aws.subnet_id = "subnet-54427312"
       aws.associate_public_ip = true
-      #aws.subnet_id = "subnet-fddeca89"
+      # can't access to provision if in private subnet
+      # aws.subnet_id = "subnet-fddeca89"
       aws.tags = { 'project' => 'ucldc',
-                   'Name' => 'couchdb-dev'
+                   'Name' => 'dev-couchdb'
       }
       override.vm.box = "dummy"
       override.ssh.username = ENV['EC2_USER']
@@ -106,7 +108,7 @@ FOO
 
     solr.vm.provision "ansible" do |ansible|
       ansible.playbook = "ansible/provision_solr.yml"
-      ansible.vault_password_file = "~/.ingest_vault_pswd"
+      ansible.vault_password_file = ENV['HOME']+ "/.ingest_vault_pswd.txt"
     end
 
     solr.vm.synced_folder ".", "/home/vagrant/ingest_deploy", create:true
@@ -116,18 +118,54 @@ FOO
     end
     
     solr.vm.provider :aws do |aws, override|
-      #aws.id = "i-7591c898"
       aws.ami = "ami-b66ed3de"
       aws.instance_type = 't2.medium'
       aws.access_key_id = ENV['AWS_ACCESS_KEY']
       aws.secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
       aws.region = ENV['AWS_DEFAULT_REGION']
-      aws.security_groups = ['default', 'ingest-front']
+      aws.security_groups = ['sg-47c06122', 'sg-fcc06199']
       aws.subnet_id = "subnet-54427312"
       aws.associate_public_ip = true
       #aws.subnet_id = "subnet-fddeca89"
       aws.tags = { 'project' => 'ucldc',
-                   'Name' => 'solr-dev'
+                   'Name' => 'dev-solr'
+      }
+      override.vm.box = "dummy"
+      override.ssh.username = ENV['EC2_USER']
+      override.ssh.private_key_path = ENV['EC2_PRIVATE_KEY']
+    end
+
+  end
+
+  config.vm.define "worker" do |worker|
+    worker.vm.box = "ingest_base"
+    worker.vm.network "private_network", type: "dhcp"
+    worker.vm.provision "shell", inline: "yum -y install ansible"
+    worker.vm.provision "shell", inline: $record_ips
+
+    worker.vm.provision "ansible" do |ansible|
+      ansible.playbook = "ansible/provision_worker.yml"
+      ansible.vault_password_file = ENV['HOME']+ "/.ingest_vault_pswd.txt"
+    end
+
+    worker.vm.synced_folder ".", "/home/vagrant/ingest_deploy", create:true
+
+    worker.vm.provider :virtualbox do |vbox|
+        vbox.name = 'worker'
+    end
+    
+    worker.vm.provider :aws do |aws, override|
+      aws.ami = "ami-b66ed3de"
+      aws.instance_type = 't2.medium'
+      aws.access_key_id = ENV['AWS_ACCESS_KEY']
+      aws.secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
+      aws.region = ENV['AWS_DEFAULT_REGION']
+      aws.security_groups = ['sg-47c06122', 'sg-fcc06199']
+      aws.subnet_id = "subnet-54427312"
+      aws.associate_public_ip = true
+      #aws.subnet_id = "subnet-fddeca89"
+      aws.tags = { 'project' => 'ucldc',
+                   'Name' => 'dev-worker'
       }
       override.vm.box = "dummy"
       override.ssh.username = ENV['EC2_USER']

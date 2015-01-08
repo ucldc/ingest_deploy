@@ -1,0 +1,3 @@
+---
+# defaults file for provision_worker
+dir_code: ./workspace/code
