@@ -4,6 +4,15 @@ ingest_deploy
 Ansible, packer and vagrant project for building and running ingest environment
 on AWS and locally.
 
+### Dependencies
+
+Tools:
+* [VirtualBox](https://www.virtualbox.org/) (Version X.X)
+* [Vagrant](https://www.vagrantup.com/) (Version X.X)
+* [vagrant-vbguest](https://github.com/dotless-de/vagrnat-vbguest/) (`vagrant plugin install vagrant-vbguest`)
+* [Ansible](http://www.ansible.com/home) (Version X.X)
+
+- if using VirtualBox, install the vagrant-vbguest 
 
 License
 =======

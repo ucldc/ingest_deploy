@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: couchdb
   sudo: yes
   gather_facts: yes
   roles:
