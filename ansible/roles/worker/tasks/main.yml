@@ -1,22 +1,52 @@
 ---
 # tasks file for provision_worker
-- name: install git
-  sudo: yes
-  yum: name=git state=latest
-- name: pull ingest harvester code to local box
-  git: repo=https://github.com/mredar/harvester.git dest={{ dir_code }}/harvester
 - name: include vaulted passwords from all_secrets.yml
   include_vars: vaulted.yml
 - name: install ssh private key for bitbucket
   template: src=id_rsa mode=600 dest=~/.ssh/id_rsa 
 - name: install ssh pub key for bitbucket
   template: src=id_rsa.pub mode=600 dest=~/.ssh/id_rsa.pub 
+- name: install development tools
+  sudo: yes
+  yum: "pkg={{ item }} state=latest"
+  with_items:
+    - git
+    - gcc
+    - make
+    - libxslt-devel
+    - libxml2-devel
+    - python27-devel
+    - python27-pip
+      #- bzip2
+      #- kernel-headers
+      #- kernel-devel
+      #- "kernel-devel-{{ kernel_release.stdout }}"
+      #- libselinux-python
+- name: install virtualenv
+  sudo: yes
+  pip:
+    name: virtualenv
+    state: present
+    executable: pip-2.7
+- name: make virtualenv directory
+  file: path={{ dir_venv }} state=directory
+- name: pull ingest harvester code to local box
+  git: repo=https://github.com/mredar/harvester.git dest={{ dir_code }}/harvester
 - name: pull dpla based code to local box
-  sudo: no
   git: 
     repo: git@bitbucket.org:mredar/dpla-ingestion.git
     dest: "{{ dir_code }}/dpla-ingestion"
     accept_hostkey: yes
-# install harvesting and dpla-ingestion code
+    version: ucldc
+- name: install akara and harvester dpla dependencies
+  pip:
+    state: present
+    requirements: /home/{{ansible_ssh_user}}/code/dpla-ingestion/requirements.txt 
+    executable: "{{ dir_venv }}/bin/pip"
+    virtualenv: "{{ dir_venv }}"
+- name: install harvester code
+  command: "{{ dir_venv }}/bin/python /home/{{ ansible_ssh_user }}/code/harvester/setup.py install"
+#- name: copy the configuration for akara to the box
+#  copy:
 # configure and start akara
 # start worker pointed at couchdb and local akara

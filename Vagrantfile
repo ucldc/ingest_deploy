@@ -26,7 +26,6 @@ FOO
     # using a specific IP.
     ingestfront.vm.network "private_network", ip: $front_ip
 
-    ingestfront.vm.provision "shell", inline: "yum -y install ansible"
     ingestfront.vm.provision "shell", inline: $record_ips
 
     ingestfront.vm.provision "ansible" do |ansible|
@@ -36,7 +35,7 @@ FOO
       ansible.raw_arguments = "--vault-password-file=" + ENV["HOME"] + "/.ingest_vault_pswd.txt"
     end
 
-    ingestfront.vm.synced_folder ".", "/home/vagrant/ingest_deploy", create:true
+#    ingestfront.vm.synced_folder ".", "/home/vagrant/ingest_deploy", create:true
 
     ingestfront.vm.provider :virtualbox do |vbox|
         vbox.name = 'ingestfront'
@@ -48,6 +47,7 @@ FOO
       aws.instance_type = 't2.medium'
       aws.access_key_id = ENV['AWS_ACCESS_KEY']
       aws.secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
+      aws.keypair_name = ENV['AWS_KEYPAIR_NAME']
       aws.region = ENV['AWS_DEFAULT_REGION']
       aws.security_groups = ['sg-47c06122', 'sg-fcc06199']
       aws.subnet_id = "subnet-54427312"
@@ -57,7 +57,7 @@ FOO
       }
       override.vm.box = "dummy"
       override.ssh.username = ENV['EC2_USER']
-      override.ssh.private_key_path = ENV['EC2_PRIVATE_KEY']
+      override.ssh.private_key_path = ENV['EC2_PRIVATE_KEY_FILE']
     end
 
   end
@@ -65,7 +65,6 @@ FOO
   config.vm.define "couchdb" do |couchdb|
     couchdb.vm.box = "ingest_base"
     couchdb.vm.network "private_network", ip: $couchdb_ip
-    couchdb.vm.provision "shell", inline: "yum -y install ansible"
     couchdb.vm.provision "shell", inline: $record_ips
 
     couchdb.vm.provision "ansible" do |ansible|
@@ -73,7 +72,7 @@ FOO
       ansible.vault_password_file = ENV['HOME']+ "/.ingest_vault_pswd.txt"
     end
 
-    couchdb.vm.synced_folder ".", "/home/vagrant/ingest_deploy", create:true
+#    couchdb.vm.synced_folder ".", "/home/vagrant/ingest_deploy", create:true
 
     couchdb.vm.provider :virtualbox do |vbox|
         vbox.name = 'couchdb'
@@ -84,6 +83,7 @@ FOO
       aws.instance_type = 't2.medium'
       aws.access_key_id = ENV['AWS_ACCESS_KEY']
       aws.secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
+      aws.keypair_name = ENV['AWS_KEYPAIR_NAME']
       aws.region = ENV['AWS_DEFAULT_REGION']
       aws.security_groups = ['sg-47c06122', 'sg-fcc06199']
       aws.subnet_id = "subnet-54427312"
@@ -95,7 +95,7 @@ FOO
       }
       override.vm.box = "dummy"
       override.ssh.username = ENV['EC2_USER']
-      override.ssh.private_key_path = ENV['EC2_PRIVATE_KEY']
+      override.ssh.private_key_path = ENV['EC2_PRIVATE_KEY_FILE']
     end
 
   end
@@ -103,7 +103,6 @@ FOO
   config.vm.define "solr" do |solr|
     solr.vm.box = "ingest_base"
     solr.vm.network "private_network", ip: $solr_ip
-    solr.vm.provision "shell", inline: "yum -y install ansible"
     solr.vm.provision "shell", inline: $record_ips
 
     solr.vm.provision "ansible" do |ansible|
@@ -111,7 +110,7 @@ FOO
       ansible.vault_password_file = ENV['HOME']+ "/.ingest_vault_pswd.txt"
     end
 
-    solr.vm.synced_folder ".", "/home/vagrant/ingest_deploy", create:true
+#    solr.vm.synced_folder ".", "/home/vagrant/ingest_deploy", create:true
 
     solr.vm.provider :virtualbox do |vbox|
         vbox.name = 'solr'
@@ -122,6 +121,7 @@ FOO
       aws.instance_type = 't2.medium'
       aws.access_key_id = ENV['AWS_ACCESS_KEY']
       aws.secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
+      aws.keypair_name = ENV['AWS_KEYPAIR_NAME']
       aws.region = ENV['AWS_DEFAULT_REGION']
       aws.security_groups = ['sg-47c06122', 'sg-fcc06199']
       aws.subnet_id = "subnet-54427312"
@@ -132,7 +132,7 @@ FOO
       }
       override.vm.box = "dummy"
       override.ssh.username = ENV['EC2_USER']
-      override.ssh.private_key_path = ENV['EC2_PRIVATE_KEY']
+      override.ssh.private_key_path = ENV['EC2_PRIVATE_KEY_FILE']
     end
 
   end
@@ -140,7 +140,6 @@ FOO
   config.vm.define "worker" do |worker|
     worker.vm.box = "ingest_base"
     worker.vm.network "private_network", type: "dhcp"
-    worker.vm.provision "shell", inline: "yum -y install ansible"
     worker.vm.provision "shell", inline: $record_ips
 
     worker.vm.provision "ansible" do |ansible|
@@ -148,17 +147,20 @@ FOO
       ansible.vault_password_file = ENV['HOME']+ "/.ingest_vault_pswd.txt"
     end
 
-    worker.vm.synced_folder ".", "/home/vagrant/ingest_deploy", create:true
+#    worker.vm.synced_folder ".", "/home/vagrant/ingest_deploy", create:true
 
     worker.vm.provider :virtualbox do |vbox|
         vbox.name = 'worker'
     end
-    
+
+    worker.vm.synced_folder ".", "/vagrant", disabled: true 
+
     worker.vm.provider :aws do |aws, override|
       aws.ami = "ami-b66ed3de"
       aws.instance_type = 't2.medium'
       aws.access_key_id = ENV['AWS_ACCESS_KEY']
       aws.secret_access_key = ENV['AWS_SECRET_ACCESS_KEY']
+      aws.keypair_name = ENV['AWS_KEYPAIR_NAME']
       aws.region = ENV['AWS_DEFAULT_REGION']
       aws.security_groups = ['sg-47c06122', 'sg-fcc06199']
       aws.subnet_id = "subnet-54427312"
@@ -169,7 +171,8 @@ FOO
       }
       override.vm.box = "dummy"
       override.ssh.username = ENV['EC2_USER']
-      override.ssh.private_key_path = ENV['EC2_PRIVATE_KEY']
+      override.ssh.private_key_path = ENV['EC2_PRIVATE_KEY_FILE']
+      override.ssh.pty = true
     end
 
   end
@@ -202,6 +205,11 @@ FOO
   # If true, then any SSH connections made will enable agent forwarding.
   # Default value: false
   # config.ssh.forward_agent = true
+  config.ssh.private_key_path = Array[
+      "~/.vagrant.d/insecure_private_key",
+      ENV['EC2_PRIVATE_KEY_FILE']
+  ]
+
 
   # Share an additional folder to the guest VM. The first argument is
   # the path on the host to the actual folder. The second argument is
