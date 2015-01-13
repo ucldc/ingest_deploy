@@ -1,2 +1,5 @@
 ---
 # handlers file for provision_worker
+- name: reload monit
+  sudo: yes
+  command: monit reload

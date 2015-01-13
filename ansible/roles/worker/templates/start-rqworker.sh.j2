@@ -1,0 +1,22 @@
+#! /bin/bash
+# Run as role user
+if [[ -n "$DEBUG" ]]; then 
+  set -x
+fi
+
+set -o pipefail  # trace ERR through pipes
+set -o errtrace  # trace ERR through 'time command' and other functions
+set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
+set -o errexit   ## set -e : exit the script if any statement returns a non-true return value
+
+if [ -e {{ dir_rqworker_run }}/rqworker.pid ]; then
+    #is running already?
+    worker_pid=`/bin/cat {{ dir_rqworker_run }}/log/rqworker.pid`
+    if ps -A | grep -q "$worker_pid"; then
+	echo "worker appears to be running at PID $worker_pid"
+        exit 13
+    fi
+fi
+
+cd {{ dir_rqworker_run }}
+{{ dir_venv }}/bin/rqworker -c rqw-settings --pid {{ dir_rqworker_run }}/rqworker.pid &> {{ dir_rqworker_run }}/worker.log &
