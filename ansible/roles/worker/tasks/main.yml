@@ -15,20 +15,34 @@
     - make
     - libxslt-devel
     - libxml2-devel
+    - monit
+- name: install amazon specific python libs
+  when: ansible_distribution == "Amazon"
+  sudo: yes
+  yum: "pkg={{ item }} state=latest"
+  with_items:
     - python27-devel
     - python27-pip
-    - monit
-      #- bzip2
-      #- kernel-headers
-      #- kernel-devel
-      #- "kernel-devel-{{ kernel_release.stdout }}"
-      #- libselinux-python
-- name: install virtualenv
+- name: install centos specific python libs
+  when: ansible_distribution == "CentOS"
+  sudo: yes
+  yum: "pkg={{ item }} state=latest"
+  with_items:
+    - python-devel
+    - python-pip
+- name: install virtualenv, amazon
   sudo: yes
   pip:
     name: virtualenv
     state: present
     executable: pip-2.7
+  when: ansible_distribution == "Amazon"
+- name: install virtualenv, centors
+  sudo: yes
+  pip:
+    name: virtualenv
+    state: present
+  when: ansible_distribution == "CentOS"
 - name: make virtualenv directory
   file: path={{ dir_venv }} state=directory
 - name: pull ingest harvester code to local box

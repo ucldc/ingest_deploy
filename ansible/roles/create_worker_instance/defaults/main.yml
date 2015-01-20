@@ -1,0 +1,9 @@
+---
+# defaults file for create_worker_instance
+image_hvm: ami-b66ed3de
+instance_type: t2.micro
+key_name: UCLDC-ingest-private
+key_name_private: UCLDC-ingest-private
+subnet_id_private: subnet-fddeca89
+subnet_id_public: subnet-54427312
+sec_grp_default: sg-47c06122

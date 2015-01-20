@@ -1,0 +1,17 @@
+# Create new worker instance for ingest
+# This will launch into the private VPC and use the private addresses
+# for redis, couchdb and solr
+#
+---
+#- hosts: localhost
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  vars:
+      project_name: "{{ project | default('ucldc') }}"
+      name_prefix: "{{ name_base | default('ucldc-ingest') }}"
+      #name_suffix: "{{ name_suffix | default('new') }}"
+      name_env: "{{ name_prefix }}" #-{{ name_suffix }}"
+  roles:
+    - create_worker_instance
+- include: provision_worker.yml

@@ -1,5 +1,5 @@
 ---
-- hosts: ingest_front
+- hosts: ingestfront
   sudo: yes
   gather_facts: yes
   roles:

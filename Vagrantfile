@@ -56,6 +56,7 @@ FOO
                    'Name' => 'dev-ingestfront'
       }
       override.vm.box = "dummy"
+      override.vm.synced_folder ".", "/vagrant", disabled: true 
       override.ssh.username = ENV['EC2_USER']
       override.ssh.private_key_path = ENV['EC2_PRIVATE_KEY_FILE']
     end
@@ -94,6 +95,7 @@ FOO
                    'Name' => 'dev-couchdb'
       }
       override.vm.box = "dummy"
+      override.vm.synced_folder ".", "/vagrant", disabled: true 
       override.ssh.username = ENV['EC2_USER']
       override.ssh.private_key_path = ENV['EC2_PRIVATE_KEY_FILE']
     end
@@ -131,6 +133,7 @@ FOO
                    'Name' => 'dev-solr'
       }
       override.vm.box = "dummy"
+      override.vm.synced_folder ".", "/vagrant", disabled: true 
       override.ssh.username = ENV['EC2_USER']
       override.ssh.private_key_path = ENV['EC2_PRIVATE_KEY_FILE']
     end
@@ -153,8 +156,6 @@ FOO
         vbox.name = 'worker'
     end
 
-    worker.vm.synced_folder ".", "/vagrant", disabled: true 
-
     worker.vm.provider :aws do |aws, override|
       aws.ami = "ami-b66ed3de"
       aws.instance_type = 't2.medium'
@@ -170,6 +171,7 @@ FOO
                    'Name' => 'dev-worker'
       }
       override.vm.box = "dummy"
+      override.vm.synced_folder ".", "/vagrant", disabled: true 
       override.ssh.username = ENV['EC2_USER']
       override.ssh.private_key_path = ENV['EC2_PRIVATE_KEY_FILE']
       override.ssh.pty = true

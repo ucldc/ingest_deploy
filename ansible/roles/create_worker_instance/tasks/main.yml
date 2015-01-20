@@ -1,0 +1,26 @@
+---
+# tasks file for create_worker_instance
+- name: create a new worker instance in the private vpc
+  local_action:
+    module: ec2
+    count: 1
+    state: present
+    region: us-east-1
+    key_name: "{{ key_name }}"
+    image: "{{ image_hvm }}"
+    instance_type: m3.medium
+    instance_profile_name: ingest-control
+    group_id: [ "{{ sec_grp_default.stdout | regex_replace('\"','')}}",  "{{ sec_grp_front.group_id }}" ]
+    wait: yes
+    wait_timeout: 500
+    vpc_subnet_id: "{{ subnet_id_private }}"
+    assign_public_ip: yes
+    instance_tags:
+        project: ucldc
+        Name: "{{ name_env}}-front"
+        subproject: ingest
+    volumes:
+    - device_name: /dev/sda
+      device_type: gp2
+  register: ec2_worker
+- debug: var=ec2_worker

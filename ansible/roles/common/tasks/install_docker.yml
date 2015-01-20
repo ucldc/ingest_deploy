@@ -4,12 +4,14 @@
   yum: pkg=python-pip state=latest
 - name: install centos docker io
   yum: pkg=docker-io state=latest
-  when: ansible_distribution == "CentOS",
+  when: ansible_distribution == "CentOS"
 - name: install amazon linux docker io
   yum: pkg=docker state=latest
   when: ansible_distribution == "Amazon"
 - name: install docker-py
-  pip: name=docker-py state=present version=0.6 #for api to match pkg above
+  pip: name=docker-py state=present #version=0.5.3 #for api to match pkg above
+- name: upgrade six - to fix errors bug
+  pip: name=six state=latest
 - name: start docker
   service: name=docker enabled=yes state=started
 - name: get docker api version

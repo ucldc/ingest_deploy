@@ -5,10 +5,13 @@
 - name: get ip of solr
   shell: cat /ip-solr
   register: ip_solr
-- name: install httpd
-  yum: pkg=httpd state=present
 - name: install mod_ssl
   yum: pkg=mod_ssl state=present
+- name: install httpd
+  yum: pkg=httpd state=present
+- name: get httpd version
+  shell: httpd -v | head -1 | sed -n 's/.*Apache\/\([0-9].[0-9]\).*/\1/p'
+  register: httpd_version
 - name: add ssl rewrite/forwarding conf
   template: src=ssl.conf dest=/etc/httpd/conf.d/ssl.conf
 - name: remove port 80
