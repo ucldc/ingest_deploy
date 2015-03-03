@@ -79,6 +79,16 @@ FOO
         vbox.name = 'couchdb'
     end
     
+    couchdb.vm.provider :docker do |docker, override|
+        override.vm.box = nil
+        docker.image = 'mredar/couchdb'
+        docker.cmd = ['/run.sh']
+        docker.ports = ['5984:5984']
+        docker.volumes = ['/var/lib/couchdb'] 
+        docker.name = 'couchdb'
+        docker.env = { COUCHDP_PASS: ENV['COUCHDB_PASSWORD'] }
+    end
+    
     couchdb.vm.provider :aws do |aws, override|
       aws.ami = "ami-b66ed3de"
       aws.instance_type = 't2.medium'
