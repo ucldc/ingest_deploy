@@ -18,7 +18,7 @@
     - device_name: /dev/sdb
       device_type: gp2
       volume_size: "{{ extra_volume_size }}"
-      delete_on_termination: "{{ dev }}"
+      delete_on_termination: "{{ dev_env }}"
       virtual_name: /var
   register: ec2_ingest_couchdb
-- { include: protect_instance_from_termination.yml, instance_id: "{{ ec2_ingest_couchdb.instance_ids[0] }}", root_device_name: "{{ ec2_ingest_couchdb.instances[0].root_device_name }}", when: not dev }
+- { include: protect_instance_from_termination.yml, instance_id: "{{ ec2_ingest_couchdb.instance_ids[0] }}", root_device_name: "{{ ec2_ingest_couchdb.instances[0].root_device_name }}", when: not dev_env }

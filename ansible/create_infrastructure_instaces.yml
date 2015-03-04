@@ -1,9 +1,8 @@
-# Create new worker instance for ingest
-# This will launch into the private VPC and use the private addresses
-# for redis, couchdb and solr
+# Create the infrastructure for the ingest process
+# VPC, subnets, security groups, gateway, routing tables,
+# nat instance(can it be the front end?),
 #
 ---
-#- hosts: localhost
 - hosts: localhost
   connection: local
   gather_facts: no
@@ -13,7 +12,8 @@
       project_name: "{{ tag_project }}-{{ tag_subproject }}"
       name_suffix: "{{ name_end | default('new') }}"
       name_env: "{{ project_name }}-{{ name_suffix }}"
-      dev_env: "{{ dev | default('false') }}"
+      dev_env: "{{ dev | default(True) }}"
+  tasks:
+    - debug: var=dev_env
   roles:
-    - create_worker_instance
-- include: provision_worker.yml
+    - create_infrastructure_instances

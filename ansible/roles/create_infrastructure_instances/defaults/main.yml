@@ -1,0 +1,11 @@
+---
+# defaults file for create_instances
+image_hvm: ami-146e2a7c
+image_nat: ami-184dc970
+instance_type: t2.micro
+key_name: UCLDC_keypair_0
+key_name_private: UCLDC-ingest-private
+extra_volume_size: 48
+subnet_id_public: subnet-54427312
+subnet_id_private: subnet-fddeca89
+sec_grp_default: sg-47c06122

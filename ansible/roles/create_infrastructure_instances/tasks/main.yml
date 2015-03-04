@@ -1,5 +1,6 @@
 ---
 # tasks file for create_instances
+- debug: var=dev_env
 - { include: create_front_end_instance.yml }
 - { include: create_solr_instance.yml }
 - { include: create_couchdb_instance.yml }
