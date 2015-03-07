@@ -1,2 +1,8 @@
 ---
-# vars file for create_instances
+# save the variables for ids created during vpc construction
+region: us-west-2
+sec_grp_default_id: {u'changed': True, u'end': u'2015-03-06 17:36:19.107562', u'stdout': u'null', u'cmd': u"/usr/local/bin/aws ec2 describe-security-groups --filters Name=vpc-id,Values=vpc-93fc4af6 | jq '.SecurityGroups[0].GroupId'", u'rc': 0, u'start': u'2015-03-06 17:36:18.494971', u'stderr': u'', u'delta': u'0:00:00.612591', 'invocation': {'module_name': u'shell', 'module_args': u"/usr/local/bin/aws ec2 describe-security-groups --filters Name=vpc-id,Values=vpc-93fc4af6 | jq '.SecurityGroups[0].GroupId'"}, 'stdout_lines': [u'null'], u'warnings': []}
+main_route_table_id: {u'changed': True, u'end': u'2015-03-06 17:36:19.790283', u'stdout': u'null', u'cmd': u"/usr/local/bin/aws ec2 describe-route-tables --filters Name=vpc-id,Values=vpc-93fc4af6 Name=association.main,Values=true | jq '.RouteTables[0].RouteTableId'", u'rc': 0, u'start': u'2015-03-06 17:36:19.165189', u'stderr': u'', u'delta': u'0:00:00.625094', 'invocation': {'module_name': u'shell', 'module_args': u"/usr/local/bin/aws ec2 describe-route-tables --filters Name=vpc-id,Values=vpc-93fc4af6 Name=association.main,Values=true | jq '.RouteTables[0].RouteTableId'"}, 'stdout_lines': [u'null'], u'warnings': []}
+sec_grp_front_id: sg-aa163ecf
+subnet_id_public: subnet-e73ab582
+subnet_id_private: subnet-e63ab583

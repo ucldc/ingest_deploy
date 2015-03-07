@@ -1,10 +1,10 @@
 ---
-- name: get ip of couchdb
-  shell: cat /ip-couchdb
-  register: ip_couchdb
-- name: get ip of solr
-  shell: cat /ip-solr
-  register: ip_solr
+###- name: get ip of couchdb #this was for vagrant
+###  shell: cat /ip-couchdb
+###  register: ip_couchdb
+###- name: get ip of solr
+###  shell: cat /ip-solr
+###  register: ip_solr
 - name: install mod_ssl
   yum: pkg=mod_ssl state=present
 - name: install httpd

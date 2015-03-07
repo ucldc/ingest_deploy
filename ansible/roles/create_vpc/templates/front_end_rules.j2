@@ -1,0 +1,46 @@
+front_end_security_rules:
+- proto: tcp
+  from_port: 22
+  to_port: 22
+  cidr_ip: "{{ cidr_cdlib }}"
+- proto: tcp
+  from_port: 22
+  to_port: 22
+  cidr_ip: "{{ cidr_registry }}"
+- proto: tcp
+  from_port: 22
+  to_port: 22
+  cidr_ip: "{{ cidr_sb_cdlib }}"
+- proto: tcp
+  from_port: 443
+  to_port: 443
+  cidr_ip: "{{ cidr_cdlib }}"
+- proto: tcp
+  from_port: 443
+  to_port: 443
+  cidr_ip: "{{ cidr_sb_cdlib }}"
+- proto: tcp
+  from_port: 443
+  to_port: 443
+  cidr_ip: "{{ cidr_ucsd_gabriela }}"
+{% for cidr in cidr_list_dpla %}
+- proto: tcp
+  from_port: 443
+  to_port: 443
+  cidr_ip: "{{ cidr }}"
+{% endfor %}
+{% for cidr in cidr_list_ucop_vpn %}
+- proto: tcp
+  from_port: 443
+  to_port: 443
+  cidr_ip: "{{ cidr }}"
+{% endfor %}
+{% for cidr in cidr_list_dpla %}{# until we get proper certificate #}
+- proto: tcp
+  from_port: 80
+  to_port: 80
+  cidr_ip: "{{ cidr }}"
+{% endfor %}
+- proto: all
+  group_name: ingest-front
+  group_desc: ingest access machine security group

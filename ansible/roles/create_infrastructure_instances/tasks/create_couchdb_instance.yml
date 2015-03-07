@@ -4,7 +4,7 @@
     module: ec2
     count: 1
     state: present #safe?
-    region: us-east-1
+    region: "{{ region }}"
     key_name: "{{ key_name_private }}"
     image: "{{ image_hvm }}"
     instance_type: "{{ instance_type }}"
@@ -12,7 +12,8 @@
     wait_timeout: 500
     vpc_subnet_id: "{{ subnet_id_private }}"
     instance_tags:
-        project: ucldc
+        project: "{{ tag_project }}"
+        subproject: "{{ tag_subproject }}"
         Name: "{{ name_env }}-couchdb"
     volumes:
     - device_name: /dev/sdb
