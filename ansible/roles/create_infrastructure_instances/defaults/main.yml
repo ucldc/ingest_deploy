@@ -5,11 +5,13 @@ image_nat: ami-290f4119
 instance_type: t2.small
 key_name: ingest
 key_name_private: ingest
+region: us-west-2 
+vpc_id: vpc-51802634
 subnet_id_public: subnet-ee63cf99
 subnet_id_private: subnet-1bbe676c
-sec_grp_default_id: sg-47c06122
-sec_grp_front_id: sg-fcc06199
-main_route_table_id: rtb-7a05f41f
-region: us-west-2 
+#sec_grp_default_id: sg-47c06122
+sec_grp_NAT_id: sg-03185166
+#sec_grp_front_id: sg-fcc06199
+#main_route_table_id: rtb-7a05f41f
 volume_size_couchdb: 164
 volume_size_solr: 64

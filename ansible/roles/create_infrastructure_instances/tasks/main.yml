@@ -1,6 +1,8 @@
 ---
 # tasks file for create_instances
 - debug: var=prod_env
+- { include: create_ingest_private_security_grp.yml }
+- { include: create_front_end_security_grp.yml }
 - { include: create_solr_instance.yml }
 - { include: create_couchdb_instance.yml }
 # front end created last, needs couchdb & solr ips for proxying

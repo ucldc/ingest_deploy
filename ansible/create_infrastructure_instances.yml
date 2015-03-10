@@ -13,11 +13,8 @@
       name_suffix: "{{ name_end | default('new') }}"
       #name_env: "{{ project_name }}-{{ name_suffix }}"
       name_env: "{{ tag_project }}-{{ name_suffix }}"
-      prod_env: "{{ production | bool | default(False) }}"
+      prod_env: "{{ production | default(False) | bool }}"
   tasks:
     - debug: var=prod_env
-    - shell: echo "dev_env tests true"
-      when: prod_env
-
-#  roles:
-#    - create_infrastructure_instances
+  roles:
+    - create_infrastructure_instances

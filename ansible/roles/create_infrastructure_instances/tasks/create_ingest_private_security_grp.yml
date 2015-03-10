@@ -1,0 +1,16 @@
+---
+- name: create security group for private ingest machines
+  ec2_group:
+    name: ingest_private
+    description: private group for ingest machines
+    state: present
+    vpc_id: "{{ vpc_id }}"
+    region: "{{ region }}"
+    rules:
+      - proto: all
+        group_name: ingest_private
+  register: sec_grp_ingest_private
+- name: add private ingest group to NAT group
+  command: >
+    aws ec2 authorize-security-group-ingress --group-id={{ sec_grp_NAT_id }}
+    --source-group={{ sec_grp_ingest_private.group_id }}

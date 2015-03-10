@@ -14,7 +14,7 @@
       name_suffix: "{{ name_end | default('new') }}"
       #name_env: "{{ project_name }}-{{ name_suffix }}"
       name_env: "{{ tag_subproject }}-{{ name_suffix }}"
-      prod_env: "{{ production | bool | default(False) }}"
+      prod_env: "{{ production | default(False) | bool }}"
   roles:
     - create_worker_instance
 - include: provision_worker.yml

@@ -1,16 +1,15 @@
 ---
 # tasks file for create_instances
 - name: create the front end instance
-  local_action:
-    module: ec2
+  ec2:
     count: 1
     state: present
     region: "{{ region }}"
     key_name: "{{ key_name }}"
-    image: "{{ image_nat }}"
+    image: "{{ image_hvm }}"
     instance_type: m3.medium
     instance_profile_name: ingest-control
-    group_id: [ "{{ sec_grp_default_id | regex_replace('\"','')}}",  "{{ sec_grp_front_id }}" ]
+    group_id: [ "{{ sec_grp_ingest_private.group_id }}",  "{{ sec_grp_front.group_id }}" ]
     wait: yes
     wait_timeout: 500
     vpc_subnet_id: "{{ subnet_id_public }}"

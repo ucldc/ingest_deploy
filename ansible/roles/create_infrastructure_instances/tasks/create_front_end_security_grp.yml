@@ -1,14 +1,12 @@
 ---
 - name: Create rules from template #https://groups.google.com/forum/#!topic/ansible-project/a8y1v2-R8Zw
-  local_action:
-    module: template
+  template:
     src: front_end_rules.j2
     dest: roles/create_vpc/vars/rules.yml
 - name: Load rules var
   include_vars: rules.yml
 - name: create front end security group
-  local_action:
-    module: ec2_group
+  ec2_group:
     region: "{{ region }}"
     description: "Access to ssh and https proxy server"
     name: "{{ name_env }}-front"

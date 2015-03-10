@@ -1,7 +1,6 @@
 ---
 - name: create the solr ingest instance
-  local_action:
-    module: ec2
+  ec2:
     count: 1
     state: present #safe?
     region: "{{ region }}"
@@ -11,6 +10,7 @@
     wait: yes
     wait_timeout: 500
     vpc_subnet_id: "{{ subnet_id_private }}"
+    group_id: [ "{{ sec_grp_ingest_private.group_id }}"]
     instance_tags:
         project: "{{ tag_project }}"
         subproject: "{{ tag_subproject }}"

@@ -13,7 +13,7 @@
       name_suffix: "{{ name_end | default('dev') }}"
       #name_env: "{{ project_name }}-{{ name_suffix }}"
       name_env: "{{ tag_subproject }}-{{ name_suffix }}"
-      prod_env: "{{ production | bool | default(False) }}"
+      prod_env: "{{ production | default(False) | bool }}"
   tasks:
     - debug: var=production
   roles:
