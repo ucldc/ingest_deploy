@@ -1,7 +1,7 @@
 ---
 image_hvm: ami-dfc39aef
 image_nat: ami-290f4119
-instance_type: t2.small
+instance_type: t2.micro
 key_name: ingest
 key_name_private: ingest
 region: us-west-2 

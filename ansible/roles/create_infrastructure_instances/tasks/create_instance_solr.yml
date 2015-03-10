@@ -2,7 +2,7 @@
 - name: create the solr ingest instance
   ec2:
     count: 1
-    state: present #safe?
+    state: present
     region: "{{ region }}"
     key_name: "{{ key_name_private }}"
     image: "{{ image_hvm }}"
@@ -16,11 +16,10 @@
         subproject: "{{ tag_subproject }}"
         Name: "{{ name_env }}-solr"
     volumes:
-    - device_name: /dev/sda1
+    - device_name: /dev/xvda
       device_type: gp2
-      volume_size: 8
+      volume_size: 16
       delete_on_termination: "{{ prod_env == False }}"
-      virtual_name: /
     - device_name: /dev/sdb
       device_type: gp2
       volume_size: "{{ volume_size_solr }}"
