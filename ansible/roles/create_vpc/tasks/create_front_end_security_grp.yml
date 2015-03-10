@@ -17,3 +17,9 @@
     rules: "{{ front_end_security_rules }}"
   register: sec_grp_front
 - debug: var=sec_grp_front
+- ec2_tag: resource={{ sec_grp_front.group_id }} state=present region={{ region }}
+  args:
+    tags:
+      project: "{{ tag_project }}"
+      subproject: "{{ tag_subproject }}"
+      Name: "{{ name_env }}-front"

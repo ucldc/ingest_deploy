@@ -41,6 +41,3 @@ front_end_security_rules:
   to_port: 80
   cidr_ip: "{{ cidr }}"
 {% endfor %}
-- proto: all
-  group_name: ingest-front
-  group_desc: ingest access machine security group

@@ -27,6 +27,7 @@
       virtual_name: /data
   register: ec2_front
 - debug: var=ec2_front
+- pause: minutes=2 #let instance come up
 - name: disable source/dest check for NAT instance
   shell: /usr/local/bin/aws ec2 modify-instance-attribute --no-source-dest-check --instance-id {{ ec2_front.instance_ids[0] }}
 - name: add route to NAT from main route table

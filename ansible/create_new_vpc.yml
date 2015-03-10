@@ -10,7 +10,7 @@
       tag_project: "{{ project | default('ucldc') }}"
       tag_subproject: "{{ subproject | default('ingest') }}"
       project_name: "{{ tag_project }}-{{ tag_subproject }}"
-      name_suffix: "{{ name_end | default('new') }}"
+      name_suffix: "{{ name_end | default('dev') }}"
       name_env: "{{ project_name }}-{{ name_suffix }}"
       dev_env: "{{ dev | default(True) }}"
   tasks:

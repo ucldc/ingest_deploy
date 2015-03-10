@@ -33,12 +33,14 @@
           routes:
             - dest: 0.0.0.0/0 #outgoing, to internet gateway -- NAT?
               gw: igw
+          # NOTE: resource_tags doesn't work here
     dns_support: yes
     dns_hostnames: yes
     instance_tenancy: default
   register: vpc
 - debug: var=vpc
-- pause: minutes=1
+  # wait for subnets, security groups and route tables to finish initializing
+- pause: minutes=2 
 - name: get public subnet id
   set_fact: subnet_id_public={{ item.id }}
   when: item.resource_tags.Name == "{{ name_env }}-public"
@@ -50,8 +52,29 @@
   with_items: vpc.subnets
 - debug: var=subnet_id_private
 - name: get default security group id
-  shell: /usr/local/bin/aws ec2 describe-security-groups --filters Name=vpc-id,Values={{ vpc.vpc_id }} | jq '.SecurityGroups[0].GroupId'
+  shell: /usr/local/bin/aws ec2 describe-security-groups --region {{ region }} --filters Name=vpc-id,Values={{ vpc.vpc_id }} | jq '.SecurityGroups[0].GroupId'
   register: sec_grp_default
+- ec2_tag: resource={{ sec_grp_default.stdout }} state=present region={{ region }}
+  args:
+    tags:
+      project: "{{ tag_project }}"
+      subproject: "{{ tag_subproject }}"
+      Name: "{{ name_env }}-default"
 - name: get default route table id
-  shell: /usr/local/bin/aws ec2 describe-route-tables --filters Name=vpc-id,Values={{ vpc.vpc_id }} Name=association.main,Values=true | jq '.RouteTables[0].RouteTableId'
+  shell: /usr/local/bin/aws ec2 describe-route-tables --region {{ region }} --filters Name=vpc-id,Values={{ vpc.vpc_id }} Name=association.main,Values=true | jq '.RouteTables[0].RouteTableId'
   register: main_route_table_id
+- ec2_tag: resource={{ main_route_table_id.stdout }} state=present region={{ region }}
+  args:
+    tags:
+      project: "{{ tag_project }}"
+      subproject: "{{ tag_subproject }}"
+      Name: "{{ name_env }}-main"
+- name: get NAT route table id
+  shell: /usr/local/bin/aws ec2 describe-route-tables --region {{ region }} --filters Name=vpc-id,Values={{ vpc.vpc_id }} Name=association.subnet-id,Values={{ subnet_id_public }} | jq '.RouteTables[0].RouteTableId'
+  register: main_route_table_id
+- ec2_tag: resource={{ main_route_table_id.stdout }} state=present region={{ region }}
+  args:
+    tags:
+      project: "{{ tag_project }}"
+      subproject: "{{ tag_subproject }}"
+      Name: "{{ name_env }}-nat"

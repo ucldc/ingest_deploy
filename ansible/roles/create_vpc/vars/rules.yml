@@ -71,6 +71,3 @@ front_end_security_rules:
   from_port: 80
   to_port: 80
   cidr_ip: "54.86.130.204/32"
-- proto: all
-  group_name: ingest-front
-  group_desc: ingest access machine security group
