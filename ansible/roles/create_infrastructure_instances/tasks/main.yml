@@ -1,11 +1,11 @@
 ---
 # tasks file for create_instances
 - debug: var=prod_env
-- { include: create_ingest_private_security_grp.yml }
-- { include: create_front_end_security_grp.yml }
-- { include: create_solr_instance.yml }
-- { include: create_couchdb_instance.yml }
+- { include: create_security_grp_ingest_private.yml }
+- { include: create_security_grp_front_end.yml }
+- { include: create_instance_solr.yml }
+- { include: create_instance_couchdb.yml }
 # front end created last, needs couchdb & solr ips for proxying
-- { include: create_front_end_instance.yml }
+- { include: create_instance_front_end.yml }
 - name: save instance variables
-  template: src=save_instance_variables.j2 dest=./instance-vars.yml 
+  template: src=save_instance_variables.j2 dest=roles/create_worker_instance/vars/main.yml
