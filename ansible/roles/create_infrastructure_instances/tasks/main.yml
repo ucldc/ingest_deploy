@@ -1,6 +1,6 @@
 ---
 # tasks file for create_instances
-- debug: var=dev_env
+- debug: var=prod_env
 - { include: create_solr_instance.yml }
 - { include: create_couchdb_instance.yml }
 # front end created last, needs couchdb & solr ips for proxying

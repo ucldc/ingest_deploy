@@ -16,10 +16,15 @@
         subproject: "{{ tag_subproject }}"
         Name: "{{ name_env }}-couchdb"
     volumes:
+    - device_name: /dev/sda1
+      device_type: gp2
+      volume_size: 8
+      delete_on_termination: "{{ prod_env == False}}"
+      virtual_name: /
     - device_name: /dev/sdb
       device_type: gp2
-      volume_size: "{{ extra_volume_size }}"
-      delete_on_termination: "{{ dev_env }}"
+      volume_size: "{{ volume_size_couchdb }}"
+      delete_on_termination: "{{ prod_env == False}}"
       virtual_name: /var
   register: ec2_ingest_couchdb
-- { include: protect_instance_from_termination.yml, instance_id: "{{ ec2_ingest_couchdb.instance_ids[0] }}", root_device_name: "{{ ec2_ingest_couchdb.instances[0].root_device_name }}", when: not dev_env }
+- { include: protect_instance_from_termination.yml, instance_id: "{{ ec2_ingest_couchdb.instance_ids[0] }}", root_device_name: "{{ ec2_ingest_couchdb.instances[0].root_device_name }}", when: prod_env }

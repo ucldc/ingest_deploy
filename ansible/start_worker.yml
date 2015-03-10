@@ -12,8 +12,9 @@
       tag_subproject: "{{ subproject | default('ingest') }}"
       project_name: "{{ tag_project }}-{{ tag_subproject }}"
       name_suffix: "{{ name_end | default('new') }}"
-      name_env: "{{ project_name }}-{{ name_suffix }}"
-      dev_env: "{{ dev | default('false') }}"
+      #name_env: "{{ project_name }}-{{ name_suffix }}"
+      name_env: "{{ tag_subproject }}-{{ name_suffix }}"
+      prod_env: "{{ production | bool | default(False) }}"
   roles:
     - create_worker_instance
 - include: provision_worker.yml

@@ -11,9 +11,10 @@
       tag_subproject: "{{ subproject | default('ingest') }}"
       project_name: "{{ tag_project }}-{{ tag_subproject }}"
       name_suffix: "{{ name_end | default('dev') }}"
-      name_env: "{{ project_name }}-{{ name_suffix }}"
-      dev_env: "{{ dev | default(True) }}"
+      #name_env: "{{ project_name }}-{{ name_suffix }}"
+      name_env: "{{ tag_subproject }}-{{ name_suffix }}"
+      prod_env: "{{ production | bool | default(False) }}"
   tasks:
-    - debug: var=dev_env
+    - debug: var=production
   roles:
     - { role: create_vpc, tags:["vpc"]}

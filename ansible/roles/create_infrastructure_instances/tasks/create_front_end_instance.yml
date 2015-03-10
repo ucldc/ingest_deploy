@@ -1,6 +1,6 @@
 ---
 # tasks file for create_instances
-- name: create the front end instance with NAT
+- name: create the front end instance
   local_action:
     module: ec2
     count: 1
@@ -20,16 +20,12 @@
         subproject: "{{ tag_subproject }}"
         Name: "{{ name_env}}-front"
     volumes:
-    - device_name: /dev/sdb
+    - device_name: /dev/sda1
       device_type: gp2
-      volume_size: "{{ extra_volume_size }}"
-      delete_on_termination: "{{ dev_env }}"
-      virtual_name: /data
+      volume_size: 16
+      delete_on_termination: "{{ prod_env == False }}"
+      virtual_name: /
   register: ec2_front
 - debug: var=ec2_front
-- pause: minutes=2 #let instance come up
-- name: disable source/dest check for NAT instance
-  shell: /usr/local/bin/aws ec2 modify-instance-attribute --no-source-dest-check --instance-id {{ ec2_front.instance_ids[0] }}
-- name: add route to NAT from main route table
-  shell: /usr/local/bin/aws ec2 create-route --route-table-id  "{{ main_route_table_id | regex_replace('\"','')}}" --destination-cidr-block 0.0.0.0/0 --instance-id {{ ec2_front.instance_ids[0] }}
-- { include: protect_instance_from_termination.yml, instance_id: "{{ ec2_front.instance_ids[0] }}", root_device_name: "{{ ec2_front.instances[0].root_device_name }}", when: not dev_env }
+- pause: minutes=5 #let instance come up
+- { include: protect_instance_from_termination.yml, instance_id: "{{ ec2_front.instance_ids[0] }}", root_device_name: "{{ ec2_front.instances[0].root_device_name }}", when: prod_env }
