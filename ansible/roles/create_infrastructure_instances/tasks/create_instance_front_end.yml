@@ -7,7 +7,7 @@
     region: "{{ region }}"
     key_name: "{{ key_name }}"
     image: "{{ image_hvm }}"
-    instance_type: m3.medium
+    instance_type: "{{ instance_type }}"
     instance_profile_name: ingest-control
     group_id: [ "{{ sec_grp_ingest_private.group_id }}",  "{{ sec_grp_front.group_id }}" ]
     wait: yes

@@ -1,8 +1,0 @@
----
-# save the variables for ids created during vpc construction
-region: us-west-2
-sec_grp_default_id: "sg-93406af6"
-main_route_table_id: "rtb-a11aa5c4"
-sec_grp_front_id: sg-4a416b2f
-subnet_id_public: subnet-9f55dbfa
-subnet_id_private: subnet-9e55dbfb

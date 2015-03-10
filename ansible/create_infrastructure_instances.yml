@@ -12,7 +12,7 @@
       project_name: "{{ tag_project }}-{{ tag_subproject }}"
       name_suffix: "{{ name_end | default('new') }}"
       #name_env: "{{ project_name }}-{{ name_suffix }}"
-      name_env: "{{ tag_project }}-{{ name_suffix }}"
+      name_env: "{{ tag_subproject }}-{{ name_suffix }}"
       prod_env: "{{ production | default(False) | bool }}"
   tasks:
     - debug: var=prod_env

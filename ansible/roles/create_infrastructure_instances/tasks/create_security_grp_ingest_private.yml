@@ -16,8 +16,9 @@
       project: "{{ tag_project }}"
       subproject: "{{ tag_subproject }}"
       Name: "{{ name_env }}-private"
-- pause: minutes=2
 - name: add private ingest group to NAT group
   command: >
     aws ec2 authorize-security-group-ingress --group-id={{ sec_grp_NAT_id }}
     --source-group={{ sec_grp_ingest_private.group_id }}
+    --protocol=tcp
+    --port=0-65535

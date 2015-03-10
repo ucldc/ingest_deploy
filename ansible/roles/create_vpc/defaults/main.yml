@@ -5,17 +5,3 @@ cidr_subnet_public: 10.61.0.0/24
 cidr_subnet_private: 10.61.1.0/24
 region: us-west-2 
 az_subnets: us-west-2a
-cidr_cdlib: 128.48.204.0/24  #CDLIB subnet
-cidr_registry: 128.48.120.185/32 #registry.cdlib.org
-cidr_sb_cdlib: 192.35.209.136/32 #sb.cdlib.org
-cidr_hedlok_deskbox: 128.48.204.194/32 #mark's linux desktop
-cidr_list_dpla:
-  - 54.84.55.179/32 #dev
-  - 54.210.225.38/32 #dev
-  - 54.165.98.52/32 #dev
-  - 54.88.10.164/32 #stage
-  - 54.86.130.204/32 #prod
-cidr_ucsd_gabriela: 137.110.8.0/24
-cidr_list_ucop_vpn: 
-  - 128.48.254.0/24
-  - 128.48.255.0/24

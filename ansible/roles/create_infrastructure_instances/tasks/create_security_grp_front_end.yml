@@ -2,7 +2,7 @@
 - name: Create rules from template #https://groups.google.com/forum/#!topic/ansible-project/a8y1v2-R8Zw
   template:
     src: front_end_rules.j2
-    dest: roles/create_vpc/vars/rules.yml
+    dest: roles/create_infrastructure_instances/vars/rules.yml
 - name: Load rules var
   include_vars: rules.yml
 - name: create front end security group
@@ -11,7 +11,7 @@
     description: "Access to ssh and https proxy server"
     name: "{{ name_env }}-front"
     state: present
-    vpc_id: "{{ vpc.vpc_id }}"
+    vpc_id: "{{ vpc_id }}"
     rules: "{{ front_end_security_rules }}"
   register: sec_grp_front
 - debug: var=sec_grp_front
@@ -21,4 +21,3 @@
       project: "{{ tag_project }}"
       subproject: "{{ tag_subproject }}"
       Name: "{{ name_env }}-front"
-- pause: minutes=2
