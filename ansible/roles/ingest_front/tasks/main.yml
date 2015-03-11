@@ -12,6 +12,7 @@
 - name: get httpd version
   shell: httpd -v | head -1 | sed -n 's/.*Apache\/\([0-9].[0-9]\).*/\1/p'
   register: httpd_version
+- debug: msg="HTTPD VERSION -- {{ httpd_version.stdout }}"
 - name: add ssl rewrite/forwarding conf
   template: src=ssl.conf dest=/etc/httpd/conf.d/ssl.conf
 - name: remove port 80

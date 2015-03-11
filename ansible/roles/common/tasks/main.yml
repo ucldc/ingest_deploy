@@ -3,4 +3,5 @@
     include_vars: all_secrets.yml
   - name: update packages
     yum: pkg=* state=latest
+  - include: add_operator_keys.yml
   - include: install_docker.yml
