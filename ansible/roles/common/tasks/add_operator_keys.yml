@@ -8,19 +8,3 @@
 - name: add UCLDC operator keys to authorized_keys
   sudo: no
   shell: cat ~/.ssh/ucldc_operator_keys >> ~/.ssh/authorized_keys
-- name: copy access key for private machines
-  sudo: no
-  copy:
-    src: ~/.ssh/ingest-west-2.pem
-    dest: ~/.ssh/ingest-west-2.pem
-    force: no
-    mode: 0600
-- name: make ingest key default
-  sudo: no
-  lineinfile:
-    dest: ~/.ssh/config
-    line: IdentityFile ~/.ssh/ingest-west-2.pem
-    state: present
-    mode: 0600
-    backup: yes
-    create: yes
