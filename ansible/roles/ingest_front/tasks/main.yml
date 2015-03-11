@@ -5,6 +5,22 @@
 ###- name: get ip of solr
 ###  shell: cat /ip-solr
 ###  register: ip_solr
+- name: copy access key for private machines
+  sudo: no
+  copy:
+    src: ~/.ssh/ingest-west-2.pem
+    dest: ~/.ssh/ingest-west-2.pem
+    force: no
+    mode: 0600
+- name: make ingest key default
+  sudo: no
+  lineinfile:
+    dest: ~/.ssh/config
+    line: IdentityFile ~/.ssh/ingest-west-2.pem
+    state: present
+    mode: 0600
+    backup: yes
+    create: yes
 - name: install mod_ssl
   yum: pkg=mod_ssl state=present
 - name: install httpd
