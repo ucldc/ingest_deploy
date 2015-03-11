@@ -19,24 +19,24 @@
   lineinfile: dest=/etc/httpd/conf/httpd.conf state=absent line="Listen 80"
 - name: start apache
   service: name=httpd enabled=yes state=started
-#    - name: Display all variables/facts known for a host
-#      debug: var=hostvars
-- name: get redis docker image
-  shell: docker pull redis
-- name: get rq-dashboard docker image
-  shell: docker pull mredar/rq-dashboard
-#    - name: run couchdb docker
-#      docker: image=tutum/couchdb command=/run.sh ports=5984
-- debug: var=REDIS_PSWD
-#TODO: setup stunnel and run redis on remote ???
-- name: run redis docker
-  docker:
-    #docker_api_version: docker_server_api_version.stdout
-    state: running
-    image: redis
-    name: redis
-    ports: "6379:6379"
-    command: "/entrypoint.sh redis-server --requirepass {{ REDIS_PSWD }}"
+###    - name: Display all variables/facts known for a host
+###      debug: var=hostvars
+### - name: get redis docker image
+###  shell: docker pull redis
+###- name: get rq-dashboard docker image
+###  shell: docker pull mredar/rq-dashboard
+###    - name: run couchdb docker
+###      docker: image=tutum/couchdb command=/run.sh ports=5984
+### - debug: var=REDIS_PSWD
+###TODO: setup stunnel and run redis on remote ???
+###- name: run redis docker
+###  docker:
+###    #docker_api_version: docker_server_api_version.stdout
+###    state: running
+###    image: redis
+###    name: redis
+###    ports: "6379:6379"
+###    command: "/entrypoint.sh redis-server --requirepass {{ REDIS_PSWD }}"
 - name: run rq-dashboard docker
   docker: 
     #docker_api_version: docker_server_api_version.stdout
@@ -45,4 +45,4 @@
     name: rq-dashboard
     ports: "9181:9181"
     command: /run.sh ports=9181
-    env: "REDIS_HOST={{ ansible_default_ipv4.address }},REDIS_PSWD={{ REDIS_PSWD }}"
+    env: "REDIS_HOST={{ redis_endpoint_elasticcache }}" #,REDIS_PSWD={{ REDIS_PSWD }}"
