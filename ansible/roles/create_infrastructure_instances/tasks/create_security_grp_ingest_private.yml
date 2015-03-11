@@ -1,14 +1,14 @@
 ---
 - name: create security group for private ingest machines
   ec2_group:
-    name: ingest_private
+    name: "{{ name_env }}-private"
     description: private group for ingest machines
     state: present
     vpc_id: "{{ vpc_id }}"
     region: "{{ region }}"
     rules:
       - proto: all
-        group_name: ingest_private
+        group_name: "{{ name_env }}-private"
   register: sec_grp_ingest_private
 - ec2_tag: resource={{ sec_grp_ingest_private.group_id }} state=present region={{ region }}
   args:

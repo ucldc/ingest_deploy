@@ -26,4 +26,4 @@
   register: ec2_ingest_front
 - debug: var=ec2_ingest_front
 - pause: minutes=5 #let instance come up
-- { include: protect_instance_from_termination.yml, instance_id: "{{ ec2_front.instance_ids[0] }}", root_device_name: "{{ ec2_front.instances[0].root_device_name }}", when: prod_env }
+- { include: protect_instance_from_termination.yml, instance_id: "{{ ec2_ingest_front.instance_ids[0] }}", root_device_name: "{{ ec2_ingest_front.instances[0].root_device_name }}", when: prod_env }
