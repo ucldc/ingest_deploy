@@ -3,9 +3,26 @@
 - debug: var=prod_env
 - { include: create_security_grp_ingest_private.yml }
 - { include: create_security_grp_front_end.yml }
-- { include: create_instance_solr.yml }
-- { include: create_instance_couchdb.yml }
+- { include: create_instance_solr.yml, tags: solr }
+- { include: create_instance_couchdb.yml, tags: couchdb }
 # front end created last, needs couchdb & solr ips for proxying
-- { include: create_instance_front_end.yml }
+- { include: create_instance_front_end.yml, tags: front }
+- { include: create_instance_ingest_majorTom.yml, tags: majorTom }
 - name: save instance variables
-  template: src=save_instance_variables.j2 dest=roles/create_worker_instance/vars/main.yml
+  template:
+    src: save_instance_variables.j2
+    dest: roles/create_infrastructure_instances/vars/main.yml
+    tags:
+      - solr
+      - couchdb
+      - front
+      - majorTom
+- name: save instance variables to worker role
+  template:
+    src: save_instance_variables.j2
+    dest: roles/create_worker_instance/vars/main.yml
+    tags:
+      - solr
+      - couchdb
+      - front
+      - majorTom
