@@ -1,5 +1,5 @@
 ---
-- hosts: worker
+- hosts: tag_Name_ingest-worker
   gather_facts: yes
   roles:
     - { role: common, sudo: yes }

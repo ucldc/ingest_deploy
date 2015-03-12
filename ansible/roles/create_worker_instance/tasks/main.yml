@@ -10,7 +10,7 @@
     image: "{{ image_hvm }}"
     instance_type: "{{ instance_type }}"
     instance_profile_name: ingest-control
-    group_id: [ "{{ sec_grp_default.stdout | regex_replace('\"','')}}",  "{{ sec_grp_front.group_id }}" ]
+    group_id: [ "{{ sec_grp_ingest_private_id }}" ]
     wait: yes
     wait_timeout: 500
     vpc_subnet_id: "{{ subnet_id_private }}"
@@ -20,7 +20,9 @@
         subproject: "{{ tag_subproject }}"
         Name: "{{ name_env}}-worker"
     volumes:
-    - device_name: /dev/sda
+    - device_name: /dev/xvda
       device_type: gp2
+      volume_size: 8
+      delete_on_termination: yes
   register: ec2_worker
 - debug: var=ec2_worker
