@@ -71,17 +71,17 @@
   template:
     src: harvester-env.j2
     dest: ~/.harvester-env
-    mode: 0600
+    mode: "0600"
 - name: put start rqworker file in place
   template:
     src: start-rqworker.sh.j2
     dest: ~/bin/start-rqworker.sh
-    mode: 755
+    mode: "0755"
 - name: put stop rqworker file in place
   template:
     src: stop-rqworker.sh.j2
     dest: ~/bin/stop-rqworker.sh
-    mode: 755
+    mode: "0755"
 - name: start rqworker
   sudo: no
   shell: ~/bin/start-rqworker.sh
