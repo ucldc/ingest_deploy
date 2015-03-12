@@ -5,6 +5,15 @@
     url: https://raw.github.com/tingletech/appstrap/master/cdl/ucldc-operator-keys.txt
     dest: ~/.ssh/ucldc_operator_keys
     force: no
-- name: add UCLDC operator keys to authorized_keys
+- name: get lines for adding to authorized_keys
   sudo: no
-  shell: cat ~/.ssh/ucldc_operator_keys >> ~/.ssh/authorized_keys
+  shell: tail -n+2 ~/.ssh/ucldc_operator_keys
+  register: operator_keys
+- 
+  name: "Add UCLDC operator keys to authorized_keys"
+  lineinfile: 
+    dest: ~/.ssh/authorized_keys
+    line: "{{ item }}"
+    state: present
+  sudo: false
+  with_items: operator_keys.stdout
