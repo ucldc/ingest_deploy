@@ -13,7 +13,6 @@
     wait: yes
     wait_timeout: 500
     vpc_subnet_id: "{{ subnet_id_private }}"
-    assign_public_ip: yes
     instance_tags:
         project: "{{ tag_project }}"
         subproject: "{{ tag_subproject }}"
