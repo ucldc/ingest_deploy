@@ -23,6 +23,10 @@ front_end_security_rules:
   from_port: 443
   to_port: 443
   cidr_ip: "{{ cidr_ucsd_gabriela }}"
+- proto: tcp
+  from_port: 6379
+  to_port: 6379
+  cidr_ip: "{{ cidr_registry }}"
 {% for cidr in cidr_list_dpla %}
 - proto: tcp
   from_port: 443
