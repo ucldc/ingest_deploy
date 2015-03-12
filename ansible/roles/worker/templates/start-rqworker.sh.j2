@@ -3,6 +3,7 @@
 if [[ -n "$DEBUG" ]]; then 
   set -x
 fi
+set -x
 
 set -o pipefail  # trace ERR through pipes
 set -o errtrace  # trace ERR through 'time command' and other functions
@@ -19,6 +20,5 @@ if [ -e {{ dir_rqworker_run }}/rqworker.pid ]; then
 fi
 
 cd {{ dir_rqworker_run }}
-{{ dir_venv }}/bin/rqworker -c rqw-settings --pid {{ dir_rqworker_run }}/rqworker.pid &> {{ dir_rqworker_run }}/worker.log &
 
-disown
+nohup {{ dir_venv }}/bin/rqworker -c rqw-settings --pid {{ dir_rqworker_run }}/rqworker.pid &> {{ dir_rqworker_run }}/worker.log &

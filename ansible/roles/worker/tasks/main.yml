@@ -6,42 +6,7 @@
   template: src=id_rsa mode=600 dest=~/.ssh/id_rsa 
 - name: install ssh pub key for bitbucket
   template: src=id_rsa.pub mode=600 dest=~/.ssh/id_rsa.pub 
-- name: install development tools
-  sudo: yes
-  yum: "pkg={{ item }} state=latest"
-  with_items:
-    - git
-    - gcc
-    - make
-    - libxslt-devel
-    - libxml2-devel
-- name: install amazon specific python libs
-  when: ansible_distribution == "Amazon"
-  sudo: yes
-  yum: "pkg={{ item }} state=latest"
-  with_items:
-    - python27-devel
-    - python27-pip
-- name: install centos specific python libs
-  when: ansible_distribution == "CentOS"
-  sudo: yes
-  yum: "pkg={{ item }} state=latest"
-  with_items:
-    - python-devel
-    - python-pip
-- name: install virtualenv, amazon
-  sudo: yes
-  pip:
-    name: virtualenv
-    state: present
-    executable: pip-2.7
-  when: ansible_distribution == "Amazon"
-- name: install virtualenv, centors
-  sudo: yes
-  pip:
-    name: virtualenv
-    state: present
-  when: ansible_distribution == "CentOS"
+- { include: install_packages.yml }
 - name: make virtualenv directory
   file: path={{ dir_venv }} state=directory
 - name: pull ingest harvester code to local box
@@ -108,4 +73,6 @@
   template: src=stop-rqworker.sh.j2 dest=~/bin/stop-rqworker.sh mode=755
 - name: start rqworker
   sudo: no
-  shell: /home/ec2-user/bin/start-rqworker.sh creates="{{ dir_rqworker_run}}/rqworker.pid"
+  shell: ~/bin/start-rqworker.sh
+  args:
+    creates: "{{ dir_rqworker_run}}/rqworker.pid"
