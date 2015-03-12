@@ -67,10 +67,21 @@
     dest: "{{ dir_rqworker_run }}/rqw-settings.py"
 - name: make user ~/bin directory
   file: path=/home/{{ ansible_ssh_user}}/bin state=directory
+- name: put harvester-env in place
+  template:
+    src: harvester-env.j2
+    dest: ~/.harvester-env
+    mode: 0600
 - name: put start rqworker file in place
-  template: src=start-rqworker.sh.j2 dest=~/bin/start-rqworker.sh mode=755
+  template:
+    src: start-rqworker.sh.j2
+    dest: ~/bin/start-rqworker.sh
+    mode: 755
 - name: put stop rqworker file in place
-  template: src=stop-rqworker.sh.j2 dest=~/bin/stop-rqworker.sh mode=755
+  template:
+    src: stop-rqworker.sh.j2
+    dest: ~/bin/stop-rqworker.sh
+    mode: 755
 - name: start rqworker
   sudo: no
   shell: ~/bin/start-rqworker.sh
