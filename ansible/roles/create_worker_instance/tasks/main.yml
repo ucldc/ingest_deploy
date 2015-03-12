@@ -3,7 +3,7 @@
 - name: create a new worker instance in the private vpc
   local_action:
     module: ec2
-    count: 1
+    count: "{{ count }}"
     state: present
     region: "{{ region }}"
     key_name: "{{ key_name }}"
@@ -11,7 +11,7 @@
     instance_type: "{{ instance_type }}"
     instance_profile_name: ingest-control
     group_id: [ "{{ sec_grp_ingest_private_id }}" ]
-    wait: yes
+    wait: true
     wait_timeout: 500
     vpc_subnet_id: "{{ subnet_id_private }}"
     assign_public_ip: yes
@@ -26,3 +26,6 @@
       delete_on_termination: yes
   register: ec2_worker
 - debug: var=ec2_worker
+- name: Wait for SSH to come up
+  wait_for: host={{ item.private_dns_name }} port=22 delay=60 timeout=320 state=started
+  with_items: ec2_worker.instances

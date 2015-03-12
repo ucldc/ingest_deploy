@@ -1,5 +1,6 @@
 ---
 # defaults file for create_worker_instance
+count: 1
 image_hvm: ami-dfc39aef
 instance_type: t2.micro
 key_name: ingest

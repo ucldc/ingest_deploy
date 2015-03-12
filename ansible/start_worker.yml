@@ -17,4 +17,4 @@
       prod_env: "{{ production | default(False) | bool }}"
   roles:
     - create_worker_instance
-- include: provision_worker.yml
+#doesn't work, not yet in ec2.py inventory - include: provision_worker.yml
