@@ -35,6 +35,10 @@
   lineinfile: dest=/etc/httpd/conf/httpd.conf state=absent line="Listen 80"
 - name: start apache
   service: name=httpd enabled=yes state=started
+- name: put solr_users file in place
+  copy:
+    src: ~/solr_users.pw
+    dest: /etc/httpd/conf.d/solr_users.pw
 ###    - name: Display all variables/facts known for a host
 ###      debug: var=hostvars
 ### - name: get redis docker image
