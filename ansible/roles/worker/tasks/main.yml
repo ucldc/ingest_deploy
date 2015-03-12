@@ -14,13 +14,13 @@
 - name: pull dpla based code to local box
   git: 
     repo: git@bitbucket.org:mredar/dpla-ingestion.git
-    dest: "{{ dir_code }}/dpla-ingestion"
+    dest: "{{ dir_code }}/dpla/ingestion"
     accept_hostkey: yes
     version: ucldc
 - name: install akara and harvester dpla dependencies
   pip:
     state: present
-    requirements: "{{ dir_code }}/dpla-ingestion/requirements.txt"
+    requirements: "{{ dir_code }}/dpla/ingestion/requirements.txt"
     executable: pip2.7
     virtualenv: "{{ dir_venv }}"
 - name: install harvester code
@@ -32,12 +32,12 @@
 - name: copy config file to akara dir???? configure & start akara
   template:
     src: akara.ini.j2
-    dest: code/dpla-ingestion/akara.ini
+    dest: code/dpla/ingestion/akara.ini
 # configure and start akara
 - name: create akara.conf
   command: "{{ dir_venv }}/bin/python setup.py install"
   args:
-    chdir: "{{ dir_code }}/dpla-ingestion"
+    chdir: "{{ dir_code }}/dpla/ingestion"
 - name: make akara run dir
   sudo: yes
   file:
@@ -46,11 +46,11 @@
     owner: "{{ ansible_ssh_user }}"
     group: "{{ ansible_ssh_user }}"
 - name: setup akara run dir
-  command: "{{ dir_venv}}/bin/akara -f {{ dir_code }}/dpla-ingestion/akara.conf setup"
+  command: "{{ dir_venv}}/bin/akara -f {{ dir_code }}/dpla/ingestion/akara.conf setup"
   args:
     chdir:  "{{ dir_akara_run }}"
 - name: run akara
-  command: "{{ dir_venv}}/bin/akara -f {{ dir_code }}/dpla-ingestion/akara.conf start"
+  command: "{{ dir_venv}}/bin/akara -f {{ dir_code }}/dpla/ingestion/akara.conf start"
   args:
     chdir:  "{{ dir_akara_run }}"
     creates: "{{ dir_akara_run }}/logs/akara.pid"
