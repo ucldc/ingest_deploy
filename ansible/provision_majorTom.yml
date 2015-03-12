@@ -5,3 +5,16 @@
   gather_facts: yes
   roles:
     - common
+  tasks:
+    - name: get ec2 inventory script
+      sudo: no
+      get_url:
+        url: https://raw.githubusercontent.com/ansible/ansible/devel/plugins/inventory/ec2.py
+        dest: ~/code/ec2.py
+        mode: 0755
+    - name: get ec2 inventory ini
+      sudo: no
+      get_url:
+        url: https://raw.githubusercontent.com/ansible/ansible/devel/plugins/inventory/ec2.ini
+        dest: ~/code/ec2.ini
+        mode: 0644

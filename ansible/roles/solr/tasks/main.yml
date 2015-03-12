@@ -3,31 +3,59 @@
 # already have setup solr from geerlinguy, now customize
 - name: pull ingest solr code to local box
   sudo: no
-  local_action: git repo=https://github.com/ucldc/solr_api.git dest={{ dir_code }}/solr_api
-- name: copy solr.xml
-  copy: src={{ dir_code }}/solr_api/solr.xml dest={{ solr_path }} force=yes backup=yes
-- name: copy zoo.cfg
-  copy: src={{ dir_code }}/solr_api/zoo.cfg dest={{ solr_path }}/solr force=yes backup=yes
+  local_action:
+    module: git
+    repo: "https://github.com/ucldc/solr_api.git"
+    dest: "{{ dir_code }}/solr_api"
 - name: copy example collection files to dc-collection
-  shell: >
-    cp -rp {{ solr_path }}example/solr/collection1/* {{ solr_path }}/cores/dc-collection
-    creates={{ solr_path }}/cores/README.txt
-    cp -R {{ solr_path }}/example/multicore {{ solr_path }}/cores
-- name: place core.properties in place
+  shell:
+     >
+     cp -rp {{ solr_path }}/example/example-schemaless/solr/collection1/conf/* {{ solr_path }}/dc-collection/conf/
+  #creates: "{{ solr_path }}/dc-collection/conf/stopwords.txt"
+- name: copy solr.xml
+  sudo: yes
+  sudo_user: tomcat
   copy:
-    src: {{ dir_code }}/solr_api/dc-collection/core.properties
-    dest: {{ solr_path }}/cores/dc-collection/core.properties
+    src: "{{ dir_code }}/solr_api/solr.xml"
+    dest: "{{ solr_path }}"
+    force: yes
+    backup: yes
+- name: copy zoo.cfg
+  sudo: yes
+  sudo_user: tomcat
+  copy:
+    src: "{{ dir_code }}/solr_api/zoo.cfg"
+    dest: "{{ solr_path }}/solr"
+    force: yes
+    backup: yes
+- name: make dc-collection core dir
+  sudo: yes
+  sudo_user: tomcat
+  file:
+    state: directory
+    dest: "{{ solr_path }}/dc-collection/conf"
+- name: place core.properties in place
+  sudo: yes
+  sudo_user: tomcat
+  copy:
+    src: "{{ dir_code }}/solr_api/dc-collection/core.properties"
+    dest: "{{ solr_path }}/dc-collection/core.properties"
     force: yes
     backup: yes
 - name: place schema in place
+  sudo: yes
+  sudo_user: tomcat
   copy:
-    src: {{ dir_code }}/solr_api/dc-collection/conf/schema.xml
-    dest: {{ solr_path }}/cores/dc-collection/conf/schema.xml
+    src: "{{ dir_code }}/solr_api/dc-collection/conf/schema.xml"
+    dest: "{{ solr_path }}/dc-collection/conf/schema.xml"
     force: yes
     backup: yes
 - name: place solrconfig in place
+  sudo: yes
+  sudo_user: tomcat
   template:
-    src: {{ dir_code }}/solr_api/dc-collection/conf/solrconfig.xml.j2
-    dest: {{ solr_path }}/cores/dc-collection/conf/solrconfig.xml.j2
+    src: "{{ dir_code }}/solr_api/dc-collection/conf/solrconfig.xml.j2"
+    dest: "{{ solr_path }}/dc-collection/conf/solrconfig.xml"
     force: yes
     backup: yes
+  notify: restart tomcat

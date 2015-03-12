@@ -6,43 +6,7 @@
   template: src=id_rsa mode=600 dest=~/.ssh/id_rsa 
 - name: install ssh pub key for bitbucket
   template: src=id_rsa.pub mode=600 dest=~/.ssh/id_rsa.pub 
-- name: install development tools
-  sudo: yes
-  yum: "pkg={{ item }} state=latest"
-  with_items:
-    - git
-    - gcc
-    - make
-    - libxslt-devel
-    - libxml2-devel
-    - monit
-- name: install amazon specific python libs
-  when: ansible_distribution == "Amazon"
-  sudo: yes
-  yum: "pkg={{ item }} state=latest"
-  with_items:
-    - python27-devel
-    - python27-pip
-- name: install centos specific python libs
-  when: ansible_distribution == "CentOS"
-  sudo: yes
-  yum: "pkg={{ item }} state=latest"
-  with_items:
-    - python-devel
-    - python-pip
-- name: install virtualenv, amazon
-  sudo: yes
-  pip:
-    name: virtualenv
-    state: present
-    executable: pip-2.7
-  when: ansible_distribution == "Amazon"
-- name: install virtualenv, centors
-  sudo: yes
-  pip:
-    name: virtualenv
-    state: present
-  when: ansible_distribution == "CentOS"
+- { include: install_packages.yml }
 - name: make virtualenv directory
   file: path={{ dir_venv }} state=directory
 - name: pull ingest harvester code to local box
@@ -76,11 +40,11 @@
     chdir: "{{ dir_code }}/dpla-ingestion"
 - name: make akara run dir
   sudo: yes
-  file: >
-    path={{ dir_akara_run }}
-    state=directory
-    owner={{ ansible_ssh_user }}
-    group={{ ansible_ssh_user }}
+  file:
+    path: "{{ dir_akara_run }}"
+    state: directory
+    owner: "{{ ansible_ssh_user }}"
+    group: "{{ ansible_ssh_user }}"
 - name: setup akara run dir
   command: "{{ dir_venv}}/bin/akara -f {{ dir_code }}/dpla-ingestion/akara.conf setup"
   args:
@@ -92,34 +56,34 @@
     creates: "{{ dir_akara_run }}/logs/akara.pid"
 - name: make rqworker run dir
   sudo: yes
-  file: >
-    path={{ dir_rqworker_run }}
-    state=directory
-    owner={{ ansible_ssh_user }}
-    group={{ ansible_ssh_user }}
+  file:
+    path: "{{ dir_rqworker_run }}"
+    state: directory
+    owner: "{{ ansible_ssh_user }}"
+    group: "{{ ansible_ssh_user }}"
 - name: create rqw-settings.py
   template:
     src: rqw-settings.py.j2
     dest: "{{ dir_rqworker_run }}/rqw-settings.py"
 - name: make user ~/bin directory
   file: path=/home/{{ ansible_ssh_user}}/bin state=directory
-- name: put monit start rqworker file in place
-  template: src=start-rqworker.sh.j2 dest=~/bin/start-rqworker.sh mode=755
-- name: put monit stop rqworker file in place
-  template: src=stop-rqworker.sh.j2 dest=~/bin/stop-rqworker.sh mode=755
-- name: add accessible monitor to monit.conf
-  sudo: yes
-  lineinfile: >
-    state=present
-    dest=/etc/monit.conf
-    line="set httpd port 2812 and use address localhost allow localhost"
-  notify:
-    - reload monit
-- name: monit rqworker (need to do so so it runs in background)
-  sudo: yes
-  template: src=rqworker.monit.j2 dest=/etc/monit.d/rqworker
-  notify:
-    - reload monit
+- name: put harvester-env in place
+  template:
+    src: harvester-env.j2
+    dest: ~/.harvester-env
+    mode: "0600"
+- name: put start rqworker file in place
+  template:
+    src: start-rqworker.sh.j2
+    dest: ~/bin/start-rqworker.sh
+    mode: "0755"
+- name: put stop rqworker file in place
+  template:
+    src: stop-rqworker.sh.j2
+    dest: ~/bin/stop-rqworker.sh
+    mode: "0755"
 - name: start rqworker
-  sudo: yes
-  command: monit start rqworker
+  sudo: no
+  shell: ~/bin/start-rqworker.sh
+  args:
+    creates: "{{ dir_rqworker_run}}/rqworker.pid"
