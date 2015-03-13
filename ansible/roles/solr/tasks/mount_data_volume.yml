@@ -1,0 +1,15 @@
+---
+- name: make filesystem on extra volume
+  filesystem: fstype=ext4 dev=/dev/xvdb
+- name: mount extra drive to copy files from current /opt
+  mount: src=/dev/xvdb name=/mnt/opt fstype=ext4 state=mounted
+# do i need to go to init 1? and how, no root pswd
+- name: copy current opt to new disk
+  shell: cp -apx /opt/* /mnt/opt/
+- name: move old opt
+  shell: mv /opt /opt.old
+- name: unmount new disk from /mnt/opt
+  mount: src=/dev/xvdb name=/mnt/opt fstype=ext4 state=unmounted
+- name: mount extra drive to /opt
+  mount: src=/dev/xvdb name=/opt fstype=ext4 state=mounted
+

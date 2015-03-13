@@ -2,6 +2,8 @@
 - hosts: couchdb
   sudo: yes
   gather_facts: yes
+  pre_tasks:
+    - { include: roles/couchdb/tasks/mount_data_volume.yml }
   roles:
     - common
     - couchdb

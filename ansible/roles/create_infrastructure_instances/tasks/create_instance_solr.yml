@@ -20,10 +20,10 @@
       device_type: gp2
       volume_size: 16
       delete_on_termination: "{{ prod_env == False }}"
-    - device_name: /dev/sdb
+    - device_name: /dev/xvdb
       device_type: gp2
       volume_size: "{{ volume_size_solr }}"
       delete_on_termination: "{{ prod_env == False }}"
-      virtual_name: /data
+      virtual_name: /opt
   register: ec2_ingest_solr
 - { include: protect_instance_from_termination.yml, instance_id: "{{ ec2_ingest_solr.instance_ids[0] }}", root_device_name: "{{ ec2_ingest_solr.instances[0].root_device_name }}", when: prod_env }

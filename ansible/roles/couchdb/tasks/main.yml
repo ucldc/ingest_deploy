@@ -1,4 +1,12 @@
 ---
+###- name: make extra disk available
+###  shell: mkfs -t ext4 /dev/xvdb
+###- name: mount extra disk to /var where docker will write files
+###  shell: mount /dev/xvdb /var
+###- name: add drive to fstab
+###  lineinfile: k
+###- name: mount extra drive before updates?
+###  mount: src=/dev/xvdb name=/var fstype=ext4 state=mounted
 - name: get couchdb docker image
   shell: docker pull mredar/couchdb
 - name: run couchdb docker

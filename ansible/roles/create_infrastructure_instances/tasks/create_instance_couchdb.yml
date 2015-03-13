@@ -20,7 +20,7 @@
       device_type: gp2
       volume_size: 8
       delete_on_termination: "{{ prod_env == False}}"
-    - device_name: /dev/sdb
+    - device_name: /dev/xvdb
       device_type: gp2
       volume_size: "{{ volume_size_couchdb }}"
       delete_on_termination: "{{ prod_env == False}}"

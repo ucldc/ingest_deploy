@@ -1,0 +1,14 @@
+---
+- name: make filesystem on extra volume
+  filesystem: fstype=ext4 dev=/dev/xvdb
+- name: mount extra drive to copy files from current /var
+  mount: src=/dev/xvdb name=/mnt/var fstype=ext4 state=mounted
+# do i need to go to init 1? and how, no root pswd
+###- name: copy current var to new disk
+###  shell: cp -apx /var/* /mnt/var/
+###- name: move old var
+###  shell: mv /var /var.old
+- name: unmount new disk from /mnt/var
+  mount: src=/dev/xvdb name=/mnt/var fstype=ext4 state=unmounted
+- name: mount extra drive to /var
+  mount: src=/dev/xvdb name=/var fstype=ext4 state=mounted
