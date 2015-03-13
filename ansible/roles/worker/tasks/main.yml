@@ -65,6 +65,10 @@
   file:
     path: "{{ dir_rqworker_run }}/profiles"
     state: directory
+- name: make logs dir
+  file:
+    path: "{{ dir_rqworker_run }}/logs"
+    state: directory
 - name: create rqw-settings.py
   template:
     src: rqw-settings.py.j2
