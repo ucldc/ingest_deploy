@@ -37,8 +37,10 @@
   service: name=httpd enabled=yes state=started
 - name: put authorized_users file in place
   copy:
-    src: ~/authorized_users.pw
+    src: authorized_users.pw
     dest: /etc/httpd/conf.d/authorized_users.pw
+  notify:
+    - restart apache
 ###TODO: setup stunnel and run redis on remote ???
 - name: install stunnel
   yum: pkg=stunnel state=present

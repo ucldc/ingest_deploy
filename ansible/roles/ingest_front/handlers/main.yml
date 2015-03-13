@@ -1,2 +1,4 @@
 ---
 # handlers file for provision_ingest_front
+- name: restart apache
+  service: name=httpd state=restarted
