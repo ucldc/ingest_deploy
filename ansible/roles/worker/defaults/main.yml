@@ -23,7 +23,7 @@ couchdb_username: <vaulted>
 couchdb_password: <vaulted>
 couchdb_item_database: ucldc
 couchdb_dasboard_database: dashboard
-couchdb_views_directory: /home/{{ ansible_ssh_user }}/code/dpla/ingestion/couchdb_views/
+couchdb_views_directory: "{{ dir_code }}/dpla/ingestion/couchdb_views/"
 
 geonames_username: <vaulted>
 geonames_token: <vaulted>
@@ -31,4 +31,4 @@ bing_api_key: <vaulted>
 
 email_return_address: ucldc@example.edu
 email_sys_admins: x@example.edu,y@example.edu
-dpla_config_file: /home/{{ ansible_ssh_user }}/code/dpla/ingestion/akara.ini
+dpla_config_file: "{{ dir_code }}/dpla/ingestion/akara.ini"

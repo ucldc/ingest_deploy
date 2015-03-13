@@ -1,8 +1,9 @@
-export REDIS_HOST=54.84.142.143
-export REDIS_PORT=6379
-export EMAIL_RETURN_ADDRESS=ucldc@cdlib.org
+export REDIS_HOST={{ redis_host }}
+export REDIS_PORT={{redis_port }}
+export EMAIL_RETURN_ADDRESS={{ email_return_address }}
 export URL_SOLR={{ solr_url }}
 export COUCHDB_URL={{ couchdb_url }}
 export COUCHDB_DB={{ couchdb_item_database }}
 export COUCHDB_USER={{ couchdb_username }}
 export COUCHDB_PASSWORD="{{ couchdb_password }}"
+export DPLA_CONFIG_FILE={{ dpla_config_file }}
