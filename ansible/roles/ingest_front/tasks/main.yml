@@ -35,10 +35,10 @@
   lineinfile: dest=/etc/httpd/conf/httpd.conf state=absent line="Listen 80"
 - name: start apache
   service: name=httpd enabled=yes state=started
-- name: put solr_users file in place
+- name: put authorized_users file in place
   copy:
-    src: ~/solr_users.pw
-    dest: /etc/httpd/conf.d/solr_users.pw
+    src: ~/authorized_users.pw
+    dest: /etc/httpd/conf.d/authorized_users.pw
 ###TODO: setup stunnel and run redis on remote ???
 - name: install stunnel
   yum: pkg=stunnel state=present
