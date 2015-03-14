@@ -32,7 +32,7 @@
 - name: copy config file to akara dir???? configure & start akara
   template:
     src: akara.ini.j2
-    dest: code/dpla/ingestion/akara.ini
+    dest: "{{ dir_code }}/dpla/ingestion/akara.ini"
 # configure and start akara
 - name: create akara.conf
   command: "{{ dir_venv }}/bin/python setup.py install"
