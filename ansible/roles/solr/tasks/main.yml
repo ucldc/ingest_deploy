@@ -7,11 +7,6 @@
     module: git
     repo: "https://github.com/ucldc/solr_api.git"
     dest: "{{ dir_code }}/solr_api"
-- name: copy example collection files to dc-collection
-  shell:
-     >
-     cp -rp {{ solr_path }}/example/example-schemaless/solr/collection1/conf/* {{ solr_path }}/dc-collection/conf/
-  #creates: "{{ solr_path }}/dc-collection/conf/stopwords.txt"
 - name: copy solr.xml
   sudo: yes
   sudo_user: tomcat
@@ -34,6 +29,10 @@
   file:
     state: directory
     dest: "{{ solr_path }}/dc-collection/conf"
+- name: copy example collection files to dc-collection
+  shell: >
+     cp -rp {{ solr_path }}/example/example-schemaless/solr/collection1/conf/* {{ solr_path }}/dc-collection/conf/
+  #creates: "{{ solr_path }}/dc-collection/conf/stopwords.txt"
 - name: place core.properties in place
   sudo: yes
   sudo_user: tomcat
