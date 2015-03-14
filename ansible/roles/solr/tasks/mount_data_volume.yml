@@ -10,6 +10,8 @@
   shell: mv /opt /opt.old
 - name: unmount new disk from /mnt/opt
   mount: src=/dev/xvdb name=/mnt/opt fstype=ext4 state=unmounted
+- name: unmount new disk from /mnt/opt
+  mount: src=/dev/xvdb name=/mnt/opt fstype=ext4 state=absent
 - name: mount extra drive to /opt
   mount: src=/dev/xvdb name=/opt fstype=ext4 state=mounted
 
