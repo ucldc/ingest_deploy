@@ -3,5 +3,7 @@
     include_vars: all_secrets.yml
   - name: update packages
     yum: pkg=* state=latest
+  - name: install htop
+    yum: pkg=htop state=present
   - include: add_operator_keys.yml
   - include: install_docker.yml
