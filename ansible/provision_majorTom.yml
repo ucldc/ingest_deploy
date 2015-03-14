@@ -5,7 +5,17 @@
   gather_facts: yes
   roles:
     - common
+    - { role: worker, sudo: no }
   tasks:
+    - name: stop worker
+      sudo: no
+      command: ~/bin/stop-rqworker.sh
+      # TODO: when rwqoekr.pid
+    - name: stop akara
+      command: "{{ dir_venv}}/bin/akara -f {{ dir_code }}/dpla/ingestion/akara.conf stop"
+      args:
+        chdir:  "{{ dir_akara_run }}"
+      #TODO: when: "{{ dir_akara_run }}/logs/akara.pid"
     - name: get ec2 inventory script
       sudo: no
       get_url:
