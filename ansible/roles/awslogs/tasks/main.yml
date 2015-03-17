@@ -19,12 +19,11 @@
 - name: copy base awslogs.conf to machine
   copy:
     src: awslogs.conf
-    dest: "{{ tempdir }}/awslogs-base" #      /tmp/awslogs.conf/awslogs-base
+    dest: "{{ tempdir.path }}/awslogs-base"
 - name: copy additional conf from dependent role (dir_dep_role)
   copy:
-    src: "{{dir_dep_role}}/awslogs.conf"
-    dest: "{{ tempdir }}/awslogs-role"
-#/tmp/awslogs.conf/awslogs-role
+    src: "{{dir_dep_role_files}}/awslogs.conf"
+    dest: "{{ tempdir.path }}/awslogs-role"
 - name: assemble CloudWatch config file
   assemble:
     src: /tmp/awslogs.conf
