@@ -17,7 +17,7 @@ redis_connect_timeout: 10
 
 solr_url: http://10.60.37.73:8983/solr/dc-collection/
 
-couchdb_url: http://10.60.36.129:5984
+couchdb_url: http://10.60.43.123:5984
 couchdb_log_level: INFO
 couchdb_username: <vaulted>
 couchdb_password: <vaulted>
