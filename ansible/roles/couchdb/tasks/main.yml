@@ -11,6 +11,7 @@
   unarchive:
     src: /tmp/docker-gen-linux-amd64-0.3.3.tar.gz
     dest: /bin/
+    copy: no
 - name: get couchdb docker image
   shell: docker pull mredar/couchdb
 - name: run couchdb docker
