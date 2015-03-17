@@ -4,5 +4,5 @@
   vars:
     dir_role_files: roles/worker/files
   roles:
-    #- { role: common, sudo: yes }
+    - { role: common, sudo: yes }
     - worker
