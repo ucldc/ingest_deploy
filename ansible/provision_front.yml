@@ -2,6 +2,8 @@
 - hosts: front
   sudo: yes
   gather_facts: yes
+  vars:
+    dir_role_files: roles/ingest_front/files
   roles:
     - common
     - ingest_front
