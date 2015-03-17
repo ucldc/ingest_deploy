@@ -7,6 +7,7 @@
     key_name: "{{ key_name_private }}"
     image: "{{ image_hvm }}"
     instance_type: "{{ instance_type }}"
+    instance_profile_name: ingest-couchdb
     wait: yes
     wait_timeout: 500
     vpc_subnet_id: "{{ subnet_id_private }}"
