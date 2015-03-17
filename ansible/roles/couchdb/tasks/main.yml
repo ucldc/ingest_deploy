@@ -1,12 +1,4 @@
 ---
-###- name: make extra disk available
-###  shell: mkfs -t ext4 /dev/xvdb
-###- name: mount extra disk to /var where docker will write files
-###  shell: mount /dev/xvdb /var
-###- name: add drive to fstab
-###  lineinfile: k
-###- name: mount extra drive before updates?
-###  mount: src=/dev/xvdb name=/var fstype=ext4 state=mounted
 - name: get couchdb docker image
   shell: docker pull mredar/couchdb
 - name: run couchdb docker
@@ -18,3 +10,5 @@
     env: COUCHDB_PASS={{ COUCHDB_PSWD }}
     volumes: /var/lib/couchdb:/var/lib/couchdb
 #TODO: need to get the password or create it....
+#TODO: for harvester user
+#TODO: run dpla scripts/sync_db
