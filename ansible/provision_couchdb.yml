@@ -4,6 +4,9 @@
   gather_facts: yes
   pre_tasks:
     - { include: roles/couchdb/tasks/mount_data_volume.yml }
+    - name: get current role dir, absolute
+      shell: pwd
+      register: dir_role
   roles:
     - common
     - couchdb

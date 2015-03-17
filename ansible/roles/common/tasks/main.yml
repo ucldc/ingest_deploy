@@ -7,4 +7,3 @@
     yum: pkg=htop state=present
   - include: add_operator_keys.yml
   - include: install_docker.yml
-  - include: install_awslogs.yml

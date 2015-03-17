@@ -1,0 +1,32 @@
+---
+- name: install awslogs package
+  yum: 
+    name: awslogs
+    state: present
+- name: make awslogs run on startup
+  shell:
+    cmd: chkconfig awslogs on
+- name: copy awscli.conf - set to us-west-2
+  copy:
+    src: awscli.conf
+    dest: /etc/awslogs/awscli.conf
+    mode: "0600"
+- name: make tempdir to store awslogs.conf fragments
+  file:
+    path: /tmp/awslogs.conf
+    state: directory
+  register: tempdir
+- name: copy base awslogs.conf to machine
+  copy:
+    src: awslogs.conf
+    dest: "{{ tempdir }}/awslogs-base" #      /tmp/awslogs.conf/awslogs-base
+- name: copy additional conf from dependent role (dir_dep_role)
+  copy:
+    src: "{{dir_dep_role}}/awslogs.conf"
+    dest: "{{ tempdir }}/awslogs-role"
+#/tmp/awslogs.conf/awslogs-role
+- name: assemble CloudWatch config file
+  assemble:
+    src: /tmp/awslogs.conf
+    dest: /etc/awslogs/awslogs.conf
+    mode: "0644"

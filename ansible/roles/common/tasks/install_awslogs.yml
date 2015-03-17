@@ -1,8 +1,0 @@
----
-- name: install awslogs package
-  yum: 
-    name: awslogs
-    state: present
-- name: make awslogs run on startup
-  shell:
-    cmd: chkconfig awslogs on
