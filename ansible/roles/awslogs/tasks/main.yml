@@ -29,3 +29,5 @@
     src: /tmp/awslogs.conf
     dest: /etc/awslogs/awslogs.conf
     mode: "0644"
+  notify:
+  - restart awslogs
