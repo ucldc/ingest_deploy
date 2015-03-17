@@ -15,12 +15,12 @@
 {{ end }}
 /var/lib/docker/containers/{{ $value.ID }}/{{ $value.ID }}-json.log
 {
-    daily
     missingok
-    rotate 7
+    rotate 10
     compress
     delaycompress
     notifempty
     create 644 root root
+    size=100M
 }
 {{ end }}
