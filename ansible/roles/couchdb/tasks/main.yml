@@ -29,8 +29,8 @@
 - name: create logrotate for couchdb container
   shell: /bin/docker-gen /tmp/logrotate-docker-gen.tmpl /etc/logrotate.d/docker
 - name: copy awslogs docker-gen template to /tmp
-  copy:
-    src: awslogs-docker-gen.tmpl
+  template:
+    src: awslogs-docker-gen.tmpl.j2
     dest: /tmp/awslogs-docker-gen.tmpl
 - name: create awslogs.conf for couchdb docker container
   shell: /bin/docker-gen /tmp/awslogs-docker-gen.tmpl /etc/awslogs/awslogs.conf

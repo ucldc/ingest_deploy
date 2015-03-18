@@ -2,7 +2,8 @@
 - hosts: tag_Name_ingest-worker
   gather_facts: yes
   vars:
-    dir_role_files: roles/worker/files
+    role: worker
+    dir_role_files: "roles/{{ role }}/files"
   roles:
     - { role: common, sudo: yes }
     - worker

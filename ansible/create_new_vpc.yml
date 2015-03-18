@@ -6,14 +6,6 @@
 - hosts: localhost
   connection: local
   gather_facts: no
-  vars:
-      tag_project: "{{ project | default('ucldc') }}"
-      tag_subproject: "{{ subproject | default('ingest') }}"
-      project_name: "{{ tag_project }}-{{ tag_subproject }}"
-      name_suffix: "{{ name_end | default('dev') }}"
-      #name_env: "{{ project_name }}-{{ name_suffix }}"
-      name_env: "{{ tag_subproject }}-{{ name_suffix }}"
-      prod_env: "{{ production | default(False) | bool }}"
   tasks:
     - debug: var=production
   roles:

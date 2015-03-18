@@ -7,14 +7,6 @@
 - hosts: localhost
   connection: local
   gather_facts: no
-  vars:
-      tag_project: "{{ project | default('ucldc') }}"
-      tag_subproject: "{{ subproject | default('ingest') }}"
-      project_name: "{{ tag_project }}-{{ tag_subproject }}"
-      #name_suffix: "{{ name_end | default('new') }}"
-      #name_env: "{{ project_name }}-{{ name_suffix }}"
-      name_env: "{{ tag_subproject }}"
-      prod_env: "{{ production | default(False) | bool }}"
   roles:
     - create_worker_instance
 #doesn't work, not yet in ec2.py inventory - include: provision_worker.yml

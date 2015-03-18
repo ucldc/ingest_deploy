@@ -2,7 +2,7 @@
 datetime_format = {{ datetime_format }}
 file = /var/local/akara-run-dir/logs/error.log
 buffer_duration = 5000
-log_stream_name = {instance_id}
+log_stream_name = {{ name_env }}-{instance_id}-{ip_address}
 initial_position = start_of_file
 log_group_name = /var/local/akara
 
@@ -10,6 +10,7 @@ log_group_name = /var/local/akara
 datetime_format = {{ datetime_format }}
 file = /var/local/rqworker/worker.log
 buffer_duration = 5000
-log_stream_name = {instance_id}
+initial_position = start_of_file
+log_stream_name = {{ name_env }}-{instance_id}-{ip_address}
 initial_position = start_of_file
 log_group_name = /var/local/worker

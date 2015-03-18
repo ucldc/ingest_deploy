@@ -3,7 +3,8 @@
   sudo: yes
   gather_facts: yes
   vars:
-    dir_role_files: roles/ingest_front/files
+    role: ingest_front
+    dir_role_files: "roles/{{ role }}/files"
   roles:
     - common
     - ingest_front

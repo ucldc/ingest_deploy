@@ -3,9 +3,14 @@
   sudo: yes
   gather_facts: yes
   vars:
-    dir_role_files: roles/couchdb/files
+    role: couchdb
+    dir_role_files: "roles/{{ role }}/files"
   pre_tasks:
-    - { include: roles/couchdb/tasks/mount_data_volume.yml }
+    - name: check if extra disk already in fstab?
+      shell: grep -c /dev/xvdb /etc/fstab 
+      register: infstab
+    - { include: roles/couchdb/tasks/mount_data_volume.yml,
+        when: infstab < 1 }
   roles:
     - common
     - couchdb

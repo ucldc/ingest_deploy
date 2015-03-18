@@ -3,6 +3,9 @@
   connection: local
   sudo: yes
   gather_facts: yes
+  vars:
+    role: majorTom
+    dir_role_files: "roles/{{ role }}/files"
   roles:
     - common
     - { role: worker, sudo: no }
