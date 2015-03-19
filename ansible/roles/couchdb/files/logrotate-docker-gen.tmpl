@@ -10,7 +10,7 @@
     compress
     delaycompress
     notifempty
-    create 644 root root
+    copytruncate
 }
 {{ end }}
 /var/lib/docker/containers/{{ $value.ID }}/{{ $value.ID }}-json.log
@@ -20,7 +20,7 @@
     compress
     delaycompress
     notifempty
-    create 644 root root
+    copytruncate
     size=100M
 }
 {{ end }}
