@@ -119,7 +119,7 @@ state_file = /var/lib/awslogs/agent-state
 
 
 [/var/log/messages]
-datetime_format = %Y%m%d %H:%M:%S
+datetime_format = {{ log_datetime_format }}
 file = /var/log/messages
 buffer_duration = 5000
 log_stream_name = {{ name_env }}-{{ role }}-{instance_id}

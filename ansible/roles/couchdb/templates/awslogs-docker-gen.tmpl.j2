@@ -118,7 +118,7 @@ state_file = /var/lib/awslogs/agent-state
 
 
 [/var/log/messages]
-datetime_format = %Y%m%d %H:%M:%S
+datetime_format = {{ log_datetime_format }}
 file = /var/log/messages
 buffer_duration = 5000
 log_stream_name = {{ name_env }}-couchdb-{instance_id}
@@ -129,7 +129,7 @@ log_group_name = /var/log/messages
 
 {{ range $index, $value := $ }}
 [/var/lib/docker/couchdb]
-datetime_format = %Y%m%d %H:%M:%S
+datetime_format = {{ log_datetime_format }}
 file = /var/lib/docker/containers/{{ $value.ID }}/{{ $value.ID }}-json.log
 buffer_duration = 5000
 log_stream_name = {{ name_env }}-couchdb-{instance_id}

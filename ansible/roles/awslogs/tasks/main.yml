@@ -8,7 +8,7 @@
     cmd: chkconfig awslogs on
 - name: copy awscli.conf - set to us-west-2
   copy:
-    src: awscli.conf.j2
+    src: awscli.conf
     dest: /etc/awslogs/awscli.conf
     mode: "0600"
 - name: make tempdir to store awslogs.conf fragments
@@ -22,7 +22,7 @@
     dest: "{{ tempdir.path }}/awslogs-base"
 - name: copy additional conf from dependent role (dir_dep_role)
   template:
-    src: "{{dir_dep_role_files}}/awslogs.conf.j2"
+    src: "{{dir_dep_role_templates}}/awslogs.conf.j2"
     dest: "{{ tempdir.path }}/awslogs-role"
 - name: assemble CloudWatch config file
   assemble:

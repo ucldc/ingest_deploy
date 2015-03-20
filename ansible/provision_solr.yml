@@ -4,7 +4,7 @@
   gather_facts: yes
   vars:
     role: solr
-    dir_role_files: "roles/{{ role }}/files"
+    dir_role_templates: "roles/{{ role }}/templates"
   pre_tasks:
     - name: check if extra disk already in fstab?
       shell: grep -c /dev/xvdb /etc/fstab 

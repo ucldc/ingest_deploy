@@ -5,7 +5,7 @@
   gather_facts: yes
   vars:
     role: majorTom
-    dir_role_files: "roles/{{ role }}/files"
+    dir_role_templates: "roles/{{ role }}/templates"
   roles:
     - common
     - { role: worker, sudo: no }

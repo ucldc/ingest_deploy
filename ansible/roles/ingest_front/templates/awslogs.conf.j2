@@ -1,5 +1,5 @@
 [/var/log/httpd/error]
-datetime_format = %Y%m%d %H:%M:%S
+datetime_format = {{ log_datetime_format }}
 file = /var/log/httpd/error.log
 buffer_duration = 5000
 log_stream_name = {{ name_env }}-{{ role }}-http-error-{instance_id}
@@ -7,7 +7,7 @@ initial_position = start_of_file
 log_group_name = /var/log/httpd
 
 [/var/log/httpd/ssl_error]
-datetime_format = %Y%m%d %H:%M:%S
+datetime_format = {{ log_datetime_format }}
 file = /var/log/httpd/ssl_error_log
 buffer_duration = 5000
 log_stream_name = {{ name_env }}-{{ role }}-http-ssl-error-{instance_id}
@@ -16,7 +16,7 @@ log_group_name = /var/log/httpd
 
 
 [/var/log/httpd/ssl_access]
-datetime_format = %Y%m%d %H:%M:%S
+datetime_format = {{ log_datetime_format }}
 file = /var/log/httpd/ssl_access_log
 buffer_duration = 5000
 log_stream_name = {{ name_env }}-{{ role }}-http-ssl-access-{instance_id}
@@ -24,7 +24,7 @@ initial_position = start_of_file
 log_group_name = /var/log/httpd
 
 [/var/log/httpd/ssl_request]
-datetime_format = %Y%m%d %H:%M:%S
+datetime_format = {{ log_datetime_format }}
 file = /var/log/httpd/ssl_request_log
 buffer_duration = 5000
 log_stream_name = {{ name_env }}-{{ role }}-http-ssl-request-{instance_id}

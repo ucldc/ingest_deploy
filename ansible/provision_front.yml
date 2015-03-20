@@ -4,7 +4,7 @@
   gather_facts: yes
   vars:
     role: ingest_front
-    dir_role_files: "roles/{{ role }}/files"
+    dir_role_templates: "roles/{{ role }}/templates"
   roles:
     - common
     - ingest_front
