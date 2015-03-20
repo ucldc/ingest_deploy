@@ -3,9 +3,10 @@
   yum: 
     name: awslogs
     state: present
-- name: make awslogs run on startup
-  shell:
-    cmd: chkconfig awslogs on
+### NOTE: enabled:yes in service should do this
+###- name: make awslogs run on startup
+###  shell:
+###    cmd: chkconfig awslogs on
 - name: copy awscli.conf - set to us-west-2
   copy:
     src: awscli.conf
@@ -30,4 +31,11 @@
     dest: /etc/awslogs/awslogs.conf
     mode: "0644"
   notify:
-  - restart awslogs
+    - restart awslogs
+- meta: flush_handlers
+# NOTE: the handler is not working so just start the darn service
+- name: start awslogs
+  service:
+    name: awslogs
+    state: started
+    enabled: yes

@@ -4,3 +4,9 @@
   service:
     name: awslogs
     state: restarted
+    enabled: yes
+- name: start awslogs
+  service:
+    name: awslogs
+    state: started
+    enabled: yes
