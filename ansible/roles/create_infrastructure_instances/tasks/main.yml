@@ -7,7 +7,7 @@
 - { include: create_instance_couchdb.yml, tags: couchdb }
 # front end created last, needs couchdb & solr ips for proxying
 - { include: create_instance_front_end.yml, tags: front }
-- { include: create_instance_ingest_majorTom.yml, tags: majorTom }
+- { include: create_instance_majorTom.yml, tags: majorTom }
 - name: save instance variables
   template:
     src: save_instance_variables.j2
