@@ -1,8 +1,4 @@
 ---
-- name: check if extra disk already in fstab?
-  shell: grep -c /dev/xvdb /etc/fstab 
-  register: infstab
-- debug: var=infstab
 - shell: ls /etc/fstab
 - name: make filesystem on extra volume
   filesystem: fstype=ext4 dev=/dev/xvdb

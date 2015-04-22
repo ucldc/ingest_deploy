@@ -9,8 +9,10 @@
     - name: check if extra disk already in fstab?
       shell: grep -c /dev/xvdb /etc/fstab 
       register: infstab
+      failed_when: infstab.rc > 1
+    - debug: var=infstab
     - { include: roles/solr/tasks/mount_data_volume.yml,
-        when: infstab < 1 }
+        when: infstab.rc == 1 }
   roles:
     - common
     - { role: geerlingguy.solr }
