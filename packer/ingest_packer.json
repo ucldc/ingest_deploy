@@ -41,6 +41,8 @@
       "ssh_wait_timeout": "10000s",
       "shutdown_command": "echo 'vagrant'|sudo -S /sbin/halt -h -p",
       "guest_additions_path": "VBoxGuestAdditions_{{.Version}}.iso",
+      "guest_additions_url": "/home/mredar/workspace/ucldc/ingest_deploy/packer/guestadditions/VBoxGuestAdditions_{{.Version}}.iso",
+      "virtualbox_version_file": ".vbox_version",
       "virtualbox_version_file": ".vbox_version",
       "vm_name": "ingest_base-centos6.6",
       "vboxmanage": [
