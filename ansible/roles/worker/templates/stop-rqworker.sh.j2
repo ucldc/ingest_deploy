@@ -8,5 +8,9 @@ set -o errtrace  # trace ERR through 'time command' and other functions
 set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
 set -o errexit   ## set -e : exit the script if any statement returns a non-true return value
 
-/bin/cat {{ dir_rqworker_run }}/rqworker.pid | /usr/bin/xargs kill
+PID_RQW=`/bin/cat {{ dir_rqworker_run }}/rqworker.pid`
+kill $PID_RQW
+while test -d "/proc/$PID_RQW"; do
+  sleep 1
+done
 /bin/rm {{ dir_rqworker_run }}/rqworker.pid
