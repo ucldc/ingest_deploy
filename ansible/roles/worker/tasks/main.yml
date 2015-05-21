@@ -81,18 +81,26 @@
 - name: put harvester-env in place
   template:
     src: harvester-env.j2
-    dest: ~/.harvester-env
+    dest: {{ dir_rqworker_run}}/.harvester-env
     mode: "0600"
 - name: put start rqworker file in place
+  sudo: yes
   template:
     src: start-rqworker.sh.j2
-    dest: ~/bin/start-rqworker.sh
-    mode: "0755"
+    dest: /usr/local/bin/start-rqworker.sh
+    mode: "0777"
 - name: put stop rqworker file in place
+  sudo: yes
   template:
     src: stop-rqworker.sh.j2
-    dest: ~/bin/stop-rqworker.sh
-    mode: "0755"
+    dest: /usr/local/bin/stop-rqworker.sh
+    mode: "0777"
+- name: halt.local to call stop rqworker in place
+  sudo: yes
+  template:
+    src: halt.local
+    dest: /sbin/halt.local
+    mode: "0777"
 - name: start rqworker
   sudo: no
   shell: ~/bin/start-rqworker.sh

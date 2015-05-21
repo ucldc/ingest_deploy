@@ -19,7 +19,7 @@ if [ -e {{ dir_rqworker_run }}/rqworker.pid ]; then
     fi
 fi
 
-. ~/.harvester-env
+. {{ dir_rqworker_run }}/.harvester-env
 
 cd {{ dir_rqworker_run }}
 
