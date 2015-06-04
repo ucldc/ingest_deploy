@@ -127,12 +127,12 @@ log_group_name = /var/log/messages
 
 ################################################################################
 
-{{ range $index, $value := $ }}
+{{ "{{" }} range $index, $value := $ {{ "}}" }}
 [/var/lib/docker/couchdb]
 datetime_format = {{ log_datetime_format }}
-file = /var/lib/docker/containers/{{ $value.ID }}/{{ $value.ID }}-json.log
+file = /var/lib/docker/containers/{{ "{{" }} $value.ID {{ "}}" }}/{{ "{{" }} $value.ID {{ "}}" }}-json.log
 buffer_duration = 5000
 log_stream_name = {{ name_env }}-couchdb-{instance_id}
 initial_position = start_of_file
 log_group_name = /var/lib/docker/couchdb
-{{ end }}
+{{ "{{" }} end {{ "}}" }}
