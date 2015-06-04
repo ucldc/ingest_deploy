@@ -1,7 +1,7 @@
 set -e
 set -u
 
-sudo yum update
+sudo yum update -y
 sudo yum install gcc -y
 sudo yum install make -y
 sudo yum install git -y

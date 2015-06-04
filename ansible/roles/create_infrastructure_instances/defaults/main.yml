@@ -29,10 +29,10 @@ cidr_list_dpla:
   - 54.165.98.52/32 #dev
   - 54.88.10.164/32 #stage
   - 54.86.130.204/32 #prod
-  - 54.174.245.252 #stage
-  - 54.174.250.147 #stage worker
-  - 54.172.250.179 #production
-  - 54.172.51.240 #production worker
+  - 54.174.245.252/32 #stage
+  - 54.174.250.147/32 #stage worker
+  - 54.172.250.179/32 #production
+  - 54.172.51.240/32 #production worker
 cidr_ucsd_gabriela: 137.110.8.0/24
 cidr_list_ucop_vpn: 
   - 128.48.254.0/24

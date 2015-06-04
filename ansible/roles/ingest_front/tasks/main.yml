@@ -33,6 +33,14 @@
   template: src=ssl.conf dest=/etc/httpd/conf.d/ssl.conf
 - name: remove port 80
   lineinfile: dest=/etc/httpd/conf/httpd.conf state=absent line="Listen 80"
+- name: make certs directory
+  file:
+    state: directory
+    path: /etc/httpd/certs
+- name: create self signed certificate
+  command: openssl req -new -nodes -x509 -subj "/C=US/ST=CA/L=Oakland/O=DSC/CN=${ansible_fqdn}" -days 3650 -keyout /etc/httpd/certs/server.key.nopass -out /etc/httpd/certs/server.crt -extensions v3_ca
+  args:
+    creates: /etc/httpd/certs/server.crt
 - name: start apache
   service: name=httpd enabled=yes state=started
 - name: put authorized_users file in place

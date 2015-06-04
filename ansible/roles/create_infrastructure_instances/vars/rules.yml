@@ -24,6 +24,10 @@ front_end_security_rules:
   to_port: 443
   cidr_ip: "137.110.8.0/24"
 - proto: tcp
+  from_port: 6379
+  to_port: 6379
+  cidr_ip: "128.48.120.185/32"
+- proto: tcp
   from_port: 443
   to_port: 443
   cidr_ip: "54.84.55.179/32"
@@ -43,6 +47,22 @@ front_end_security_rules:
   from_port: 443
   to_port: 443
   cidr_ip: "54.86.130.204/32"
+- proto: tcp
+  from_port: 443
+  to_port: 443
+  cidr_ip: "54.174.245.252/32"
+- proto: tcp
+  from_port: 443
+  to_port: 443
+  cidr_ip: "54.174.250.147/32"
+- proto: tcp
+  from_port: 443
+  to_port: 443
+  cidr_ip: "54.172.250.179/32"
+- proto: tcp
+  from_port: 443
+  to_port: 443
+  cidr_ip: "54.172.51.240/32"
 - proto: tcp
   from_port: 443
   to_port: 443
@@ -71,3 +91,19 @@ front_end_security_rules:
   from_port: 80
   to_port: 80
   cidr_ip: "54.86.130.204/32"
+- proto: tcp
+  from_port: 80
+  to_port: 80
+  cidr_ip: "54.174.245.252/32"
+- proto: tcp
+  from_port: 80
+  to_port: 80
+  cidr_ip: "54.174.250.147/32"
+- proto: tcp
+  from_port: 80
+  to_port: 80
+  cidr_ip: "54.172.250.179/32"
+- proto: tcp
+  from_port: 80
+  to_port: 80
+  cidr_ip: "54.172.51.240/32"
