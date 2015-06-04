@@ -9,7 +9,7 @@
   yum: pkg=docker state=latest
   when: ansible_distribution == "Amazon"
 - name: install docker-py
-  pip: name=docker-py state=present #version=0.5.3 #for api to match pkg above
+  pip: name=docker-py state=present version=1.1.0 #for constants, ansible needs update
 - name: upgrade six - to fix errors bug
   pip: name=six state=latest
 - name: start docker
