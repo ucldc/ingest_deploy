@@ -13,6 +13,8 @@
     - name: stop worker
       sudo: no
       command: /usr/local/bin/stop-rqworker.sh
+      args:
+        removes: "{{ dir_rqworker_run }}/rqworker.pid"
       # TODO: when rwqoekr.pid
     - name: stop akara
       command: "{{ dir_venv}}/bin/akara -f {{ dir_code }}/dpla/ingestion/akara.conf stop"
