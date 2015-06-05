@@ -36,12 +36,12 @@
     - name: put ingest-private.pem in place
       template:
         src: ingest-private.pem.j2
-        dest: {{ role_home_dir }}/.ssh/ingest-private.pem
+        dest: "{{ role_home_dir }}/.ssh/ingest-private.pem"
         mode: 0600
         owner: ec2-user:ec2-user
     - name: put ssh config in place to make ingest-private default identity
       copy:
         src: ssh_config
-        dest: {{ role_home_dir }}/.ssh/config
+        dest: "{{ role_home_dir }}/.ssh/config"
         mode: 0600
         owner: ec2-user:ec2-user
