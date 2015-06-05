@@ -7,6 +7,11 @@
     repo: https://github.com/ucldc/solr_api.git
     dest: "{{ dir_code }}"
     update: yes
+- name: create data shared directory and set permissions
+  file:
+    path: /opt/solr/data
+    state: directory
+    mode: 0777
 - name: docker build the image
   sudo: yes
   docker_image: name={{ docker_image_name }} path={{ dir_code }} state=present
@@ -17,4 +22,4 @@
     image: "{{ docker_image_name }}"
     ports: 8983:8983
     state: restarted
-    volumes: /opt/solr/index/:/opt/solr/server/solr/dc-collection/data:rw
+    volumes: /opt/solr/data/:/opt/solr/server/solr/dc-collection/data:rw
