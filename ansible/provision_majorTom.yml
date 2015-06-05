@@ -32,7 +32,7 @@
         dest: ~/code/ec2.ini
         mode: 0644
     - name: read in ingest private key from vaulted file
-      include_vars: ingest-priv-key
+      include_vars: ingest-private.pem
     - name: put ingest-private.pem in place
       template:
         src: ingest-private.pem.j2
