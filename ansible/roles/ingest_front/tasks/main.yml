@@ -49,9 +49,35 @@
     dest: /etc/httpd/conf.d/users.digest
   notify:
     - restart apache
-###TODO: setup stunnel and run redis on remote ???
+# setup stunnel to access redis from registry
 - name: install stunnel
   yum: pkg=stunnel state=present
+- name: copy stunnel.conf
+  copy: 
+    src: stunnel.conf
+    dest: /etc/stunnel/
+- name: read in the ssl pem from encrypted file
+  include_vars: stunnel.pem.yml
+- name: put pem in place, NOTE -  pem is vaulted
+  template:
+    src: stunnel.pem.j2
+    dest: /etc/stunnel/stunnel.pem
+    mode: 0500
+- name: put init.d script in place
+  copy:
+    src: stunnel.init.d
+    dest: /etc/init.d/stunnel
+    mode: 0744
+- name: chkconfig stunnel to run at boot
+  command: chkconfig --add stunnel
+- name: start stunnel in daemon mode
+  command: /etc/init.d/stunnel start
+- name: put bootstrap for majorTom in place
+  sudo: no
+  copy:
+    src: bootstrap_majorTom.sh
+    dest: ~/bootstrap_majorTom.sh
+    mode: 0755
 - name: run rq-dashboard docker
   docker: 
     #docker_api_version: docker_server_api_version.stdout
