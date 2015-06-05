@@ -1,2 +1,41 @@
 ---
 # tasks file for majorTom
+- debug: name=role_home_dir
+- name: stop worker
+  command: /usr/local/bin/stop-rqworker.sh
+  args:
+    removes: "{{ dir_rqworker_run }}/rqworker.pid"
+  # TODO: when rwqoekr.pid
+- name: stop akara
+  command: "{{ dir_venv}}/bin/akara -f {{ dir_code }}/dpla/ingestion/akara.conf stop"
+  args:
+    chdir:  "{{ dir_akara_run }}"
+  #TODO: when: "{{ dir_akara_run }}/logs/akara.pid"
+- name: get ec2 inventory script
+  get_url:
+    url: https://raw.githubusercontent.com/ansible/ansible/devel/plugins/inventory/ec2.py
+    dest: "{{ role_home_dir.stdout }}/code/ec2.py"
+    mode: 0755
+- name: get ec2 inventory ini
+  get_url:
+    url: https://raw.githubusercontent.com/ansible/ansible/devel/plugins/inventory/ec2.ini
+    dest: "{{ role_home_dir.stdout }}/code/ec2.ini"
+    mode: 0644
+- name: read in ingest private key from vaulted file
+  include_vars: ingest-private.pem.yml
+- name: put ingest-private.pem in place
+  template:
+    src: ingest-private.pem.j2
+    dest: "{{ role_home_dir.stdout }}/.ssh/ingest-private.pem"
+    mode: 0600
+- name: set .ssh dir
+  file:
+    state: directory
+    mode: 0700
+    dest: "{{ role_home_dir.stdout }}/.ssh"
+- name: put ssh config in place to make ingest-private default identity
+  template:
+    src: ssh_config
+    dest: "{{ role_home_dir.stdout }}/.ssh/config"
+    mode: 0600
+    owner: ec2-user

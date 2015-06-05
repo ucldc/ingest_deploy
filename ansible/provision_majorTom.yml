@@ -1,49 +1,11 @@
 ---
 - hosts: localhost
   connection: local
-  sudo: yes
   gather_facts: yes
   vars:
     role: majorTom
     dir_role_templates: "roles/{{ role }}/templates"
   roles:
-    - common
+    - { role: common, sudo: no }
     - { role: worker, sudo: no }
-  tasks:
-    - name: stop worker
-      sudo: no
-      command: /usr/local/bin/stop-rqworker.sh
-      args:
-        removes: "{{ dir_rqworker_run }}/rqworker.pid"
-      # TODO: when rwqoekr.pid
-    - name: stop akara
-      command: "{{ dir_venv}}/bin/akara -f {{ dir_code }}/dpla/ingestion/akara.conf stop"
-      args:
-        chdir:  "{{ dir_akara_run }}"
-      #TODO: when: "{{ dir_akara_run }}/logs/akara.pid"
-    - name: get ec2 inventory script
-      sudo: no
-      get_url:
-        url: https://raw.githubusercontent.com/ansible/ansible/devel/plugins/inventory/ec2.py
-        dest: ~/code/ec2.py
-        mode: 0755
-    - name: get ec2 inventory ini
-      sudo: no
-      get_url:
-        url: https://raw.githubusercontent.com/ansible/ansible/devel/plugins/inventory/ec2.ini
-        dest: ~/code/ec2.ini
-        mode: 0644
-    - name: read in ingest private key from vaulted file
-      include_vars: ingest-private.pem
-    - name: put ingest-private.pem in place
-      template:
-        src: ingest-private.pem.j2
-        dest: "{{ role_home_dir }}/.ssh/ingest-private.pem"
-        mode: 0600
-        owner: ec2-user:ec2-user
-    - name: put ssh config in place to make ingest-private default identity
-      copy:
-        src: ssh_config
-        dest: "{{ role_home_dir }}/.ssh/config"
-        mode: 0600
-        owner: ec2-user:ec2-user
+    - { role: majorTom, sudo: no }

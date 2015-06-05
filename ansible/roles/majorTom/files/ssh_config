@@ -1,1 +1,0 @@
-IdentityFile {{ role_home_dir/.ssh/ingest-private.pem
