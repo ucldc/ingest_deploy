@@ -1,6 +1,8 @@
 ---
   - name: include vaulted passwords
     include_vars: all_secrets.yml
+  - name: set role_home_dir, hostname, whoami
+    include: setvars.yml
   - name: update packages
     yum: pkg=* state=latest
   - name: install htop
