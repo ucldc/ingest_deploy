@@ -1,11 +1,12 @@
 ---
 # tasks file for solr5_docker
-- vars:
-    docker_image_name: ucldc/solr
-    dir_code: code/solr_api
+- name: install git
+  yum: pkg=git state=present
 - name: get the solr_api code
-  git:  repo=https://github.com/ucldc/solr_api.git
-        dest={{ dir_code }}
+  git:
+    repo: https://github.com/ucldc/solr_api.git
+    dest: "{{ dir_code }}"
+    update: yes
 - name: docker build the image
   sudo: yes
   docker_image: name={{ docker_image_name }} path={{ dir_code }} state=present
@@ -13,7 +14,7 @@
   sudo: yes
   docker: 
     name: solr
-    image: {{ docker_image_name }}
+    image: "{{ docker_image_name }}"
     ports: 8983:8983
     state: restarted
     volumes: /opt/solr/index/:/opt/solr/server/solr/dc-collection/data:rw
