@@ -6,6 +6,3 @@
 - name: figure out the home directory
   shell: "getent passwd $(whoami) | cut -d: -f6"
   register: role_home_dir
-- name: figure out the hostname
-  shell: ~/appstrap/ansible/myhostname
-  register: hostname
