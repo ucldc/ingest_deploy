@@ -2,6 +2,11 @@
 # tasks file for provision_worker
 - name: include vaulted passwords from vaulted.yml
   include_vars: vaulted.yml
+- name: get correct urls for environment
+  include_vars:  "main{{ name_suffix }}.yml"
+- debug: var=couchdb_url
+- debug: var=solr_url
+- debug: var=redis_host
 - name: install ssh private key for bitbucket
   template: src=id_rsa mode=600 dest=~/.ssh/id_rsa 
 - name: install ssh pub key for bitbucket

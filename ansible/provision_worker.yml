@@ -1,5 +1,5 @@
 ---
-- hosts: tag_Name_{{ name_env| replace('-', '_') }}_worker
+- hosts: tag_Name_ingest{{ name_suffix| replace('-', '_') }}_worker
   gather_facts: yes
   vars:
     role: worker

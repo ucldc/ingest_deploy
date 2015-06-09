@@ -2,7 +2,7 @@
 # defaults file for create_worker_instance
 count: 1
 image_hvm: ami-dfc39aef
-instance_type: t2.micro
+instance_type: m3.large
 key_name: ingest
 subnet_id_private: subnet-1bbe676c
 sec_grp_ingest_private_id: sg-95b298f0

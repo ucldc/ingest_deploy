@@ -1,5 +1,6 @@
 ---
 # tasks file for create_worker_instance
+- debug: var=instance_type
 - name: create a new worker instance in the private vpc
   local_action:
     module: ec2
