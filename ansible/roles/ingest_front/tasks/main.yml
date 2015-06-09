@@ -86,4 +86,4 @@
     name: rq-dashboard
     ports: "9181:9181"
     command: /run.sh ports=9181
-    env: "REDIS_HOST={{ redis_endpoint_elasticcache }}" #,REDIS_PSWD={{ REDIS_PSWD }}"
+    env: "REDIS_HOST={{ redis_host }}" #,REDIS_PSWD={{ REDIS_PSWD }}"

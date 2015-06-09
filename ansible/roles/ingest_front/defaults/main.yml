@@ -1,3 +1,2 @@
 ---
 # defaults file for provision_ingest_front
-redis_endpoint_elasticcache: x-001.swle7i.0001.usw2.cache.amazonaws.com
