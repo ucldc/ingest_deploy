@@ -1,0 +1,16 @@
+# Create new worker instance for ingest
+# This will launch into the private VPC and use the private addresses
+# for redis, couchdb and solr
+#
+---
+#- hosts: localhost
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  vars:
+      name_suffix: -prod
+  roles:
+    - create_worker_instance
+#doesn't work, not yet in ec2.py inventory - include: provision_worker.yml
+
+

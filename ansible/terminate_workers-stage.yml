@@ -1,0 +1,12 @@
+# terminate workers for this environment
+---
+- hosts: tag_Name_ingest_stage_worker
+  gather_facts: yes
+- name: create a new worker instance in the private vpc
+  local_action:
+    module: ec2
+    state: absent
+    region: "{{ region }}"
+    key_name: "{{ key_name }}"
+    wait: true
+    wait_timeout: 500
