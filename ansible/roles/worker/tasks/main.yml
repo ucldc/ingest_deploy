@@ -15,13 +15,17 @@
 - name: make virtualenv directory
   file: path={{ dir_venv }} state=directory
 - name: pull ingest harvester code to local box
-  git: repo=https://github.com/mredar/harvester.git dest={{ dir_code }}/harvester
+  git:
+    repo: https://github.com/mredar/harvester.git
+    dest: "{{ dir_code }}/harvester"
+    update: yes
 - name: pull dpla based code to local box
   git: 
     repo: git@bitbucket.org:mredar/dpla-ingestion.git
     dest: "{{ dir_code }}/dpla/ingestion"
     accept_hostkey: yes
     version: ucldc
+    update: yes
 - name: install akara and harvester dpla dependencies
   pip:
     state: present
