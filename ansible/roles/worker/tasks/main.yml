@@ -81,6 +81,10 @@
   file:
     path: "{{ dir_rqworker_run }}/logs"
     state: directory
+- name: create pynuxrc for the rqworker in /var/local #this doesn't seem to work
+  template:
+    src: pynuxrc
+    dest: "{{ dir_rqworker_run }}/.pynuxrc"
 - name: create rqw-settings.py
   template:
     src: rqw-settings.py.j2
