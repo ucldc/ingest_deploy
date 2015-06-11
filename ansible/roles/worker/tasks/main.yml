@@ -12,6 +12,8 @@
 - name: install ssh pub key for bitbucket
   template: src=id_rsa.pub mode=600 dest=~/.ssh/id_rsa.pub 
 - { include: install_packages.yml }
+- name: make user ~/bin directory
+  file: path=/home/{{ ansible_ssh_user}}/bin state=directory
 - name: make virtualenv directory
   file: path={{ dir_venv }} state=directory
 - name: pull ingest harvester code to local box
@@ -41,6 +43,14 @@
     chdir: "{{ dir_code }}/harvester"
 #  how do you keep dev, prod, stg separate.
 #  with, vars per host.
+- name: put run_solr_update in bin
+  template:
+      src: run_solr_update.sh.j2
+      dest: ~/bin/run_solr_update.sh
+      mode: 0755
+################################################################################
+#configure akara
+################################################################################
 - name: copy config file to akara dir???? configure & start akara
   template:
     src: akara.ini.j2
@@ -66,6 +76,9 @@
   args:
     chdir:  "{{ dir_akara_run }}"
     creates: "{{ dir_akara_run }}/logs/akara.pid"
+################################################################################
+#configure rq worker
+################################################################################
 - name: make rqworker run dir
   sudo: yes
   file:
@@ -81,7 +94,7 @@
   file:
     path: "{{ dir_rqworker_run }}/logs"
     state: directory
-- name: create pynuxrc for the rqworker in /var/local #this doesn't seem to work
+- name: create pynuxrc for the rqworker in working dir #this doesn't seem to work
   template:
     src: pynuxrc
     dest: "{{ dir_rqworker_run }}/.pynuxrc"
@@ -89,8 +102,6 @@
   template:
     src: rqw-settings.py.j2
     dest: "{{ dir_rqworker_run }}/rqw-settings.py"
-- name: make user ~/bin directory
-  file: path=/home/{{ ansible_ssh_user}}/bin state=directory
 - name: put harvester-env in place
   template:
     src: harvester-env.j2
