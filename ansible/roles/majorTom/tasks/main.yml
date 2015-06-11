@@ -4,12 +4,12 @@
 - name: stop worker
   command: /usr/local/bin/stop-rqworker.sh
   args:
-    removes: "{{ dir_rqworker_run }}/rqworker.pid"
+    removes: "{{ dir_run_rqworker }}/rqworker.pid"
   # TODO: when rwqoekr.pid
 - name: stop akara
   command: "{{ dir_venv}}/bin/akara -f {{ dir_code }}/dpla/ingestion/akara.conf stop"
   args:
-    chdir:  "{{ dir_akara_run }}"
+    chdir:  "{{ dir_run_akara }}"
   #TODO: when: "{{ dir_akara_run }}/logs/akara.pid"
 - name: get ec2 inventory script
   get_url:
