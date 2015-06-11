@@ -94,10 +94,10 @@
   file:
     path: "{{ dir_rqworker_run }}/logs"
     state: directory
-- name: create pynuxrc for the rqworker in working dir #this doesn't seem to work
+- name: create pynuxrc for the ec2-user in home dir
   template:
     src: pynuxrc
-    dest: "{{ dir_rqworker_run }}/.pynuxrc"
+    dest: ~/.pynuxrc
 - name: create rqw-settings.py
   template:
     src: rqw-settings.py.j2
