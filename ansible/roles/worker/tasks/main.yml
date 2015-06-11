@@ -13,7 +13,7 @@
   template: src=id_rsa.pub mode=600 dest=~/.ssh/id_rsa.pub 
 - { include: install_packages.yml }
 - name: make user ~/bin directory
-  file: path=/home/{{ ansible_ssh_user}}/bin state=directory
+  file: path=/home/{{ ansible_ssh_user }}/bin state=directory
 - name: make virtualenv directory
   file: path={{ dir_venv }} state=directory
 - name: pull ingest harvester code to local box
@@ -21,13 +21,13 @@
     repo: https://github.com/mredar/harvester.git
     dest: "{{ dir_code }}/harvester"
     update: yes
-- name: pull dpla based code to local box
-  git: 
-    repo: git@bitbucket.org:mredar/dpla-ingestion.git
-    dest: "{{ dir_code }}/dpla/ingestion"
-    accept_hostkey: yes
-    version: ucldc
-    update: yes
+#- name: pull dpla based code to local box
+#  git: 
+#    repo: git@bitbucket.org:mredar/dpla-ingestion.git
+#    dest: "{{ dir_code }}/dpla/ingestion"
+#    accept_hostkey: yes
+#    version: ucldc
+#    update: yes
 - name: install akara and harvester dpla dependencies
   pip:
     state: present
@@ -41,13 +41,30 @@
   command: "{{ dir_venv }}/bin/python {{ dir_code }}/harvester/setup.py install"
   args:
     chdir: "{{ dir_code }}/harvester"
-#  how do you keep dev, prod, stg separate.
-#  with, vars per host.
-- name: put run_solr_update in bin
+## configure run_solr_update
+# TODO: queue for worker
+- name: create solr_update run dir
+  sudo: yes
+  file:
+    path: "{{ dir_run }}/solr_update"
+    state: directory
+    owner: "{{ ansible_ssh_user }}"
+    group: "{{ ansible_ssh_user }}"
+- name: create solr_update log dir
+  sudo: yes
+  file:
+    path: "{{ dir_run }}/solr_update/log"
+    state: directory
+    owner: "{{ ansible_ssh_user }}"
+    group: "{{ ansible_ssh_user }}"
+- name: put run_solr_update in dir_bin
+  sudo: yes
   template:
       src: run_solr_update.sh.j2
-      dest: ~/bin/run_solr_update.sh
-      mode: 0755
+      dest: "{{dir_bin}}/run_solr_update.sh"
+      mode: "0775"
+      owner: "{{ ansible_ssh_user }}"
+      group: "{{ ansible_ssh_user }}"
 ################################################################################
 #configure akara
 ################################################################################
@@ -66,6 +83,7 @@
     path: "{{ dir_run_akara }}"
     state: directory
     owner: "{{ ansible_ssh_user }}"
+    group: "{{ ansible_ssh_user }}"
     group: "{{ ansible_ssh_user }}"
 - name: setup akara run dir
   command: "{{ dir_venv}}/bin/akara -f {{ dir_code }}/dpla/ingestion/akara.conf setup"
@@ -86,6 +104,7 @@
     state: directory
     owner: "{{ ansible_ssh_user }}"
     group: "{{ ansible_ssh_user }}"
+    group: "{{ ansible_ssh_user }}"
 - name: make profiles dir
   file:
     path: "{{ dir_run_rqworker }}/profiles"
@@ -94,10 +113,10 @@
   file:
     path: "{{ dir_run_rqworker }}/logs"
     state: directory
-- name: create pynuxrc for the rqworker in working dir #this doesn't seem to work
+- name: create pynuxrc for the ec2-user in home dir
   template:
     src: pynuxrc
-    dest: "{{ dir_run_rqworker }}/.pynuxrc"
+    dest: ~/.pynuxrc
 - name: create rqw-settings.py
   template:
     src: rqw-settings.py.j2
@@ -111,22 +130,26 @@
   sudo: yes
   template:
     src: start-rqworker.sh.j2
-    dest: /usr/local/bin/start-rqworker.sh
-    mode: "0777"
+    dest: "{{ dir_bin }}start-rqworker.sh"
+    mode: "0775"
+    owner: "{{ ansible_ssh_user }}"
+    group: "{{ ansible_ssh_user }}"
 - name: put stop rqworker file in place
   sudo: yes
   template:
     src: stop-rqworker.sh.j2
-    dest: /usr/local/bin/stop-rqworker.sh
-    mode: "0777"
+    dest: "{{ dir_bin }}stop-rqworker.sh"
+    mode: "0775"
+    owner: "{{ ansible_ssh_user }}"
+    group: "{{ ansible_ssh_user }}"
 - name: halt.local to call stop rqworker in place
   sudo: yes
   template:
     src: halt.local.j2
     dest: /sbin/halt.local
-    mode: "0777"
+    mode: "0775"
 - name: start rqworker
   sudo: no
-  shell: /usr/local/bin/start-rqworker.sh
+  shell: "{{ dir_bin }}start-rqworker.sh"
   args:
     creates: "{{ dir_run_rqworker}}/rqworker.pid"
