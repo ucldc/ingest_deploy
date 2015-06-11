@@ -3,7 +3,7 @@ redis_port: 6379
 redis_password: "{{ redis_password_prod }}"
 redis_connect_timeout: 10
 
-solr_url: http://10.60.37.73:8983/solr/dc-collection/
+solr_url: http://10.60.37.73:8983/solr/dc-collection
 
 couchdb_url: http://10.60.43.123:5984
 couchdb_username: "{{ couchdb_username_prod }}"
