@@ -1,4 +1,4 @@
 check process rqworker
-    with pidfile "{{ dir_rqworker_run }}/rqworker.pid"
+    with pidfile "{{ dir_run_rqworker }}/rqworker.pid"
     start program "/bin/su - {{ ansible_ssh_user }} -c '/home/{{ ansible_ssh_user }}/bin/start-rqworker.sh'" with timeout 60 seconds
     stop program "/home/{{ ansible_ssh_user }}/bin/stop-rqworker.sh"
