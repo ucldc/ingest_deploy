@@ -32,11 +32,11 @@ dt=`date '+%Y%m%d_%H%M%S'`
 
 if [ -z "$since" ] ; then
 python {{ dir_code}}/harvester/solr_updater.py $COUCHDB_URL ucldc \
-  $URL_SOLR &> {{ dir_venv }/solr-indexes/log/solr-up-${dt}.out &
+  $URL_SOLR &> {{ dir_run}}/solr_upate/log/solr-up-${dt}.out &
 else
 python {{ dir_code }}/harvester/harvester/solr_updater.py --since=$since \
   $COUCHDB_URL ucldc $URL_SOLR \
-  &> {{ dir_venv }/solr-indexes/log/solr-up-${dt}.out &
+  &> {{ dir_run }}/solr_update/log/solr-up-${dt}.out &
 fi
 
 disown
