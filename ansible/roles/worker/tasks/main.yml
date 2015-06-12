@@ -36,7 +36,7 @@
     virtualenv: "{{ dir_venv }}"
 - name: put .boto in place for strict cert checking fix
 # https://github.com/boto/boto/issues/2836
-  copy: src=.boto dest=~/.boto mode=600
+  copy: src=dot_boto dest=~/.boto mode=600
 - name: install harvester code
   command: "{{ dir_venv }}/bin/python {{ dir_code }}/harvester/setup.py install"
   args:
