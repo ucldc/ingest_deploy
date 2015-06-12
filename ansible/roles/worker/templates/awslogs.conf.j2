@@ -1,15 +1,15 @@
 [akara-error.log]
 datetime_format = {{ log_datetime_format }}
-file = {{ dir_venv }/akara-run-dir/logs/error.log
+file = {{ dir_run_akara }}/logs/error.log
 buffer_duration = 5000
 log_stream_name = {{ name_env }}-{instance_id}-{ip_address}
 initial_position = start_of_file
-log_group_name = {{ dir_venv }/akara
+log_group_name = {{ dir_run_akara }}
 
 [worker-log]
 datetime_format = {{ log_datetime_format }}
-file = {{ dir_venv }/rqworker/worker.log
+file = {{ dir_run_rqworker }}/worker.log
 buffer_duration = 5000
 initial_position = start_of_file
 log_stream_name = {{ name_env }}-{instance_id}-{ip_address}
-log_group_name = {{ dir_venv }/worker
+log_group_name = {{ dir_run_rqworker }}

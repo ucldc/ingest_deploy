@@ -1,1 +1,4 @@
 IdentityFile {{ role_home_dir.stdout }}/.ssh/ingest-private.pem
+
+Host 10.60.*
+    StrictHostKeyChecking no
