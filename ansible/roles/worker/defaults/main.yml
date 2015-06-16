@@ -1,10 +1,10 @@
 ---
 # defaults file for provision_worker
-dir_code: /home/{{ ansible_ssh_user }}/code
-dir_venv: /home/{{ ansible_ssh_user }}/workers_local
+dir_code: /home/{{ ansible_ssh_user }}/code/
+dir_venv: /home/{{ ansible_ssh_user }}/workers_local/
 dir_run: /var/local/
-dir_run_akara: "{{ dir_run }}//akara"
-dir_run_rqworker: "{{ dir_run }}/rqworker"
+dir_run_akara: "{{ dir_run }}akara"
+dir_run_rqworker: "{{ dir_run }}rqworker"
 # put here so root shuddown finds easily
 dir_bin: /usr/local/bin/
 
@@ -26,7 +26,7 @@ couchdb_username: <vaulted>
 couchdb_password: <vaulted>
 couchdb_item_database: ucldc
 couchdb_dasboard_database: dashboard
-couchdb_views_directory: "{{ dir_code }}/dpla/ingestion/couchdb_views/"
+couchdb_views_directory: "{{ dir_code }}dpla/ingestion/couchdb_views/"
 
 geonames_username: <vaulted>
 geonames_token: <vaulted>
@@ -34,4 +34,4 @@ bing_api_key: <vaulted>
 
 email_return_address: ucldc@example.edu
 email_sys_admins: x@example.edu,y@example.edu
-dpla_config_file: "{{ dir_code }}/dpla/ingestion/akara.ini"
+dpla_config_file: "{{ dir_code }}dpla/ingestion/akara.ini"
