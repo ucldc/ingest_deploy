@@ -7,6 +7,7 @@
 - debug: var=couchdb_url
 - debug: var=solr_url
 - debug: var=redis_host
+- debug: var=rq_work_queues
 - name: install ssh private key for bitbucket
   template: src=id_rsa mode=600 dest=~/.ssh/id_rsa 
 - name: install ssh pub key for bitbucket
