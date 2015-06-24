@@ -58,3 +58,9 @@
     force: yes
     backup: yes
   notify: restart tomcat
+- name: create directory for index tarballs, used later during index push
+  sudo: yes
+  file:
+    state: directory
+    dest: /opt/indexes
+    mode: 0777
