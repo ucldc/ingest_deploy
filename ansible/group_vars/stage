@@ -1,0 +1,3 @@
+---
+sec_grp_ingest_private:
+  group_id: "{{ sec_grp_ingest_private_id }}"
