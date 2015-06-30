@@ -17,6 +17,7 @@
 - name: run couchdb docker
   docker:
     state: running
+    restart_policy: always
     image: tutum/couchdb
     name: couchdb
     ports: 5984:5984

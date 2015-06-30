@@ -22,4 +22,5 @@
     image: "{{ docker_image_name }}"
     ports: 8983:8983
     state: restarted
+    restart_policy: always
     volumes: /opt/solr/data/:/opt/solr/server/solr/dc-collection/data:rw
