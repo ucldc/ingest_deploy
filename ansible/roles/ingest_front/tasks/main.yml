@@ -82,6 +82,7 @@
   docker: 
     #docker_api_version: docker_server_api_version.stdout
     state: running
+    restart_policy: always
     image: mredar/rq-dashboard
     name: rq-dashboard
     ports: "9181:9181"
