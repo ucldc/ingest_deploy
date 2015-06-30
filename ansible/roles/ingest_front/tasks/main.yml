@@ -52,10 +52,10 @@
 # setup stunnel to access redis from registry
 - name: install stunnel
   yum: pkg=stunnel state=present
-- name: copy stunnel.conf
-  copy: 
-    src: stunnel.conf
-    dest: /etc/stunnel/
+- name: put stunnel.conf
+  template: 
+    src: stunnel.conf.j2
+    dest: /etc/stunnel/stunnel.conf
 - name: read in the ssl pem from encrypted file
   include_vars: stunnel.pem.yml
 - name: put pem in place, NOTE -  pem is vaulted
