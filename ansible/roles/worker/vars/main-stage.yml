@@ -10,3 +10,7 @@ solr_url: http://10.60.20.55:8983/solr/dc-collection
 couchdb_url: http://10.60.27.222:5984
 couchdb_username: "{{ couchdb_username_stage }}"
 couchdb_password: "{{ couchdb_password_stage }}"
+
+run_dir_solr: solr-update
+run_dir_rq: rqworker
+run_dir_akara: akara-run-dir
