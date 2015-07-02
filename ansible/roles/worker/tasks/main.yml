@@ -44,17 +44,17 @@
     chdir: "{{ dir_code }}/harvester"
 ## configure solr-index-to-s3
 # TODO: queue for worker
-- name: create solr_update run dir
+- name: create run_dir_solr run dir
   sudo: yes
   file:
-    path: "{{ dir_run }}/solr_update"
+    path: "{{ dir_run }}/{{ run_dir_solr }}"
     state: directory
     owner: "{{ ansible_ssh_user }}"
     group: "{{ ansible_ssh_user }}"
-- name: create solr_update log dir
+- name: create run_dir_solr log dir
   sudo: yes
   file:
-    path: "{{ dir_run }}/solr_update/log"
+    path: "{{ dir_run }}/{{ run_dir_solr }}/log"
     state: directory
     owner: "{{ ansible_ssh_user }}"
     group: "{{ ansible_ssh_user }}"
