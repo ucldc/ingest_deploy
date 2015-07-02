@@ -42,7 +42,7 @@
   command: "{{ dir_venv }}/bin/python {{ dir_code }}/harvester/setup.py install"
   args:
     chdir: "{{ dir_code }}/harvester"
-## configure run_solr_update
+## configure solr-index-to-s3
 # TODO: queue for worker
 - name: create solr_update run dir
   sudo: yes
@@ -58,11 +58,19 @@
     state: directory
     owner: "{{ ansible_ssh_user }}"
     group: "{{ ansible_ssh_user }}"
-- name: put run_solr_update in dir_bin
+- name: put solr-index-to-s3 in dir_bin
   sudo: yes
   template:
-      src: run_solr_update.sh.j2
-      dest: "{{dir_bin}}/run_solr_update.sh"
+      src: solr-index-to-s3.sh.j2
+      dest: "{{dir_bin}}/solr-index-to-s3.sh"
+      mode: "0775"
+      owner: "{{ ansible_ssh_user }}"
+      group: "{{ ansible_ssh_user }}"
+- name: put solr-update in dir_bin
+  sudo: yes
+  template:
+      src: solr-update.sh.j2
+      dest: "{{dir_bin}}/solr-update.sh"
       mode: "0775"
       owner: "{{ ansible_ssh_user }}"
       group: "{{ ansible_ssh_user }}"

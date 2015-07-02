@@ -34,6 +34,6 @@ set -o nounset
 
 dt=`date '+%Y%m%d_%H%M%S'`
 
-ansible-playbook -i {{ dir_code }}/ingest_deploy/ansible/hosts {{ dir_code }}/harvester/harvester/grab-solr-index-playbook.yml --extra-vars="server_role=stage" --limit="solr-stage" &> {{ dir_run }}/solr_update/log/solr-up-${dt}.out &
+stdbuf -i0 -o0 -e0 ansible-playbook -i {{ dir_code }}/ingest_deploy/ansible/hosts {{ dir_code }}/harvester/harvester/grab-solr-index-playbook.yml --extra-vars="server_role=stage" --limit="solr-stage" &> {{ dir_run }}/solr_update/log/solr-up-${dt}.out &
 
 disown

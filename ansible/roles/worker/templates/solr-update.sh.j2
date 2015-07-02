@@ -31,7 +31,7 @@ set -o nounset
 
 dt=`date '+%Y%m%d_%H%M%S'`
 
-python {{ dir_code }}/harvester/harvester/solr_updater.py \
+stdbuf -i0 -o0 -e0 python {{ dir_code }}/harvester/harvester/solr_updater.py \
   $COUCHDB_URL ucldc $URL_SOLR $@ \
   &> {{ dir_run }}/solr_update/log/solr-up-${dt}.out &
 
