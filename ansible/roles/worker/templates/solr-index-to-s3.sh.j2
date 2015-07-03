@@ -25,7 +25,12 @@ fi
 
 DATA_BRANCH=$1
 echo "DB $DATA_BRANCH"
-exit
+
+if [[ $DATA_BRANCH ne "stage" -o $DATA_BRANCH ne "production" ]]
+    echo DATA_BRANCH must be stage or production
+    exit
+fi
+
 . ~/.harvester-env
 
 set +o nounset
