@@ -1,0 +1,9 @@
+---
+redis_host: x-001.swle7i.0001.usw2.cache.amazonaws.com
+subnet_id_public: subnet-ee63cf99
+subnet_id_private: subnet-1bbe676c
+sec_grp_ingest_private_id: sg-95b298f0
+DATA_BRANCH: production
+name_suffix: "-{{ DATA_BRANCH| truncate(4) }}"
+couchdb_url: http://10.60.43.123:5984
+solr_url: http://10.60.38.11:8983/solr

@@ -1,0 +1,4 @@
+{% for user in basic_auth_users %}
+  {{ user }}
+{% endfor %}
+

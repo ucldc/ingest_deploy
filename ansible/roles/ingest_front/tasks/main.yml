@@ -5,6 +5,7 @@
 ###- name: get ip of solr
 ###  shell: cat /ip-solr
 ###  register: ip_solr
+- include_vars: basic_auth_users.yml
 - name: copy access key for private machines
   sudo: no
   copy:
@@ -44,8 +45,8 @@
 - name: start apache
   service: name=httpd enabled=yes state=started
 - name: put authorized_users file in place
-  copy:
-    src: authorized_users.digest
+  template:
+    src: users.digest
     dest: /etc/httpd/conf.d/users.digest
   notify:
     - restart apache
