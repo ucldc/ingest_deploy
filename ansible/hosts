@@ -7,25 +7,11 @@ solr-prod
 local
 front-prod
 
-[prod:vars]
-redis_host=x-001.swle7i.0001.usw2.cache.amazonaws.com
-subnet_id_public=subnet-ee63cf99
-subnet_id_private=subnet-1bbe676c
-sec_grp_ingest_private_id=sg-95b298f0
-name_suffix=-prod
-
 [stage:children]
 couchdb-stage
 solr-stage
 local
 front-stage
-
-[stage:vars]
-redis_host=x-001.swle7i.0001.usw2.cache.amazonaws.com
-subnet_id_public=subnet-b07689e9
-subnet_id_private=subnet-56758a0f
-sec_grp_ingest_private_id=sg-ba28c5de
-name_suffix=-stage
 
 [solr:children]
 solr-stage
