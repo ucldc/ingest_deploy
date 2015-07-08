@@ -19,7 +19,7 @@
   file: path={{ dir_venv }} state=directory
 - name: pull ingest harvester code to local box
   git:
-    repo: https://github.com/mredar/harvester.git
+    repo: https://github.com/ucldc/harvester.git
     dest: "{{ dir_code }}/harvester"
     update: yes
 - name: pull dpla based code to local box
