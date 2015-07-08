@@ -10,11 +10,10 @@ working....
 
 Tools:
 
-* [VirtualBox](https://www.virtualbox.org/) (Version X.X)
-* [Vagrant](https://www.vagrantup.com/) (Version X.X)
-* [vagrant-vbguest](https://github.com/dotless-de/vagrnat-vbguest/) (`vagrant plugin install vagrant-vbguest`)
-* [Ansible](http://www.ansible.com/home) (Version X.X)
-
+- [VirtualBox](https://www.virtualbox.org/) (Version X.X)
+- [Vagrant](https://www.vagrantup.com/) (Version X.X)
+- [vagrant-vbguest](https://github.com/dotless-de/vagrnat-vbguest/) (`vagrant plugin install vagrant-vbguest`)
+- [Ansible](http://www.ansible.com/home) (Version X.X)
 - if using VirtualBox, install the vagrant-vbguest 
 
 UCLDC Harvesting operations guide
