@@ -40,6 +40,7 @@ Then run:
       ingest_deploy/ansible/roles/ingest_front/vars/basic_auth_users.yml
 
 Entries in this file are htdigest lines, preceded by a - to make a yaml list.
+eg:
 
     ---
     basic_auth_users:
@@ -97,6 +98,63 @@ and start running Akara & the worker processes that listen on the queues
 specified. You should see the worker processes appear in the rq monitor once
 this is done.
 
+NOTE: if you already have provisioned worker machines running jobs, use the
+--limit=<ip range> eg. --limit=10.60.22.\*. Rerunning the provisioning will put
+the current running workers in a bad state, you will then have to log on to the
+worker and restart the worker process or terminate the machine.
+
+AWS assigns unique subnets to the groups of workers you start, so in general,
+different generations of machines will be distinguished by the different C class
+subnet. This makes the --limit parameter quite useful.
+
+
+Creating New Solr Indexes
+-------------------------
+
+Currently, solr updates are run from the majorTom machine. The solr update
+looks at the couchdb changes endpoint. This endpoint has a record for each
+document that has been created in the database, including deleted documents.
+
+Run
+
+    /usr/local/bin/solr-update.sh <--since=(int)>
+
+This will run an incremental update from the last changes sequence number that is saved in s3 at solr.ucldc/couchdb_since/<DATA_BRANCH>.
+
+To specify the last sequence number (since parameter to the couchdb change
+endpoint). To reindex all docs use --since=0
+
+Once the solr index is updated, run:
+
+    /usr/local/bin/solr-index-to-s3.sh <DATA_BRANCH> (stage|production)
+
+This will push the last build solr index to s3 at the location
+
+    solr.ucldc/indexes/<DATA_BRANCH>/YYYY/MM/solr-index.YYYY-MM-DD-HH_MM_SS.tar.bz2
+
+Updating the Beanstalk
+----------------------
+
+Go into the beanstalk control panel and clone an existing ucldc-solr-stage
+environment in the ucldc-solr application. Go into the configuration page and
+change the environment variable INDEX_PATH to point to the new index.
+Once the environment is updated, run a "Rebuild Environment". Building the
+environment will recreate the machines and run the AWS eb commands that download
+the INDEX_PATH file and run the solr index on that.
+
+
+Other AWS Related Admin Tasks
+-----------------------------
+
+When new harvester or ingest code is pushed, you need to crate a new generation
+of worker machines to pick up the new code.
+
+First, terminate the existing machines.
+
+    ansible-playbook -i ~/code/ec2.py ~/code/ingest_deploy/ansible/terminate_workers.yml <--limit=10.60.?.?>
+
+Then go through the worker create process again, creating and provisioning
+machines as needed.
 
 License
 =======
