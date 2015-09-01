@@ -2,7 +2,7 @@
 - name: Get UCLDC operator keys to account, no need for master key
   sudo: no
   get_url:
-    url: https://raw.github.com/mredar/appstrap/master/cdl/ucldc-operator-keys.txt
+    url: https://raw.github.com/ucldc/appstrap/master/cdl/ucldc-operator-keys.txt
     dest: ~/.ssh/ucldc_operator_keys
     force: no
 - name: get lines for adding to authorized_keys
