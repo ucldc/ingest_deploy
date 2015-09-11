@@ -26,9 +26,13 @@ fi
 DATA_BRANCH=$1
 echo "DB $DATA_BRANCH"
 
-if [[ $DATA_BRANCH ne "stage" -o $DATA_BRANCH ne "production" ]]
-    echo DATA_BRANCH must be stage or production
-    exit
+if [[ $DATA_BRANCH != "stage" ]];
+  then
+    if [[ $DATA_BRANCH != "production" ]];
+      then
+    	echo DATA_BRANCH must be stage or production
+    	exit
+    fi
 fi
 
 . ~/.harvester-env
@@ -39,7 +43,7 @@ set -o nounset
 
 dt=`date '+%Y%m%d_%H%M%S'`
 
-stdbuf -i0 -o0 -e0 ansible-playbook -i \ 
+stdbuf -i0 -o0 -e0 ansible-playbook -i \
   {{ dir_code }}/ingest_deploy/ansible/hosts \
     {{ dir_code }}/harvester/harvester/grab-solr-index-playbook.yml \
     --extra-vars="server_role=stage" --limit="solr-stage" \

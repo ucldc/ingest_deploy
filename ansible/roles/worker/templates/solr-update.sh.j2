@@ -13,15 +13,9 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" # http://stackoverflow.c
 cd $DIR
 
 usage(){
-    ./beanstalk-describe.sh ucldc-solr
-    echo "deploy-version.sh version-label environment-name"
+    echo "solr-update.sh <--since=VAL>"
     exit 1
 }
-
-if [ $# -ne 2 ];
-  then
-    usage
-fi
 
 . ~/.harvester-env
 
@@ -31,7 +25,7 @@ set -o nounset
 
 dt=`date '+%Y%m%d_%H%M%S'`
 
-stdbuf -i0 -o0 -e0 python {{ dir_code }}/harvester/harvester/{{ run_dir_solr }}r.py \
+stdbuf -i0 -o0 -e0 python {{ dir_code }}/harvester/harvester/solr_updater.py \
   $COUCHDB_URL ucldc $URL_SOLR $@ \
   &> {{ dir_run }}/{{ run_dir_solr }}/log/solr-up-${dt}.out &
 
