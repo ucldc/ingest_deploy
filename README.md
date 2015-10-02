@@ -141,12 +141,13 @@ change the environment variable INDEX_PATH to point to the new index.
 Once the environment is updated, run a "Rebuild Environment". Building the
 environment will recreate the machines and run the AWS eb commands that download
 the INDEX_PATH file and run the solr index on that.
+NOTE: need scripts to automate this.
 
 
 Other AWS Related Admin Tasks
 -----------------------------
 
-When new harvester or ingest code is pushed, you need to crate a new generation
+When new harvester or ingest code is pushed, you need to create a new generation
 of worker machines to pick up the new code.
 
 First, terminate the existing machines.
