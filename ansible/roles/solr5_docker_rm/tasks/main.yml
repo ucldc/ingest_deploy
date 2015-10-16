@@ -1,0 +1,21 @@
+---
+# Remove the container & image for solr, in prep for rebuild.
+# Remove index as well
+# tasks file for solr5_docker_rm
+- name: remove the running container
+  sudo: yes
+  docker: 
+    name: solr
+    state: absent
+  file:
+    path: 
+    state: directory
+    mode: 0777
+- name: remove the docker image
+  sudo: yes
+  docker_image:
+    name: "{{ docker_image_name }}"
+    state: absent
+- name: remove the index files
+  cmd: rm -rf {{dir_index}}/*
+  tags: rm_index

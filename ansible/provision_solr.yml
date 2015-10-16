@@ -7,6 +7,7 @@
     dir_role_templates: "roles/{{ role }}/templates"
     docker_image_name: ucldc/solr
     dir_code: code/solr_api
+    dir_index: /opt/solr/data
   pre_tasks:
     - name: check if extra disk already in fstab?
       shell: grep -c /dev/xvdb /etc/fstab 

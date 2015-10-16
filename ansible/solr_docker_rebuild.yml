@@ -1,0 +1,13 @@
+---
+- hosts: solr
+  sudo: yes
+  gather_facts: yes
+  vars:
+    role: solr
+    #dir_role_templates: "roles/{{ role }}/templates"
+    docker_image_name: ucldc/solr
+    dir_code: code/solr_api
+    dir_index: /opt/solr/data
+  roles:
+    - solr5_docker_rm
+    - solr5_docker
