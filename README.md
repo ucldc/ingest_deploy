@@ -95,8 +95,8 @@ machines setup & running a worker process run:
 
 This will provision the workers by installing required software, configurations
 and start running Akara & the worker processes that listen on the queues
-specified. You should see the worker processes appear in the rq monitor once
-this is done.
+specified. You should see the worker processes appear in the rq monitor
+dashboard once this is done.
 
 NOTE: if you already have provisioned worker machines running jobs, use the
 --limit=<ip range> eg. --limit=10.60.22.\*. Rerunning the provisioning will put
@@ -178,6 +178,31 @@ First, terminate the existing machines.
 
 Then go through the worker create process again, creating and provisioning
 machines as needed.
+
+What to do when harvests fail
+-----------------------------
+
+First take a look at the RQ Dashboard. There will be a bit of the error message
+there. Hopefully this would identify the error and you can modify whatever is
+going wrong.
+
+If you need more extensive access to logs, they are all stored on the AWS
+CloudWatch platform. Go to the CloudWatch page in the AWS console and choose the
+"Logs" page.
+![ucldc-cw logs](docs/images/screen_shot_cloudwatch_logs_page.png)
+The /var/local/rqworker & /var/local/akara contain the logs from the worker
+processes & the Akara server on a worker instance.
+The logs are named with the instance id & ip address, e.g. ingest-stage-i-127546c9-10.60.28.224
+![ucldc-cw rqworker-log-page](docs/images/screen_shot_cloudwatch_rqworker-logs-page.png)
+You will probably need to use the sorting by "Last Event Time" to get the most
+recent logs. Find the log of interest by IP or instance id & click through. You
+will then see the logs for that worker instance:
+![ucldc-cw rqworker-log](docs/images/screen_shot_cloudwatch_rqworker-log.png)
+
+If this doesn't get you enough information, you can ssh to a worker instance and
+watch the logs real time if you like. tail -f /var/local/rqworker/worker.log or
+/var/local/akara/logs/error.log.
+
 
 License
 =======
