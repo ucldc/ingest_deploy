@@ -16,11 +16,11 @@ Tools:
 - [Ansible](http://www.ansible.com/home) (Version X.X)
 - if using VirtualBox, install the vagrant-vbguest 
 
-Resources that you'll be using:
+Primary <a href="https://docs.google.com/drawings/d/18Whi3nZGNgKQ2qh-XnJlV3McItyp-skuGSqH5b_L-X8/edit">harvesting infrastructure</a> components that you'll be using:
 
 - <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> (admin interface)
+- ingest front
 - majorTom
-- front end
 - RQ Dashboard
 
 UCLDC Harvesting operations guide
@@ -82,23 +82,26 @@ Running a harvest
 
 Before initiating a harvest, you'll first need to confirm if the collection has previously been harvested -- or if it's a new collection:
 
-* Consult the <a href="https://registry.cdlib.org/admin/library_collection/collection/>Collection Registry</a> and look up the collection, to determine the key.  For example, for <a href="https://registry.cdlib.org/admin/library_collection/collection/26189/">"Radiologic Imaging Lab collection"</a>, the key is "26189"
+* Log into the <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> (admin interface) and look up the collection, to determine the key.  For example, for <a href="https://registry.cdlib.org/admin/library_collection/collection/26189/">"Radiologic Imaging Lab collection"</a>, the key is "26189"
 * Query CouchDB using this URL syntax.  Replace the key parameter with the key for the collection: `https://52.10.100.133/couchdb/ucldc/_design/all_provider_docs/_view/by_provider_name_count?key=%2226189%22`
 
 If you have results in the resulting "value" parameter, then you'll need to remove the harvested records from CouchDB:
 
-* Log into majorTom
-* Run this command, adding the key for the collection at the end: `python ~/code/harvester/scripts/delete_collection.py 23065`
+* Log into majorTom.
+* Run this command, adding the key for the collection at the end: `python ~/code/harvester/scripts/delete_collection.py 23065`.
+* The proceed with the steps below for conducting a new harvest.
 
-If you have zero results
+If you have zero results, then you'll be conducting a new harvest:
 
-Queue collections for (re)harvest via the [UCLDC Registry Admin Interface](https://registry.cdlib.org/admin). Once you have logged in, select collections you want to queue, and then choose `Start harvest normal stage` from the `Action` drop-down. You should then get feedback message verifying that the collections have been queued.
+* <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> (admin interface) and look up the collection
+* Choose `Start harvest normal stage` from the `Action` drop-down. 
+* You should then get feedback message verifying that the collections have been queued.
 
 Note: "normal stage" is the current default. When you provision workers (see below), you can specify which queue(s) they will poll for jobs via the `rq_work_queues` parameter. The example given below sets the workers up to listen for jobs on `normal-stage` and `low-stage`, but you can change this if need be. 
 
-### Harvest content through to couchDB
+### Harvest the collection through to CouchDB
 
-The following sections describe the process for ingesting content from harvest targets. This is done via the use of "transient" rq worker instances, which are created as needed and then deleted after use. Once the rq workers have been created and provisioned, they will automatically look for jobs in the queue and run the full harvester code for those jobs. The end result is that couchDB is updated.
+The following sections describe the process for harvesting collections through to CouchDB. This is done via the use of "transient" <a href="http://python-rq.org/">Redis Queue</a> (RQ) worker instances, which are created as needed and then deleted after use. Once the RQ workers have been created and provisioned, they will automatically look for jobs in the queue and run the full harvester code for those jobs. The end result is that CouchDB is updated.
 
 Note: to run these processes, you need to log onto the ingest front machine and then into the majorTom machine. Getting access to these machines is a one time setup step that Mark needs to walk you through.
 
