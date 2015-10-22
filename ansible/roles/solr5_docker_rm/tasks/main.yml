@@ -17,5 +17,5 @@
     name: "{{ docker_image_name }}"
     state: absent
 - name: remove the index files
-  cmd: rm -rf {{dir_index}}/*
+  command: rm -rf {{dir_index}}/*
   tags: rm_index
