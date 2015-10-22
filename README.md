@@ -20,7 +20,7 @@ UCLDC Harvesting operations guide
 =================================
 
 
-add monitoring user
+Adding a monitoring user (one time set up)
 --------------------------------
 
 pull the ucldc/ingest_deploy project
@@ -55,7 +55,7 @@ From a machine that can already access the ingest front machine with ssh run:
 This will install the users.digest to allow access for the monitoring user.
 
 
-Adding an admin user
+Adding an admin user  (one time set up)
 --------------------
 
 add your public ssh to keys file in https://github.com/ucldc/appstrap/tree/master/cdl/ucldc-operator-keys.txt
@@ -68,72 +68,109 @@ From a machine that can already access the ingest front machine with ssh run:
 This will add your public key to the ~/.ssh/authorized_keys for the ec2-user on
 the ingest front machine.
 
-
-Creating workers
+Running a harvest
 ----------------
 
-You need to log onto the ingest front machine and then to the majorTom machine.
-The key to access instances in the private subnet has a password, ask Mark for
-it.
+### Queue collections for harvest
 
-Log in to the majorTom machine. From here you can run the ansible playbooks to
-create and provision worker machines.
+Queue collections for (re)harvest via the [UCLDC Registry Admin Interface](https://registry.cdlib.org/admin). Once you have logged in, select collections you want to queue, and then choose `Start harvest normal stage` from the `Action` drop-down. You should then get feedback message verifying that the collections have been queued.
 
-First you need to activate the virtualenv in ~/workers_local/ 
+Note: "normal stage" is the current default. When you provision workers (see below), you can specify which queue(s) they will poll for jobs via the `rq_work_queues` parameter. The example given below sets the workers up to listen for jobs on `normal-stage` and `low-stage`, but you can change this if need be. 
+
+### Harvest content through to couchDB
+
+The following sections describe the process for ingesting content from harvest targets. This is done via the use of "transient" rq worker instances, which are created as needed and then deleted after use. Once the rq workers have been created and provisioned, they will automatically look for jobs in the queue and run the full harvester code for those jobs. The end result is that couchDB is updated.
+
+Note: to run these processes, you need to log onto the ingest front machine and then into the majorTom machine. Getting access to these machines is a one time setup step that Mark needs to walk you through.
+
+#### Create workers
+
+Log in to the majorTom machine. From here you can run the ansible playbooks to create and provision worker machines.
+
+activate the virtualenv in ~/workers_local/ :
 
     . ~/workers_local/bin/activate
 
-Then to create some worker machines run:
+Then to create some worker machines (bare ec2 instances), run:
 
     ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ingest_deploy/ansible/hosts ~/code/ingest_deploy/ansible/create_worker-stage.yml --extra-vars="count=3"
 
-The "count=##" will set the number of instances to create.
-Once this runs and the instances are in a state of "running", to get the
-machines setup & running a worker process run:
+The `count=##` parameter will set the number of instances to create. For harvesting one small collection you can set this to `count=1`. To re-harvest all collections, you can set this to `count=20`. For anything in between, use your judgment.
+
+You should see output in the console as the playbook runs through its tasks. At the end, it will give you a status line. Look for `fail=0` to verify that everything ran OK.
+
+#### Provision workers
+
+Once this is done and the instances are in a state of "running", get the machines setup and running a worker process by running:
 
     ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ec2.py ~/code/ingest_deploy/ansible/provision_worker-stage.yml --extra-vars='rq_work_queues=["normal-stage","low-stage"]'
 
 This will provision the workers by installing required software, configurations
 and start running Akara & the worker processes that listen on the queues
-specified. You should see the worker processes appear in the rq monitor
-dashboard once this is done.
+specified. 
+
+You should see the worker processes appear in the rq dashboard once
+this is done. (As Mark for access to the dashboard).
 
 NOTE: if you already have provisioned worker machines running jobs, use the
---limit=<ip range> eg. --limit=10.60.22.\*. Rerunning the provisioning will put
-the current running workers in a bad state, you will then have to log on to the
+--limit=<ip range> eg. --limit=10.60.22.\* to make sure you don't reprovision 
+a currently running machine. Otherwise rerunning the provisioning will put the 
+current running workers in a bad state, and you will then have to log on to the 
 worker and restart the worker process or terminate the machine.
 
 AWS assigns unique subnets to the groups of workers you start, so in general,
 different generations of machines will be distinguished by the different C class
 subnet. This makes the --limit parameter quite useful.
 
+#### Verify that the harvests are complete and content is in couchDB
 
-Creating New Solr Indexes
--------------------------
+You can monitor the jobs in the rq dashboard (ask Mark for access). The jobs will disappear from queue when they've all been slurped up by the workers. You will be able to see the workers running jobs (indicated by a "play" triangle icon) and then finishing (indicated by a "pause" icon).
+
+You should then be able to see any changes reflected in the couchDB admin console, or via an API query. (Ask Mark for access). **_need more detail here_**
+
+#### Delete the workers
+
+To terminate all workers, run:
+
+    ansible-playbook -i ~/code/ec2.py ~/code/ingest_deploy/ansible/terminate_workers.yml <--limit=10.60.?.?>
+    
+Again, you can use the `limit` parameter to specify a range of IP addresses for deletion.
+    
+### Create a New Solr Index
+
+This section describes how to create a new solr index based on the current couchDB.
 
 Currently, solr updates are run from the majorTom machine. The solr update
 looks at the couchdb changes endpoint. This endpoint has a record for each
 document that has been created in the database, including deleted documents.
 
-Run
+To do an incremental update, run:
 
-    /usr/local/bin/solr-update.sh <--since=(int)>
+    /usr/local/bin/solr-update.sh
 
-This will run an incremental update from the last changes sequence number that is saved in s3 at solr.ucldc/couchdb_since/<DATA_BRANCH>.
+This will run an incremental update, which is what you will most often want to do. This uses the last changes sequence number that is saved in s3 at solr.ucldc/couchdb_since/<DATA_BRANCH> in order to determine what has changed.
 
-To specify the last sequence number (since parameter to the couchdb change
-endpoint). To reindex all docs use --since=0
+Or, to reindex all docs run: 
 
-Once the solr index is updated, run:
+    /usr/local/bin/solr-update.sh --since=0
 
-    /usr/local/bin/solr-index-to-s3.sh <DATA_BRANCH> (stage|production)
+Once the solr index is updated, push the index to S3:
 
-This will push the last build solr index to s3 at the location
+    /usr/local/bin/solr-index-to-s3.sh stage
+    
+where `stage` is the DATA_BRANCH. (Note: right now, we are only using `stage`, so this is the default. In the future, we may have other branches, i.e. `production`.)
+    
+This will push the last build solr index to s3 at the location:
 
     solr.ucldc/indexes/<DATA_BRANCH>/YYYY/MM/solr-index.YYYY-MM-DD-HH_MM_SS.tar.bz2
+    
+Note that stashing a solr index on s3 does nothing in terms of updating the Calisphere front-end website. In order to update the web application so that it points to the data represented in the new index, you have to update the Elastic Beanstalk instance  configuration (see below).
+    
 
-Updating the Beanstalk
+Updating the Beanstalk (Pushing New Solr Index to Front-end)
 ----------------------
+
+This section describes how to update an Elastic Beanstalk configuration to point to a new solr index. This will update the specified Calisphere front-end web application so that it points to the data in the new solr instance.
 
 Go into the beanstalk control panel and select the ucldc-solr application.
 ![ucldc-solr app view](docs/images/screen_shot_ucldc_solr_app.png)
@@ -168,6 +205,8 @@ NOTE: need scripts to automate this.
 
 Other AWS Related Admin Tasks
 -----------------------------
+
+### Picking up new harvester or ingest code
 
 When new harvester or ingest code is pushed, you need to create a new generation
 of worker machines to pick up the new code.
@@ -233,3 +272,4 @@ INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 POSSIBILITY OF SUCH DAMAGE.
+
