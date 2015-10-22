@@ -16,6 +16,13 @@ Tools:
 - [Ansible](http://www.ansible.com/home) (Version X.X)
 - if using VirtualBox, install the vagrant-vbguest 
 
+Resources that you'll be using:
+
+- <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> (admin interface)
+- majorTom
+- front end
+- RQ Dashboard
+
 UCLDC Harvesting operations guide
 =================================
 
