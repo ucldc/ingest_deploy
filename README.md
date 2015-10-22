@@ -155,7 +155,14 @@ Then from the environment Dashboard, select the "Rebuild Environment" action:
 Again this can take a while. During the rebuild, the new solr index will be
 pulled to the beanstalk machines.
 Now QA against the newly cloned environment's URL. Once the QA looks OK, the
-final step is to swap URLs with the existing index environment.
+final step is to swap URLs with the existing index environment. From the new
+environment select the action "Swap Environment URLs". You will go to this
+screen and select the currently active environment:
+![ucldc-solr swap URLs](docs/images/screen_shot_clone_env-swap.png)
+Click the swap button & in a few seconds the old URL will point to the new
+environment.
+Once everything checks out well with the new index, you can terminate the older
+environment.
 
 NOTE: need scripts to automate this.
 
