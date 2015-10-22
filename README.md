@@ -136,22 +136,22 @@ Updating the Beanstalk
 ----------------------
 
 Go into the beanstalk control panel and select the ucldc-solr application.
-[ucldc-solr app view](docs/images/screen_shot_ucldc_solr_app.png)
+![ucldc-solr app view](docs/images/screen_shot_ucldc_solr_app.png)
 Select the existing environment you want to replace and clone the environment:
-[ucldc-solr clone env](docs/images/screen_shot_clone_env.png)
+![ucldc-solr clone env](docs/images/screen_shot_clone_env.png)
 If a new ami is available, choose it. Otherwise the defaults should be good. The
 URL will be swapped later so the current one doesn't matter.
-[ucldc-solr clone env config](docs/images/screen_shot_clone_env-config.png)
+![ucldc-solr clone env config](docs/images/screen_shot_clone_env-config.png)
 Wait for the cloning to finish, this can take a while, 15 minutes is not
 unusual. Eventually you will see this:
-[ucldc-solr clone env ready](docs/images/screen_shot_clone_env-ready.png)
+![ucldc-solr clone env ready](docs/images/screen_shot_clone_env-ready.png)
 Choose the "configuration" screen & go to the "software configuration" screen:
-[ucldc-solr clone config screen](docs/images/screen_shot_clone_env-software-config.png)
+![ucldc-solr clone config screen](docs/images/screen_shot_clone_env-software-config.png)
 Change the INDEX_PATH Environment Property to point to the new index on S3, then
 click apply and wait for the new environment to be ready again. (Health should
 be "Green")
 Then from the environment Dashboard, select the "Rebuild Environment" action:
-[ucldc-solr clone rebuild](docs/images/screen_shot_clone_env-rebuild.png)
+![ucldc-solr clone rebuild](docs/images/screen_shot_clone_env-rebuild.png)
 Again this can take a while. During the rebuild, the new solr index will be
 pulled to the beanstalk machines.
 Now QA against the newly cloned environment's URL. Once the QA looks OK, the
