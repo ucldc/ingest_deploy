@@ -227,10 +227,10 @@ Once the solr index is updated, and if it is ready for distribution to the Calis
 Note that stashing a Solr index on S3 does nothing in terms of updating the Calisphere front-end website. In order to update the web application so that it points to the data represented in the new index, you have to update the Elastic Beanstalk instance  configuration (see below).
     
 
-Updating Elastic Beanstalk (pushing Solr index to Calisphere front-end website)
+Updating Elastic Beanstalk
 ----------------------
 
-This section describes how to update an Elastic Beanstalk configuration to point to a new solr index. This will update the specified Calisphere front-end web application so that it points to the data in the new solr instance.
+This section describes how to update an Elastic Beanstalk configuration to point to a new Solr index stored on S3. This will update the specified Calisphere front-end web application so that it points to the data in the new Solr instance.
 
 Go into the Elastic Beanstalk control panel and select the ucldc-solr application.
 ![ucldc-solr app view](docs/images/screen_shot_ucldc_solr_app.png)
