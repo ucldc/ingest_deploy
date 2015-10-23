@@ -95,7 +95,7 @@ If you do not have results in the "value" parameter, then go to the next step of
 
 * Log into the majorTom machine.
 * Run this command, adding the key for the collection at the end: `python ~/code/harvester/scripts/delete_collection.py 23065`.
-* The proceed with the steps below for creating a new harvest job
+* Then proceed with the steps below for creating a new harvest job
 
 ### 2. Create a harvest job
 
