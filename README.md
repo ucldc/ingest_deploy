@@ -21,7 +21,7 @@ Primary <a href="https://docs.google.com/drawings/d/18Whi3nZGNgKQ2qh-XnJlV3McIty
 - <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> (admin interface)
 - ingest front machine
 - majorTom machine
-- RQ Dashboard
+- <a href="https://52.10.100.133/rq/">RQ Dashboard</a> (admin interface)
 
 UCLDC Harvesting operations guide
 =================================
@@ -79,26 +79,28 @@ the ingest front machine.
 Running a harvest
 ----------------
 
-### Queue collections for harvest
+### 1. Queue collections for harvest
 
 Before initiating a harvest, you'll first need to confirm if the collection has previously been harvested -- or if it's a new collection:
 
 * Log into the <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> (admin interface) and look up the collection, to determine the key.  For example, for <a href="https://registry.cdlib.org/admin/library_collection/collection/26189/">"Radiologic Imaging Lab collection"</a>, the key is "26189"
 * Query CouchDB using this URL syntax.  Replace the key parameter with the key for the collection: `https://52.10.100.133/couchdb/ucldc/_design/all_provider_docs/_view/by_provider_name_count?key=%2226189%22`
 
-If you have results in the resulting "value" parameter, then you'll need to remove the harvested records from CouchDB:
+#### Re-harvest
+If you have results in the "value" parameter, then you'll be conducting a re-harvest. You'll first need to remove the harvested records from CouchDB:
 
 * Log into majorTom.
 * Run this command, adding the key for the collection at the end: `python ~/code/harvester/scripts/delete_collection.py 23065`.
 * The proceed with the steps below for conducting a new harvest.
 
+#### New harvest
 If you have zero results, then you'll be conducting a new harvest:
 
 * <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> (admin interface) and look up the collection
-* Choose `Start harvest normal stage` from the `Action` drop-down. 
+* Choose `Start harvest normal stage` from the `Action` drop-down. Note: "normal stage" is the current default. When you provision workers (see below), you can specify which queue(s) they will poll for jobs via the `rq_work_queues` parameter. The example given below sets the workers up to listen for jobs on `normal-stage` and `low-stage`, but you can change this if need be. 
 * You should then get feedback message verifying that the collections have been queued.
 
-Note: "normal stage" is the current default. When you provision workers (see below), you can specify which queue(s) they will poll for jobs via the `rq_work_queues` parameter. The example given below sets the workers up to listen for jobs on `normal-stage` and `low-stage`, but you can change this if need be. 
+You can now begin to monitor the harvesting process through the <a href="https://52.10.100.133/rq/">RQ Dashboard</a> (admin interface). At this stage, you'll see the harvest job listed in the queue.
 
 ### Harvest the collection through to CouchDB
 
@@ -118,13 +120,11 @@ You should see output in the console as the playbook runs through its tasks. At 
 
 #### Provision workers
 
-Once this is done and the instances are in a state of "running", get the machines setup and running a worker process:
+Once this is done and the instances are in a state of "running", you'll need to provision the workers by installing required software, configurations and start running Akara & the worker processes that listen on the queues
+specified:
 
-* To provision the workers by installing required software, configurations
-and start running Akara & the worker processes that listen on the queues
-specified, run: `ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ec2.py ~/code/ingest_deploy/ansible/provision_worker-stage.yml --extra-vars='rq_work_queues=["normal-stage","low-stage"]'`
-
-You should see the worker processes appear in the RQ dashboard once this is done. (As Mark for access to the dashboard).
+* To provision the workers, run: `ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ec2.py ~/code/ingest_deploy/ansible/provision_worker-stage.yml --extra-vars='rq_work_queues=["normal-stage","low-stage"]'`
+* Check the status of the the harvesting process through the <a href="https://52.10.100.133/rq/">RQ Dashboard</a> (admin interface).  You should now see the provisioned workers listed, and acting on the jobs in the queue. You will be able to see the workers running jobs (indicated by a "play" triangle icon) and then finishing (indicated by a "pause" icon).
 
 NOTE: if you already have provisioned worker machines running jobs, use the
 --limit=<ip range> eg. --limit=10.60.22.\* to make sure you don't reprovision 
@@ -136,19 +136,28 @@ AWS assigns unique subnets to the groups of workers you start, so in general,
 different generations of machines will be distinguished by the different C class
 subnet. This makes the --limit parameter quite useful.
 
-#### Verify that the harvests are complete and content is in couchDB
+#### Verify that the harvests are complete
 
-You can monitor the jobs in the rq dashboard (ask Mark for access). The jobs will disappear from queue when they've all been slurped up by the workers. You will be able to see the workers running jobs (indicated by a "play" triangle icon) and then finishing (indicated by a "pause" icon).
+The jobs will disappear from queue when they've all been slurped up by the workers. You should then be able to QA check the harvested collection:
 
-You should then be able to see any changes reflected in the couchDB admin console, or via an API query. (Ask Mark for access). **_need more detail here_**
+* Query CouchDB using this URL syntax.  Replace the key parameter with the key for the collection: `https://52.10.100.133/couchdb/ucldc/_design/all_provider_docs/_view/by_provider_name_count?key=%2226189%22`
+* Results in the "value" parameter indicate the total number of metadata records harvested; this should align with the expected results. If there are no results, you will need to troubleshoot and re-harvest.
 
-#### Delete the workers
 
-To terminate all workers, run:
+#### QA check collection in CouchDB
 
-    ansible-playbook -i ~/code/ec2.py ~/code/ingest_deploy/ansible/terminate_workers.yml <--limit=10.60.?.?>
-    
-Again, you can use the `limit` parameter to specify a range of IP addresses for deletion.
+
+#### QA check collection in Solr
+
+
+
+
+#### Terminate worker instances
+
+Once you've QA checked the results and have completed the harvest, you'll need to terminate the worker instances.
+
+* Log into majorTom
+* Run: `ansible-playbook -i ~/code/ec2.py ~/code/ingest_deploy/ansible/terminate_workers.yml <--limit=10.60.?.?>` . You can use the `limit` parameter to specify a range of IP addresses for deletion.
     
 ### Create a New Solr Index
 
