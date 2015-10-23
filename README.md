@@ -16,7 +16,7 @@ Tools:
 - [Ansible](http://www.ansible.com/home) (Version X.X)
 - if using VirtualBox, install the vagrant-vbguest 
 
-Primary <a href="https://docs.google.com/drawings/d/18Whi3nZGNgKQ2qh-XnJlV3McItyp-skuGSqH5b_L-X8/edit">harvesting infrastructure</a> components that you'll be using.  Ask Mark Redar for access to these components:
+Primary <a href="https://docs.google.com/drawings/d/18Whi3nZGNgKQ2qh-XnJlV3McItyp-skuGSqH5b_L-X8/edit">harvesting infrastructure</a> components that you'll be using.  Ask Mark Redar for access to these components.  Note that you will need to log onto the ingest front machine and then into the majorTom machine to run commands:
 
 - <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> (admin interface)
 - ingest front machine
@@ -90,7 +90,7 @@ Before initiating a harvest, you'll first need to confirm if the collection has 
 
 If you do not have results in the "value" parameter, then go to the next step of creating a harvest job.  If you do have results in the "value" parameter, then you'll be conducting a re-harvest. You'll first need to remove the harvested records from CouchDB:
 
-* Log into majorTom.
+* Log into the majorTom machine.
 * Run this command, adding the key for the collection at the end: `python ~/code/harvester/scripts/delete_collection.py 23065`.
 * The proceed with the steps below for creating a new harvest job
 
@@ -106,11 +106,9 @@ You can now begin to monitor the harvesting process through the <a href="https:/
 
 The following sections describe the process for harvesting collections through to CouchDB. This is done via the use of "transient" <a href="http://python-rq.org/">Redis Queue</a> (RQ) worker instances, which are created as needed and then deleted after use. Once the RQ workers have been created and provisioned, they will automatically look for jobs in the queue and run the full harvester code for those jobs. The end result is that CouchDB is updated.
 
-Note: to run these processes, you need to log onto the ingest front machine and then into the majorTom machine. Getting access to these machines is a one time setup step that Mark needs to walk you through.
-
 #### 3.1. Create workers
 
-* Log in to the majorTom machine. 
+* Log into the majorTom machine. 
 * To activate the virtualenv in ~/workers_local/, run: `. ~/workers_local/bin/activate`
 * To create some worker machines (bare ec2 instances), run: `ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ingest_deploy/ansible/hosts ~/code/ingest_deploy/ansible/create_worker-stage.yml --extra-vars="count=3"`
 
@@ -123,6 +121,7 @@ You should see output in the console as the playbook runs through its tasks. At 
 Once this is done and the instances are in a state of "running", you'll need to provision the workers by installing required software, configurations and start running Akara & the worker processes that listen on the queues
 specified:
 
+* Log into the majorTom machine.
 * To provision the workers, run: `ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ec2.py ~/code/ingest_deploy/ansible/provision_worker-stage.yml --extra-vars='rq_work_queues=["normal-stage","low-stage"]'`
 * Check the status of the the harvesting process through the <a href="https://52.10.100.133/rq/">RQ Dashboard</a> (admin interface).  You should now see the provisioned workers listed, and acting on the jobs in the queue. You will be able to see the workers running jobs (indicated by a "play" triangle icon) and then finishing (indicated by a "pause" icon).
 
@@ -184,54 +183,47 @@ NOTE: To view the original XTF-indexed metadata for content harvested from Calis
  * In the "Jump to" box, enter the unique ID for a given  metadata record (e.g., 26094--00000001)
  * You can now view the metadata in either its source format or mapped to CouchDB fields
 
-#### QA check collection in Solr
+### 5. QA check collection in Solr
 
 The objective of this QA process is to view any results passed from the CouchDB staging instance to the Solr staging instance; it can also be used to verify issues or discrepancies in data between the two instances.  It assumes that the data in CouchDB has been correctly mapped through to Solr; this is a fixed mapping, as documented on the second tab of the <a href="https://docs.google.com/spreadsheets/d/1u2RE9PD0N9GkLQTFNJy3HiH9N5IbKDG52HjJ6JomC9I/edit#gid=2062617414">metadata crosswalk</a>.
+
+Before you can conduct QA checking, you'll need to update Solr -- see instructions below.
 
 <b>Querying Solr</b>
 * Log into <a href="https://52.10.100.133/solr/#/dc-collection/query">Solr</a> (admin interface)
 * Consult the <a href="https://wiki.apache.org/solr/SolrQuerySyntax">Solr guide</a> for additional query details.
 
-
-#### Terminate worker instances
+### 6. Terminate worker instances
 
 Once you've QA checked the results and have completed the harvest, you'll need to terminate the worker instances.
 
 * Log into majorTom
 * Run: `ansible-playbook -i ~/code/ec2.py ~/code/ingest_deploy/ansible/terminate_workers.yml <--limit=10.60.?.?>` . You can use the `limit` parameter to specify a range of IP addresses for deletion.
     
-### Create a New Solr Index
+Updating Solr
+----------------
 
-This section describes how to create a new solr index based on the current couchDB.
+### Create a new Solr index based on the current CouchDB instance
 
-Currently, solr updates are run from the majorTom machine. The solr update
-looks at the couchdb changes endpoint. This endpoint has a record for each
-document that has been created in the database, including deleted documents.
+Currently, Solr updates are run from the majorTom machine. The Solr update looks at the Couchdb changes endpoint. This endpoint has a record for each document that has been created in the database, including deleted documents.
 
-To do an incremental update, run:
+* To do an incremental update, run: `/usr/local/bin/solr-update.sh`. This will run an incremental update, which is what you will most often want to do. This uses the last changes sequence number that is saved in s3 at solr.ucldc/couchdb_since/<DATA_BRANCH> in order to determine what has changed.
+* To reindex all docs run: `/usr/local/bin/solr-update.sh --since=0`
 
-    /usr/local/bin/solr-update.sh
 
-This will run an incremental update, which is what you will most often want to do. This uses the last changes sequence number that is saved in s3 at solr.ucldc/couchdb_since/<DATA_BRANCH> in order to determine what has changed.
+### Generating Solr indexes for S3:
 
-Or, to reindex all docs run: 
+Once the solr index is updated, and if it is ready for distribution to the Calisphere front-end website, you can generate an index to store on S3:
 
-    /usr/local/bin/solr-update.sh --since=0
-
-Once the solr index is updated, push the index to S3:
-
-    /usr/local/bin/solr-index-to-s3.sh stage
-    
-where `stage` is the DATA_BRANCH. (Note: right now, we are only using `stage`, so this is the default. In the future, we may have other branches, i.e. `production`.)
-    
-This will push the last build solr index to s3 at the location:
+* Run: `/usr/local/bin/solr-index-to-s3.sh stage`, where `stage` is the DATA_BRANCH. (Note: right now, we are only using `stage`, so this is the default. In the future, we may have other branches, i.e. `production`.)
+* This will push the last build Solr index to S3 at the location:
 
     solr.ucldc/indexes/<DATA_BRANCH>/YYYY/MM/solr-index.YYYY-MM-DD-HH_MM_SS.tar.bz2
     
-Note that stashing a solr index on s3 does nothing in terms of updating the Calisphere front-end website. In order to update the web application so that it points to the data represented in the new index, you have to update the Elastic Beanstalk instance  configuration (see below).
+Note that stashing a Solr index on S3 does nothing in terms of updating the Calisphere front-end website. In order to update the web application so that it points to the data represented in the new index, you have to update the Elastic Beanstalk instance  configuration (see below).
     
 
-Updating the Beanstalk (Pushing New Solr Index to Front-end)
+Updating the Beanstalk (pushing Solr index to Calisphere front-end website)
 ----------------------
 
 This section describes how to update an Elastic Beanstalk configuration to point to a new solr index. This will update the specified Calisphere front-end web application so that it points to the data in the new solr instance.
