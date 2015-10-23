@@ -168,12 +168,12 @@ NOTE: To view the original XTF-indexed metadata for content harvested from Calis
 <b>Querying CouchDB</b>
 * To generate a results set of metadata records for a given collection in CouchDB, using this URL syntax: `https://52.10.100.133/couchdb/ucldc/_design/all_provider_docs/_list/has_field_value/by_provider_name_wdoc?key="10046"&field=originalRecord.subject&limit=100'`. Each metadata record in the results set will have a unique ID  (e.g., 26094--00000001). This can be used for viewing the metadata within the CouchDB UI.
 * Parameters: 
- * field="####": Optional.  Limit the display output to a particular field. 
- * key="####": Optional.  Limits by collection, using the Collection Registry numeric ID.   
- * limit="####": Optional.  Sets the number or results 
- * originalRecord.####: Optional.  Limit the display output to a particular metadata field.  Replace #### with the CouchDB data element (e.g., title, creator) 
- * include_docs="true": Optional.  Will include complete metadata record within the results set (JSON output) 
- * value=####:  Optional.  Search for a particular value, within a results set of metadata records from a particular collection.  Note: exact matches only!
+ * <b>field</b>: Optional.  Limit the display output to a particular field. 
+ * <b>key</b>: Optional.  Limits by collection, using the Collection Registry numeric ID.   
+ * <b>limit</b>: Optional.  Sets the number or results 
+ * <b>originalRecord</b>: Optional.  Limit the display output to a particular metadata field; specify the CouchDB data element (e.g., title, creator) 
+ * <b>include_docs="true"</b>: Optional.  Will include complete metadata record within the results set (JSON output) 
+ * <b>value</b>:  Optional.  Search for a particular value, within a results set of metadata records from a particular collection.  Note: exact matches only!
 * To generate a results set of data values within a particular element (e.g., Rights), for metadata records from all collections: `https://52.10.100.133/couchdb/ucldc/_design/qa_reports/_view/sourceResource.rights_value?limit=100&group_level=2`
 * To check if there are null data values within a particular element (e.g., isShownAt), for metadata records from all collections: `https://52.10.100.133/couchdb/ucldc/_design/qa_reports/_view/isShownAt_value?limit=100&group_level=2&start_key=%5B%22__MISSING__%22%5D`
 * To view a result of raw CouchDB JSON output:  `https://52.10.100.133/couchdb/ucldc/_design/all_provider_docs/_view/by_provider_name?key="26094"&limit=1&include_docs=true`
