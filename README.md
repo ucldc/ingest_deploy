@@ -167,7 +167,7 @@ NOTE: To view the original XTF-indexed metadata for content harvested from Calis
 * Append the following to the URL, to set the number of results: `docsPerPage=###`
 
 <b>Querying CouchDB</b>
-* To generate a results set of metadata records for a given collection in CouchDB, using this URL syntax: `https://52.10.100.133/couchdb/ucldc/_design/all_provider_docs/_list/has_field_value/by_provider_name_wdoc?key="10046"&field=originalRecord.subject&limit=100'`. Each metadata record in the results set will have a unique ID  (e.g., 26094--00000001). This can be used for viewing the metadata within the CouchDB UI.
+* To generate a results set of metadata records for a given collection in CouchDB, using this URL syntax: `https://52.10.100.133/couchdb/ucldc/_design/all_provider_docs/_list/has_field_value/by_provider_name_wdoc?key="10046"&field=originalRecord.subject&limit=100`. Each metadata record in the results set will have a unique ID  (e.g., 26094--00000001). This can be used for viewing the metadata within the CouchDB UI.
 * Parameters: 
  * <b>field</b>: Optional.  Limit the display output to a particular field. 
  * <b>key</b>: Optional.  Limits by collection, using the Collection Registry numeric ID.   
