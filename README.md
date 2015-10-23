@@ -22,7 +22,7 @@ Primary <a href="https://docs.google.com/drawings/d/18Whi3nZGNgKQ2qh-XnJlV3McIty
 - ingest front machine
 - majorTom machine
 - <a href="https://52.10.100.133/rq/">RQ Dashboard</a> (admin interface)
-- <a href="https://52.10.100.133/couchdb/_utils/database.html?ucldc/_all_docs>CouchDB</a> (admin interface)
+- <a href="https://52.10.100.133/couchdb/_utils/database.html?ucldc/_all_docs">CouchDB</a> (admin interface)
 - <a href="https://52.10.100.133/solr/#/dc-collection/query">Solr</a> (admin interface)
 
 UCLDC Harvesting operations guide
@@ -179,7 +179,7 @@ NOTE: To view the original XTF-indexed metadata for content harvested from Calis
 
 <b>Viewing metadata for an object in CouchDB</b>
 
-* Log into <a href="https://52.10.100.133/couchdb/_utils/database.html?ucldc/_all_docs>CouchDB</a> (admin interface)
+* Log into <a href="https://52.10.100.133/couchdb/_utils/database.html?ucldc/_all_docs">CouchDB</a> (admin interface)
  * In the "Jump to" box, enter the unique ID for a given  metadata record (e.g., 26094--00000001)
  * You can now view the metadata in either its source format or mapped to CouchDB fields
 
