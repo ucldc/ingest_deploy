@@ -22,6 +22,7 @@ Primary <a href="https://docs.google.com/drawings/d/18Whi3nZGNgKQ2qh-XnJlV3McIty
 - ingest front machine
 - majorTom machine
 - <a href="https://52.10.100.133/rq/">RQ Dashboard</a> (admin interface)
+- <a href="https://52.10.100.133/couchdb/_utils/database.html?ucldc/_all_docs>CouchDB</a> (admin interface)
 - <a href="https://52.10.100.133/solr/#/dc-collection/query">Solr</a> (admin interface)
 
 UCLDC Harvesting operations guide
@@ -149,7 +150,7 @@ The jobs will disappear from queue when they've all been slurped up by the worke
 As a next step, QA check the harvested collection in CouchDB; you can also subsequently check the results in Solr.
 
 The objective of this part of the QA process is to ensure that source metadata (from a harvesting target) is correctly mapped through to CouchDB
-Suggested method is to review the 1) source metadata (e.g., original MARC21  record, original XTF-indexed metadata*) vis-a-vis the 2) a random sample of CouchDB results and 3) <a href="https://docs.google.com/spreadsheets/d/1u2RE9PD0N9GkLQTFNJy3HiH9N5IbKDG52HjJ6JomC9I/edit#gid=265758929"metadata crosswalk</a>. Things to check:
+Suggested method is to review the 1) source metadata (e.g., original MARC21  record, original XTF-indexed metadata*) vis-a-vis the 2) a random sample of CouchDB results and 3) <a href="https://docs.google.com/spreadsheets/d/1u2RE9PD0N9GkLQTFNJy3HiH9N5IbKDG52HjJ6JomC9I/edit#gid=265758929">metadata crosswalk</a>. Things to check:
 
 * Verify if metadata from the source record was carried over into CouchDB correctly: did any metadata get dropped?
 * Verify the metadata mappings: was the mapping handled correctly, going from the source metadata through to CouchDB, as defined in the metadata crosswalk?  
