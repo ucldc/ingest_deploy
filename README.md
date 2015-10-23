@@ -149,22 +149,22 @@ The jobs will disappear from queue when they've all been slurped up by the worke
 As a next step, QA check the harvested collection in CouchDB; you can also subsequently check the results in Solr.
 
 The objective of this part of the QA process is to ensure that source metadata (from a harvesting target) is correctly mapped through to CouchDB
-Suggested method is to review the 1) source metadata (e.g., original MARC21  record, original XTF-indexed metadata*) vis-a-vis the 2) a random sample of CouchDB results and 3) <a href="https://docs.google.com/spreadsheets/d/1u2RE9PD0N9GkLQTFNJy3HiH9N5IbKDG52HjJ6JomC9I/edit#gid=265758929"metadata crosswalk</a> 
+Suggested method is to review the 1) source metadata (e.g., original MARC21  record, original XTF-indexed metadata*) vis-a-vis the 2) a random sample of CouchDB results and 3) <a href="https://docs.google.com/spreadsheets/d/1u2RE9PD0N9GkLQTFNJy3HiH9N5IbKDG52HjJ6JomC9I/edit#gid=265758929"metadata crosswalk</a>. Things to check:
 
-* Check to confirm that metadata from the source record was carried over into CouchDB: did any metadata get dropped?
-* Check the metadata mappings: was the mapping handled correctly, going from the source metadata through to CouchDB, as defined in the metadata crosswalk?  
-* Check if any needed metadata remediation was completed (as defined in the metadata crosswalk) -- e.g., were rights statuses and statements globally applied?
-* Check for DPLA/CDL required data values -- are they present?  If not, we may need to go back to the data provider to supply the information -- or potentially supply it for them (through the Collection Registry)
-* Check the data values used within the various metadata elements:
- * Are there any errors or noticeable problems?  
- * Do the data  values look "correct" (e.g., for Type, data values are drawn from the  DCMI Type Vocabulary)?  
+* Verify if metadata from the source record was carried over into CouchDB correctly: did any metadata get dropped?
+* Verify the metadata mappings: was the mapping handled correctly, going from the source metadata through to CouchDB, as defined in the metadata crosswalk?  
+* Verify if any needed metadata remediation was completed (as defined in the metadata crosswalk) -- e.g., were rights statuses and statements globally applied?
+* Verify DPLA/CDL required data values -- are they present?  If not, we may need to go back to the data provider to supply the information -- or potentially supply it for them (through the Collection Registry)
+* Verify the data values used within the various metadata elements:
+ * Do the data values look "correct" (e.g., for Type, data values are drawn from the DCMI Type Vocabulary)?  
  * Any funky characters or problems with formatting of the data?  Any data coming through that looks like it may have underlying copyright issues
- 
+ * Are there any errors or noticeable problems? 
+   
 NOTE: To view the original XTF-indexed metadata for content harvested from Calisphere:
 * Go to Collection Registry, locate the collection that was harvested from XTF, and skip to the "URL harvest" field -- use that URL to generate a result of the XTF-indexed metadata (view source code to see raw XML)
 * Append the following to the URL, to set the number of results: `docsPerPage=###`
 
-##### Querying CouchDB
+<b>Querying CouchDB</b>
 * To generate a results set of metadata records for a given collection in CouchDB, using this URL syntax: 'https://52.10.100.133/couchdb/ucldc/_design/all_provider_docs/_list/has_field_value/by_provider_name_wdoc?key="10046"&field=originalRecord.subject&limit=100'. Each metadata record in the results set will have a unique ID  (e.g., 26094--00000001). This can be used for viewing the metadata within the CouchDB UI.
 * Parameters: 
  * field="####": Optional.  Limit the display output to a particular field. 
@@ -177,8 +177,9 @@ NOTE: To view the original XTF-indexed metadata for content harvested from Calis
 * To generate a results set of data values within a particular element (e.g., Rights), for metadata records from all collections: https://52.10.100.133/couchdb/ucldc/_design/qa_reports/_view/sourceResource.rights_value?limit=100&group_level=2
 * To check if there are null data values within a particular element (e.g., isShownAt), for metadata records from all collections: https://52.10.100.133/couchdb/ucldc/_design/qa_reports/_view/isShownAt_value?limit=100&group_level=2&start_key=%5B%22__MISSING__%22%5D
 * To view a result of raw CouchDB JSON output:  https://52.10.100.133/couchdb/ucldc/_design/all_provider_docs/_view/by_provider_name?key="26094"&limit=1&include_docs=true
+* Consult the <a href="http://wiki.apache.org/couchdb/HTTP_view_API">CouchDB guide</a> for additional query details.
 
-##### Viewing metadata for an object through the CouchDB UI
+<b>Viewing metadata for an object through the CouchDB UI</b>
 
 * To view a result in CouchDB UI, go to <href="https://52.10.100.133/couchdb/_utils/database.html?ucldc/_all_docs">https://52.10.100.133/couchdb/_utils/database.html?ucldc/_all_docs</a>
 * In the "Jump to" box, enter the unique ID for a given  metadata record (e.g., 26094--00000001)
@@ -186,7 +187,11 @@ NOTE: To view the original XTF-indexed metadata for content harvested from Calis
 
 #### QA check collection in Solr
 
+The objective of this QA process is to view any results passed from the CouchDB staging instance to the Solr staging instance; it can also be used to verify issues or discrepancies in data between the two instances.  It assumes that the data in CouchDB has been correctly mapped through to Solr; this is a fixed mapping, as documented on the second tab of the <a href="https://docs.google.com/spreadsheets/d/1u2RE9PD0N9GkLQTFNJy3HiH9N5IbKDG52HjJ6JomC9I/edit#gid=2062617414">metadata crosswalk</a>.
 
+<b>Querying Solr</b>
+* Use the <a href="https://52.10.100.133/solr/#/dc-collection/query">Solr</a> (admin interface)
+* Consult the <a href="https://wiki.apache.org/solr/SolrQuerySyntax">Solr guide</a> for additional query details.
 
 
 
