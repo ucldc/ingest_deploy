@@ -124,7 +124,8 @@ Once this is done and the worker instances are in a state of "running", you'll n
 
 * Log into the majorTom machine.
 * To provision the workers, run: `ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ec2.py ~/code/ingest_deploy/ansible/provision_worker-stage.yml --extra-vars='rq_work_queues=["normal-stage","low-stage"]'`
-* If the provisioning process stalls, use `ctrl-C` to end the process then re-do the ansible command.
+* Wait for the provisioning to finish; this can take a while, 10-15 minutes is not
+unusual. If the provisioning process stalls, use `ctrl-C` to end the process then re-do the ansible command.
 * Check the status of the the harvesting process through the <a href="https://52.10.100.133/rq/">RQ Dashboard</a>.  You should now see the provisioned workers listed, and acting on the jobs in the queue. You will be able to see the workers running jobs (indicated by a "play" triangle icon) and then finishing (indicated by a "pause" icon).
 
 NOTE: if you already have provisioned worker machines running jobs, use the
