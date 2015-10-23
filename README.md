@@ -106,7 +106,7 @@ You can now begin to monitor the harvesting process through the <a href="https:/
 
 ### 3. Harvest the collection through to CouchDB
 
-The following sections describe the process for harvesting collections through to CouchDB. This is done via the use of "transient" <a href="http://python-rq.org/">Redis Queue</a> (RQ) worker instances, which are created as needed and then deleted after use. Once the RQ workers have been created and provisioned, they will automatically look for jobs in the queue and run the full harvester code for those jobs. The end result is that CouchDB is updated.
+The following sections describe the process for harvesting collections through to CouchDB. This is done via the use of "transient" <a href="http://python-rq.org/">Redis Queue</a>-managed (RQ) worker instances, which are created as needed and then deleted after use. Once the workers have been created and provisioned, they will automatically look for jobs in the queue and run the full harvester code for those jobs. The end result is that CouchDB is updated.
 
 #### 3.1. Create workers
 
@@ -120,8 +120,7 @@ You should see output in the console as the playbook runs through its tasks. At 
 
 #### 3.2. Provision workers to act on harvesting 
 
-Once this is done and the instances are in a state of "running", you'll need to provision the workers by installing required software, configurations and start running Akara & the worker processes that listen on the queues
-specified:
+Once this is done and the worker instances are in a state of "running", you'll need to provision the workers by installing required software, configurations and start running Akara and the worker processes that listen on the queues specified:
 
 * Log into the majorTom machine.
 * To provision the workers, run: `ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ec2.py ~/code/ingest_deploy/ansible/provision_worker-stage.yml --extra-vars='rq_work_queues=["normal-stage","low-stage"]'`
