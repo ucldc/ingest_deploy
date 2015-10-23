@@ -8,7 +8,7 @@ working....
 
 ### Dependencies
 
-Tools:
+<b>Tools</b>
 
 - [VirtualBox](https://www.virtualbox.org/) (Version X.X)
 - [Vagrant](https://www.vagrantup.com/) (Version X.X)
@@ -16,7 +16,9 @@ Tools:
 - [Ansible](http://www.ansible.com/home) (Version X.X)
 - if using VirtualBox, install the vagrant-vbguest 
 
-Primary <a href="https://docs.google.com/drawings/d/18Whi3nZGNgKQ2qh-XnJlV3McItyp-skuGSqH5b_L-X8/edit">harvesting infrastructure</a> components that you'll be using.  Ask Mark Redar for access to these components.  Note that you will need to log onto the ingest front machine and then into the majorTom machine to run commands:
+<b>Primary <a href="https://docs.google.com/drawings/d/18Whi3nZGNgKQ2qh-XnJlV3McItyp-skuGSqH5b_L-X8/edit">harvesting infrastructure</a> components</b>
+
+<i>Ask Mark Redar for access to these components.  Note that you will need to log onto the ingest front machine and then into the majorTom machine to run commands</i>
 
 - <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> 
 - ingest front machine
