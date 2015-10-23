@@ -77,39 +77,37 @@ From a machine that can already access the ingest front machine with ssh run:
 This will add your public key to the ~/.ssh/authorized_keys for the ec2-user on
 the ingest front machine.
 
-Running a harvest
+Conducting a harvest
 ----------------
 
-### 1. Queue collections for harvest
+### 1. New harvest or re-harvest?
 
 Before initiating a harvest, you'll first need to confirm if the collection has previously been harvested -- or if it's a new collection:
 
 * Log into the <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> (admin interface) and look up the collection, to determine the key.  For example, for <a href="https://registry.cdlib.org/admin/library_collection/collection/26189/">"Radiologic Imaging Lab collection"</a>, the key is "26189"
 * Query CouchDB using this URL syntax.  Replace the key parameter with the key for the collection: `https://52.10.100.133/couchdb/ucldc/_design/all_provider_docs/_view/by_provider_name_count?key=%2226189%22`
 
-#### Re-harvest
-If you have results in the "value" parameter, then you'll be conducting a re-harvest. You'll first need to remove the harvested records from CouchDB:
+If you do not have results in the "value" parameter, then go to the next step of creating a harvest job.  If you do have results in the "value" parameter, then you'll be conducting a re-harvest. You'll first need to remove the harvested records from CouchDB:
 
 * Log into majorTom.
 * Run this command, adding the key for the collection at the end: `python ~/code/harvester/scripts/delete_collection.py 23065`.
-* The proceed with the steps below for conducting a new harvest.
+* The proceed with the steps below for creating a new harvest job
 
-#### New harvest
-If you have zero results, then you'll be conducting a new harvest:
+### 2. Create a harvest job
 
-* <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> (admin interface) and look up the collection
+* Log into the <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> (admin interface) and look up the collection
 * Choose `Start harvest normal stage` from the `Action` drop-down. Note: "normal stage" is the current default. When you provision workers (see below), you can specify which queue(s) they will poll for jobs via the `rq_work_queues` parameter. The example given below sets the workers up to listen for jobs on `normal-stage` and `low-stage`, but you can change this if need be. 
 * You should then get feedback message verifying that the collections have been queued.
 
 You can now begin to monitor the harvesting process through the <a href="https://52.10.100.133/rq/">RQ Dashboard</a> (admin interface). At this stage, you'll see the harvest job listed in the queue.
 
-### Harvest the collection through to CouchDB
+### 3. Harvest the collection through to CouchDB
 
 The following sections describe the process for harvesting collections through to CouchDB. This is done via the use of "transient" <a href="http://python-rq.org/">Redis Queue</a> (RQ) worker instances, which are created as needed and then deleted after use. Once the RQ workers have been created and provisioned, they will automatically look for jobs in the queue and run the full harvester code for those jobs. The end result is that CouchDB is updated.
 
 Note: to run these processes, you need to log onto the ingest front machine and then into the majorTom machine. Getting access to these machines is a one time setup step that Mark needs to walk you through.
 
-#### Create workers
+#### 3.1. Create workers
 
 * Log in to the majorTom machine. 
 * To activate the virtualenv in ~/workers_local/, run: `. ~/workers_local/bin/activate`
@@ -119,7 +117,7 @@ The `count=##` parameter will set the number of instances to create. For harvest
 
 You should see output in the console as the playbook runs through its tasks. At the end, it will give you a status line. Look for `fail=0` to verify that everything ran OK.
 
-#### Provision workers
+#### 3.2. Provision workers to act on harvesting 
 
 Once this is done and the instances are in a state of "running", you'll need to provision the workers by installing required software, configurations and start running Akara & the worker processes that listen on the queues
 specified:
@@ -137,7 +135,7 @@ AWS assigns unique subnets to the groups of workers you start, so in general,
 different generations of machines will be distinguished by the different C class
 subnet. This makes the --limit parameter quite useful.
 
-#### Verify that the harvests are complete
+#### 3.3. Verify that the harvests are complete
 
 The jobs will disappear from queue when they've all been slurped up by the workers. You should then be able to QA check the harvested collection:
 
@@ -146,9 +144,27 @@ The jobs will disappear from queue when they've all been slurped up by the worke
 * If you have results, continue with QA checking the collection in CouchDB and Solr.
 * If there are no results, you will need to troubleshoot and re-harvest.
 
-#### QA check collection in CouchDB
+### 4. QA check collection in CouchDB
 
-<u>Querying CouchDB</u>
+As a next step, QA check the harvested collection in CouchDB; you can also subsequently check the results in Solr.
+
+The objective of this part of the QA process is to ensure that source metadata (from a harvesting target) is correctly mapped through to CouchDB
+Suggested method is to review the 1) source metadata (e.g., original MARC21  record, original XTF-indexed metadata*) vis-a-vis the 2) a random sample of CouchDB results and 3) <a href="https://docs.google.com/spreadsheets/d/1u2RE9PD0N9GkLQTFNJy3HiH9N5IbKDG52HjJ6JomC9I/edit#gid=265758929"metadata crosswalk</a> 
+
+* Check to confirm that metadata from the source record was carried over into CouchDB: did any metadata get dropped?
+* Check the metadata mappings: was the mapping handled correctly, going from the source metadata through to CouchDB, as defined in the metadata crosswalk?  
+* Check if any needed metadata remediation was completed (as defined in the metadata crosswalk) -- e.g., were rights statuses and statements globally applied?
+* Check for DPLA/CDL required data values -- are they present?  If not, we may need to go back to the data provider to supply the information -- or potentially supply it for them (through the Collection Registry)
+* Check the data values used within the various metadata elements:
+ * Are there any errors or noticeable problems?  
+ * Do the data  values look "correct" (e.g., for Type, data values are drawn from the  DCMI Type Vocabulary)?  
+ * Any funky characters or problems with formatting of the data?  Any data coming through that looks like it may have underlying copyright issues
+ 
+NOTE: To view the original XTF-indexed metadata for content harvested from Calisphere:
+* Go to Collection Registry, locate the collection that was harvested from XTF, and skip to the "URL harvest" field -- use that URL to generate a result of the XTF-indexed metadata (view source code to see raw XML)
+* Append the following to the URL, to set the number of results: `docsPerPage=###`
+
+##### Querying CouchDB
 * To generate a results set of metadata records for a given collection in CouchDB, using this URL syntax: 'https://52.10.100.133/couchdb/ucldc/_design/all_provider_docs/_list/has_field_value/by_provider_name_wdoc?key="10046"&field=originalRecord.subject&limit=100'. Each metadata record in the results set will have a unique ID  (e.g., 26094--00000001). This can be used for viewing the metadata within the CouchDB UI.
 * Parameters: 
  * field="####": Optional.  Limit the display output to a particular field. 
@@ -162,13 +178,14 @@ The jobs will disappear from queue when they've all been slurped up by the worke
 * To check if there are null data values within a particular element (e.g., isShownAt), for metadata records from all collections: https://52.10.100.133/couchdb/ucldc/_design/qa_reports/_view/isShownAt_value?limit=100&group_level=2&start_key=%5B%22__MISSING__%22%5D
 * To view a result of raw CouchDB JSON output:  https://52.10.100.133/couchdb/ucldc/_design/all_provider_docs/_view/by_provider_name?key="26094"&limit=1&include_docs=true
 
-<u>Viewing metadata for an object through the CouchDB UI</u>
+##### Viewing metadata for an object through the CouchDB UI
 
 * To view a result in CouchDB UI, go to <href="https://52.10.100.133/couchdb/_utils/database.html?ucldc/_all_docs">https://52.10.100.133/couchdb/_utils/database.html?ucldc/_all_docs</a>
 * In the "Jump to" box, enter the unique ID for a given  metadata record (e.g., 26094--00000001)
 
 
 #### QA check collection in Solr
+
 
 
 
