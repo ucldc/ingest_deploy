@@ -189,10 +189,10 @@ NOTE: To view the original XTF-indexed metadata for content harvested from Calis
 
 The objective of this QA process is to view any results passed from the CouchDB staging instance to the Solr staging instance; it can also be used to verify issues or discrepancies in data between the two instances.  It assumes that the data in CouchDB has been correctly mapped through to Solr; this is a fixed mapping, as documented on the second tab of the <a href="https://docs.google.com/spreadsheets/d/1u2RE9PD0N9GkLQTFNJy3HiH9N5IbKDG52HjJ6JomC9I/edit#gid=2062617414">metadata crosswalk</a>.
 
-Before you can conduct QA checking, you'll need to update Solr -- see instructions below.
+Before you can conduct QA checking, you'll need to update Solr -- see <b>Uppdating Solr</b> instructions below.
 
 <b>Querying Solr</b>
-* Log into <a href="https://52.10.100.133/solr/#/dc-collection/query">Solr</a> 
+* Log into <a href="https://52.10.100.133/solr/#/dc-collection/query">Solr</a> to conduct queries 
 * Consult the <a href="https://wiki.apache.org/solr/SolrQuerySyntax">Solr guide</a> for additional query details.
 
 ### 6. Terminate worker instances
