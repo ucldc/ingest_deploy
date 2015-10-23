@@ -16,19 +16,21 @@ Tools:
 - [Ansible](http://www.ansible.com/home) (Version X.X)
 - if using VirtualBox, install the vagrant-vbguest 
 
-Primary <a href="https://docs.google.com/drawings/d/18Whi3nZGNgKQ2qh-XnJlV3McItyp-skuGSqH5b_L-X8/edit">harvesting infrastructure</a> components that you'll be using:
+Primary <a href="https://docs.google.com/drawings/d/18Whi3nZGNgKQ2qh-XnJlV3McItyp-skuGSqH5b_L-X8/edit">harvesting infrastructure</a> components that you'll be using.  Ask Mark Redar for access to these components:
 
 - <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> (admin interface)
-- ingest front
-- majorTom
+- ingest front machine
+- majorTom machine
 - RQ Dashboard
 
 UCLDC Harvesting operations guide
 =================================
 
+User accounts
+----------------
 
-Adding a monitoring user (one time set up)
---------------------------------
+### Adding a monitoring user (one time set up)
+
 
 pull the ucldc/ingest_deploy project
 Get the ansible vault password from Mark. It's easiest if you create a file
@@ -62,8 +64,7 @@ From a machine that can already access the ingest front machine with ssh run:
 This will install the users.digest to allow access for the monitoring user.
 
 
-Adding an admin user  (one time set up)
---------------------
+### Adding an admin user  (one time set up)
 
 add your public ssh to keys file in https://github.com/ucldc/appstrap/tree/master/cdl/ucldc-operator-keys.txt
 
@@ -107,15 +108,9 @@ Note: to run these processes, you need to log onto the ingest front machine and 
 
 #### Create workers
 
-Log in to the majorTom machine. From here you can run the ansible playbooks to create and provision worker machines.
-
-activate the virtualenv in ~/workers_local/ :
-
-    . ~/workers_local/bin/activate
-
-Then to create some worker machines (bare ec2 instances), run:
-
-    ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ingest_deploy/ansible/hosts ~/code/ingest_deploy/ansible/create_worker-stage.yml --extra-vars="count=3"
+* Log in to the majorTom machine. 
+* To activate the virtualenv in ~/workers_local/, run: `. ~/workers_local/bin/activate`
+* To create some worker machines (bare ec2 instances), run: `ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ingest_deploy/ansible/hosts ~/code/ingest_deploy/ansible/create_worker-stage.yml --extra-vars="count=3"`
 
 The `count=##` parameter will set the number of instances to create. For harvesting one small collection you can set this to `count=1`. To re-harvest all collections, you can set this to `count=20`. For anything in between, use your judgment.
 
@@ -123,16 +118,13 @@ You should see output in the console as the playbook runs through its tasks. At 
 
 #### Provision workers
 
-Once this is done and the instances are in a state of "running", get the machines setup and running a worker process by running:
+Once this is done and the instances are in a state of "running", get the machines setup and running a worker process:
 
-    ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ec2.py ~/code/ingest_deploy/ansible/provision_worker-stage.yml --extra-vars='rq_work_queues=["normal-stage","low-stage"]'
-
-This will provision the workers by installing required software, configurations
+* To provision the workers by installing required software, configurations
 and start running Akara & the worker processes that listen on the queues
-specified. 
+specified, run: `ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ec2.py ~/code/ingest_deploy/ansible/provision_worker-stage.yml --extra-vars='rq_work_queues=["normal-stage","low-stage"]'`
 
-You should see the worker processes appear in the rq dashboard once
-this is done. (As Mark for access to the dashboard).
+You should see the worker processes appear in the RQ dashboard once this is done. (As Mark for access to the dashboard).
 
 NOTE: if you already have provisioned worker machines running jobs, use the
 --limit=<ip range> eg. --limit=10.60.22.\* to make sure you don't reprovision 
