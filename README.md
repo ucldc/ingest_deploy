@@ -21,9 +21,8 @@ working....
 <i>Consult the <a href="https://docs.google.com/drawings/d/18Whi3nZGNgKQ2qh-XnJlV3McItyp-skuGSqH5b_L-X8/edit">harvesting infrastructure diagram</a> for an illustration of the key components.  Ask Mark Redar for access to them; note that you will need to log onto the ingest front machine and then into the majorTom machine to run commands</i>
 
 - <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> 
-- ingest front machine
+- ingest front machine and <a href="https://52.10.100.133/rq/">RQ Dashboard</a>
 - majorTom machine
-- <a href="https://52.10.100.133/rq/">RQ Dashboard</a>
 - <a href="https://52.10.100.133/couchdb/_utils/database.html?ucldc/_all_docs">CouchDB</a>
 - <a href="https://52.10.100.133/solr/#/dc-collection/query">Solr</a> 
 - Elastic Beanstalk 
