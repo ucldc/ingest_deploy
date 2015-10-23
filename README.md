@@ -179,7 +179,7 @@ NOTE: To view the original XTF-indexed metadata for content harvested from Calis
 
 <b>Viewing metadata for an object in CouchDB</b>
 
-* Log into <a href="https://52.10.100.133/couchdb/_utils/database.html?ucldc/_all_docs>CouchDB</a> (admin interface) 
+* Log into CouchDB (admin interface) 
  * In the "Jump to" box, enter the unique ID for a given  metadata record (e.g., 26094--00000001)
  * You can now view the metadata in either its source format or mapped to CouchDB fields
 
