@@ -18,12 +18,13 @@ Tools:
 
 Primary <a href="https://docs.google.com/drawings/d/18Whi3nZGNgKQ2qh-XnJlV3McItyp-skuGSqH5b_L-X8/edit">harvesting infrastructure</a> components that you'll be using.  Ask Mark Redar for access to these components.  Note that you will need to log onto the ingest front machine and then into the majorTom machine to run commands:
 
-- <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> (admin interface)
+- <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> 
 - ingest front machine
 - majorTom machine
-- <a href="https://52.10.100.133/rq/">RQ Dashboard</a> (admin interface)
-- <a href="https://52.10.100.133/couchdb/_utils/database.html?ucldc/_all_docs">CouchDB</a> (admin interface)
-- <a href="https://52.10.100.133/solr/#/dc-collection/query">Solr</a> (admin interface)
+- <a href="https://52.10.100.133/rq/">RQ Dashboard</a>
+- <a href="https://52.10.100.133/couchdb/_utils/database.html?ucldc/_all_docs">CouchDB</a>
+- <a href="https://52.10.100.133/solr/#/dc-collection/query">Solr</a> 
+- Elastic Beanstalk 
 
 UCLDC Harvesting operations guide
 =================================
@@ -211,7 +212,7 @@ Currently, Solr updates are run from the majorTom machine. The Solr update looks
 * To reindex all docs run: `/usr/local/bin/solr-update.sh --since=0`
 
 
-### Generating Solr indexes for S3:
+### Generating Solr indexes for S3
 
 Once the solr index is updated, and if it is ready for distribution to the Calisphere front-end website, you can generate an index to store on S3:
 
@@ -228,7 +229,7 @@ Updating the Beanstalk (pushing Solr index to Calisphere front-end website)
 
 This section describes how to update an Elastic Beanstalk configuration to point to a new solr index. This will update the specified Calisphere front-end web application so that it points to the data in the new solr instance.
 
-Go into the beanstalk control panel and select the ucldc-solr application.
+Go into the Beanstalk control panel and select the ucldc-solr application.
 ![ucldc-solr app view](docs/images/screen_shot_ucldc_solr_app.png)
 Select the existing environment you want to replace and clone the environment:
 ![ucldc-solr clone env](docs/images/screen_shot_clone_env.png)
