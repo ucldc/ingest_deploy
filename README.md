@@ -151,7 +151,6 @@ As a next step, QA check the harvested collection in CouchDB; you can also subse
 
 The objective of this part of the QA process is to ensure that source metadata (from a harvesting target) is correctly mapped through to CouchDB
 Suggested method is to review the 1) source metadata (e.g., original MARC21  record, original XTF-indexed metadata*) vis-a-vis the 2) a random sample of CouchDB results and 3) <a href="https://docs.google.com/spreadsheets/d/1u2RE9PD0N9GkLQTFNJy3HiH9N5IbKDG52HjJ6JomC9I/edit#gid=265758929">metadata crosswalk</a>. Things to check:
-
 * Verify if metadata from the source record was carried over into CouchDB correctly: did any metadata get dropped?
 * Verify the metadata mappings: was the mapping handled correctly, going from the source metadata through to CouchDB, as defined in the metadata crosswalk?  
 * Verify if any needed metadata remediation was completed (as defined in the metadata crosswalk) -- e.g., were rights statuses and statements globally applied?
@@ -174,7 +173,6 @@ NOTE: To view the original XTF-indexed metadata for content harvested from Calis
  * originalRecord.####: Optional.  Limit the display output to a particular metadata field.  Replace #### with the CouchDB data element (e.g., title, creator) 
  * include_docs="true": Optional.  Will include complete metadata record within the results set (JSON output) 
  * value=####:  Optional.  Search for a particular value, within a results set of metadata records from a particular collection.  Note: exact matches only!
-
 * To generate a results set of data values within a particular element (e.g., Rights), for metadata records from all collections: https://52.10.100.133/couchdb/ucldc/_design/qa_reports/_view/sourceResource.rights_value?limit=100&group_level=2
 * To check if there are null data values within a particular element (e.g., isShownAt), for metadata records from all collections: https://52.10.100.133/couchdb/ucldc/_design/qa_reports/_view/isShownAt_value?limit=100&group_level=2&start_key=%5B%22__MISSING__%22%5D
 * To view a result of raw CouchDB JSON output:  https://52.10.100.133/couchdb/ucldc/_design/all_provider_docs/_view/by_provider_name?key="26094"&limit=1&include_docs=true
