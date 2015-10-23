@@ -86,7 +86,7 @@ Conducting a harvest
 
 Before initiating a harvest, you'll first need to confirm if the collection has previously been harvested -- or if it's a new collection:
 
-* Log into the <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> (admin interface) and look up the collection, to determine the key.  For example, for <a href="https://registry.cdlib.org/admin/library_collection/collection/26189/">"Radiologic Imaging Lab collection"</a>, the key is "26189"
+* Log into the <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> and look up the collection, to determine the key.  For example, for <a href="https://registry.cdlib.org/admin/library_collection/collection/26189/">"Radiologic Imaging Lab collection"</a>, the key is "26189"
 * Query CouchDB using this URL syntax.  Replace the key parameter with the key for the collection: `https://52.10.100.133/couchdb/ucldc/_design/all_provider_docs/_view/by_provider_name_count?key=%2226189%22`
 
 If you do not have results in the "value" parameter, then go to the next step of creating a harvest job.  If you do have results in the "value" parameter, then you'll be conducting a re-harvest. You'll first need to remove the harvested records from CouchDB:
@@ -97,11 +97,11 @@ If you do not have results in the "value" parameter, then go to the next step of
 
 ### 2. Create a harvest job
 
-* Log into the <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> (admin interface) and look up the collection
+* Log into the <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> and look up the collection
 * Choose `Start harvest normal stage` from the `Action` drop-down. Note: "normal stage" is the current default. When you provision workers (see below), you can specify which queue(s) they will poll for jobs via the `rq_work_queues` parameter. The example given below sets the workers up to listen for jobs on `normal-stage` and `low-stage`, but you can change this if need be. 
 * You should then get feedback message verifying that the collections have been queued.
 
-You can now begin to monitor the harvesting process through the <a href="https://52.10.100.133/rq/">RQ Dashboard</a> (admin interface). At this stage, you'll see the harvest job listed in the queue.
+You can now begin to monitor the harvesting process through the <a href="https://52.10.100.133/rq/">RQ Dashboard</a>. At this stage, you'll see the harvest job listed in the queue.
 
 ### 3. Harvest the collection through to CouchDB
 
@@ -124,7 +124,7 @@ specified:
 
 * Log into the majorTom machine.
 * To provision the workers, run: `ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ec2.py ~/code/ingest_deploy/ansible/provision_worker-stage.yml --extra-vars='rq_work_queues=["normal-stage","low-stage"]'`
-* Check the status of the the harvesting process through the <a href="https://52.10.100.133/rq/">RQ Dashboard</a> (admin interface).  You should now see the provisioned workers listed, and acting on the jobs in the queue. You will be able to see the workers running jobs (indicated by a "play" triangle icon) and then finishing (indicated by a "pause" icon).
+* Check the status of the the harvesting process through the <a href="https://52.10.100.133/rq/">RQ Dashboard</a>.  You should now see the provisioned workers listed, and acting on the jobs in the queue. You will be able to see the workers running jobs (indicated by a "play" triangle icon) and then finishing (indicated by a "pause" icon).
 
 NOTE: if you already have provisioned worker machines running jobs, use the
 --limit=<ip range> eg. --limit=10.60.22.\* to make sure you don't reprovision 
@@ -143,7 +143,7 @@ The jobs will disappear from queue when they've all been slurped up by the worke
 * Query CouchDB using this URL syntax.  Replace the key parameter with the key for the collection: `https://52.10.100.133/couchdb/ucldc/_design/all_provider_docs/_view/by_provider_name_count?key=%2226189%22`
 * Results in the "value" parameter indicate the total number of metadata records harvested; this should align with the expected results. 
 * If you have results, continue with QA checking the collection in CouchDB and Solr.
-* If there are no results, you will need to troubleshoot and re-harvest.
+* If there are no results, you will need to troubleshoot and re-harvest.  See <b>What to do when harvests fail</b> section for details.
 
 ### 4. QA check collection in CouchDB
 
@@ -180,7 +180,7 @@ NOTE: To view the original XTF-indexed metadata for content harvested from Calis
 
 <b>Viewing metadata for an object in CouchDB</b>
 
-* Log into <a href="https://52.10.100.133/couchdb/_utils/database.html?ucldc/_all_docs">CouchDB</a> (admin interface)
+* Log into <a href="https://52.10.100.133/couchdb/_utils/database.html?ucldc/_all_docs">CouchDB</a>
  * In the "Jump to" box, enter the unique ID for a given  metadata record (e.g., 26094--00000001)
  * You can now view the metadata in either its source format or mapped to CouchDB fields
 
@@ -191,7 +191,7 @@ The objective of this QA process is to view any results passed from the CouchDB 
 Before you can conduct QA checking, you'll need to update Solr -- see instructions below.
 
 <b>Querying Solr</b>
-* Log into <a href="https://52.10.100.133/solr/#/dc-collection/query">Solr</a> (admin interface)
+* Log into <a href="https://52.10.100.133/solr/#/dc-collection/query">Solr</a> 
 * Consult the <a href="https://wiki.apache.org/solr/SolrQuerySyntax">Solr guide</a> for additional query details.
 
 ### 6. Terminate worker instances
@@ -224,12 +224,12 @@ Once the solr index is updated, and if it is ready for distribution to the Calis
 Note that stashing a Solr index on S3 does nothing in terms of updating the Calisphere front-end website. In order to update the web application so that it points to the data represented in the new index, you have to update the Elastic Beanstalk instance  configuration (see below).
     
 
-Updating the Beanstalk (pushing Solr index to Calisphere front-end website)
+Updating Elastic Beanstalk (pushing Solr index to Calisphere front-end website)
 ----------------------
 
 This section describes how to update an Elastic Beanstalk configuration to point to a new solr index. This will update the specified Calisphere front-end web application so that it points to the data in the new solr instance.
 
-Go into the Beanstalk control panel and select the ucldc-solr application.
+Go into the Elastic Beanstalk control panel and select the ucldc-solr application.
 ![ucldc-solr app view](docs/images/screen_shot_ucldc_solr_app.png)
 Select the existing environment you want to replace and clone the environment:
 ![ucldc-solr clone env](docs/images/screen_shot_clone_env.png)
@@ -260,19 +260,16 @@ environment.
 
 NOTE: need scripts to automate this.
 
-Other AWS Related Admin Tasks
+Other AWS-related admin tasks
 -----------------------------
 
 ### Picking up new harvester or ingest code
 
 When new harvester or ingest code is pushed, you need to create a new generation
-of worker machines to pick up the new code.
+of worker machines to pick up the new code:
 
-First, terminate the existing machines.
-
-    ansible-playbook -i ~/code/ec2.py ~/code/ingest_deploy/ansible/terminate_workers.yml <--limit=10.60.?.?>
-
-Then go through the worker create process again, creating and provisioning
+* First, terminate the existing machines: `ansible-playbook -i ~/code/ec2.py ~/code/ingest_deploy/ansible/terminate_workers.yml <--limit=10.60.?.?>`
+* Then go through the worker create process again, creating and provisioning
 machines as needed.
 
 What to do when harvests fail
