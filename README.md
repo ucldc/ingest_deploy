@@ -22,6 +22,7 @@ Primary <a href="https://docs.google.com/drawings/d/18Whi3nZGNgKQ2qh-XnJlV3McIty
 - ingest front machine
 - majorTom machine
 - <a href="https://52.10.100.133/rq/">RQ Dashboard</a> (admin interface)
+- <a href="https://52.10.100.133/solr/#/dc-collection/query">Solr</a> (admin interface)
 
 UCLDC Harvesting operations guide
 =================================
@@ -141,10 +142,30 @@ subnet. This makes the --limit parameter quite useful.
 The jobs will disappear from queue when they've all been slurped up by the workers. You should then be able to QA check the harvested collection:
 
 * Query CouchDB using this URL syntax.  Replace the key parameter with the key for the collection: `https://52.10.100.133/couchdb/ucldc/_design/all_provider_docs/_view/by_provider_name_count?key=%2226189%22`
-* Results in the "value" parameter indicate the total number of metadata records harvested; this should align with the expected results. If there are no results, you will need to troubleshoot and re-harvest.
-
+* Results in the "value" parameter indicate the total number of metadata records harvested; this should align with the expected results. 
+* If you have results, continue with QA checking the collection in CouchDB and Solr.
+* If there are no results, you will need to troubleshoot and re-harvest.
 
 #### QA check collection in CouchDB
+
+<u>Querying CouchDB</u>
+* To generate a results set of metadata records for a given collection in CouchDB, using this URL syntax: 'https://52.10.100.133/couchdb/ucldc/_design/all_provider_docs/_list/has_field_value/by_provider_name_wdoc?key="10046"&field=originalRecord.subject&limit=100'. Each metadata record in the results set will have a unique ID  (e.g., 26094--00000001). This can be used for viewing the metadata within the CouchDB UI.
+* Parameters: 
+ * field="####": Optional.  Limit the display output to a particular field. 
+ * key="####": Optional.  Limits by collection, using the Collection Registry numeric ID.   
+ * limit="####": Optional.  Sets the number or results 
+ * originalRecord.####: Optional.  Limit the display output to a particular metadata field.  Replace #### with the CouchDB data element (e.g., title, creator) 
+ * include_docs="true": Optional.  Will include complete metadata record within the results set (JSON output) 
+ * value=####:  Optional.  Search for a particular value, within a results set of metadata records from a particular collection.  Note: exact matches only!
+
+* To generate a results set of data values within a particular element (e.g., Rights), for metadata records from all collections: https://52.10.100.133/couchdb/ucldc/_design/qa_reports/_view/sourceResource.rights_value?limit=100&group_level=2
+* To check if there are null data values within a particular element (e.g., isShownAt), for metadata records from all collections: https://52.10.100.133/couchdb/ucldc/_design/qa_reports/_view/isShownAt_value?limit=100&group_level=2&start_key=%5B%22__MISSING__%22%5D
+* To view a result of raw CouchDB JSON output:  https://52.10.100.133/couchdb/ucldc/_design/all_provider_docs/_view/by_provider_name?key="26094"&limit=1&include_docs=true
+
+<u>Viewing metadata for an object through the CouchDB UI</u>
+
+* To view a result in CouchDB UI, go to <href="https://52.10.100.133/couchdb/_utils/database.html?ucldc/_all_docs">https://52.10.100.133/couchdb/_utils/database.html?ucldc/_all_docs</a>
+* In the "Jump to" box, enter the unique ID for a given  metadata record (e.g., 26094--00000001)
 
 
 #### QA check collection in Solr
