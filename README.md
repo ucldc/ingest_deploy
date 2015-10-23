@@ -16,9 +16,9 @@ working....
 - [Ansible](http://www.ansible.com/home) (Version X.X)
 - if using VirtualBox, install the vagrant-vbguest 
 
-<b>Primary <a href="https://docs.google.com/drawings/d/18Whi3nZGNgKQ2qh-XnJlV3McItyp-skuGSqH5b_L-X8/edit">harvesting infrastructure</a> components</b>
+<b>Harvesting infrastructure components</b>
 
-<i>Ask Mark Redar for access to these components.  Note that you will need to log onto the ingest front machine and then into the majorTom machine to run commands</i>
+<i>Consult the <a href="https://docs.google.com/drawings/d/18Whi3nZGNgKQ2qh-XnJlV3McItyp-skuGSqH5b_L-X8/edit">harvesting infrastructure diagram</a> for an illustration of the key components.  Ask Mark Redar for access to them; note that you will need to log onto the ingest front machine and then into the majorTom machine to run commands</i>
 
 - <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> 
 - ingest front machine
