@@ -165,7 +165,7 @@ NOTE: To view the original XTF-indexed metadata for content harvested from Calis
 * Append the following to the URL, to set the number of results: `docsPerPage=###`
 
 <b>Querying CouchDB</b>
-* To generate a results set of metadata records for a given collection in CouchDB, using this URL syntax: 'https://52.10.100.133/couchdb/ucldc/_design/all_provider_docs/_list/has_field_value/by_provider_name_wdoc?key="10046"&field=originalRecord.subject&limit=100'. Each metadata record in the results set will have a unique ID  (e.g., 26094--00000001). This can be used for viewing the metadata within the CouchDB UI.
+* To generate a results set of metadata records for a given collection in CouchDB, using this URL syntax: `https://52.10.100.133/couchdb/ucldc/_design/all_provider_docs/_list/has_field_value/by_provider_name_wdoc?key="10046"&field=originalRecord.subject&limit=100'`. Each metadata record in the results set will have a unique ID  (e.g., 26094--00000001). This can be used for viewing the metadata within the CouchDB UI.
 * Parameters: 
  * field="####": Optional.  Limit the display output to a particular field. 
  * key="####": Optional.  Limits by collection, using the Collection Registry numeric ID.   
@@ -173,25 +173,24 @@ NOTE: To view the original XTF-indexed metadata for content harvested from Calis
  * originalRecord.####: Optional.  Limit the display output to a particular metadata field.  Replace #### with the CouchDB data element (e.g., title, creator) 
  * include_docs="true": Optional.  Will include complete metadata record within the results set (JSON output) 
  * value=####:  Optional.  Search for a particular value, within a results set of metadata records from a particular collection.  Note: exact matches only!
-* To generate a results set of data values within a particular element (e.g., Rights), for metadata records from all collections: https://52.10.100.133/couchdb/ucldc/_design/qa_reports/_view/sourceResource.rights_value?limit=100&group_level=2
-* To check if there are null data values within a particular element (e.g., isShownAt), for metadata records from all collections: https://52.10.100.133/couchdb/ucldc/_design/qa_reports/_view/isShownAt_value?limit=100&group_level=2&start_key=%5B%22__MISSING__%22%5D
-* To view a result of raw CouchDB JSON output:  https://52.10.100.133/couchdb/ucldc/_design/all_provider_docs/_view/by_provider_name?key="26094"&limit=1&include_docs=true
+* To generate a results set of data values within a particular element (e.g., Rights), for metadata records from all collections: `https://52.10.100.133/couchdb/ucldc/_design/qa_reports/_view/sourceResource.rights_value?limit=100&group_level=2`
+* To check if there are null data values within a particular element (e.g., isShownAt), for metadata records from all collections: `https://52.10.100.133/couchdb/ucldc/_design/qa_reports/_view/isShownAt_value?limit=100&group_level=2&start_key=%5B%22__MISSING__%22%5D`
+* To view a result of raw CouchDB JSON output:  `https://52.10.100.133/couchdb/ucldc/_design/all_provider_docs/_view/by_provider_name?key="26094"&limit=1&include_docs=true`
 * Consult the <a href="http://wiki.apache.org/couchdb/HTTP_view_API">CouchDB guide</a> for additional query details.
 
-<b>Viewing metadata for an object through the CouchDB UI</b>
+<b>Viewing metadata for an object in CouchDB</b>
 
-* To view a result in CouchDB UI, go to <href="https://52.10.100.133/couchdb/_utils/database.html?ucldc/_all_docs">https://52.10.100.133/couchdb/_utils/database.html?ucldc/_all_docs</a>
-* In the "Jump to" box, enter the unique ID for a given  metadata record (e.g., 26094--00000001)
-
+* Log into <a href="https://52.10.100.133/couchdb/_utils/database.html?ucldc/_all_docs>CouchDB</a> (admin interface) 
+ * In the "Jump to" box, enter the unique ID for a given  metadata record (e.g., 26094--00000001)
+ * You can now view the metadata in either its source format or mapped to CouchDB fields
 
 #### QA check collection in Solr
 
 The objective of this QA process is to view any results passed from the CouchDB staging instance to the Solr staging instance; it can also be used to verify issues or discrepancies in data between the two instances.  It assumes that the data in CouchDB has been correctly mapped through to Solr; this is a fixed mapping, as documented on the second tab of the <a href="https://docs.google.com/spreadsheets/d/1u2RE9PD0N9GkLQTFNJy3HiH9N5IbKDG52HjJ6JomC9I/edit#gid=2062617414">metadata crosswalk</a>.
 
 <b>Querying Solr</b>
-* Use the <a href="https://52.10.100.133/solr/#/dc-collection/query">Solr</a> (admin interface)
+* Log into <a href="https://52.10.100.133/solr/#/dc-collection/query">Solr</a> (admin interface)
 * Consult the <a href="https://wiki.apache.org/solr/SolrQuerySyntax">Solr guide</a> for additional query details.
-
 
 
 #### Terminate worker instances
