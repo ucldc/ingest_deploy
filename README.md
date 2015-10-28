@@ -301,6 +301,18 @@ watch the logs real time if you like. tail -f /var/local/rqworker/worker.log or
 /var/local/akara/logs/error.log.
 
 
+Recreating the Solr Index from scratch
+--------------------------------------
+
+The solr index is run in a docker container. To make changes to the schema or
+other configurations, you need to recreate the docker image for the container.
+
+To do so in the ingest environment, run `ansible-playbook -i hosts solr_docker_rebuild.yml`.  This will remove the docker container & image, rebuild the image, remove the index files and run a new container based on the latest solr config in https://github.com/ucldc/solr_api/.
+
+You will then have to run `/usr/local/solr-update.sh --since=0` to reindex the
+whole couchdb database.
+
+
 License
 =======
 
