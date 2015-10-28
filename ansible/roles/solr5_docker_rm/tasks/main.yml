@@ -6,16 +6,15 @@
   sudo: yes
   docker: 
     name: solr
+    image: "{{ docker_image_name }}"
     state: absent
-  file:
-    path: 
-    state: directory
-    mode: 0777
 - name: remove the docker image
   sudo: yes
   docker_image:
     name: "{{ docker_image_name }}"
     state: absent
+- debug:
+    msg : "DIR INDEX:{{ dir_index }}"
 - name: remove the index files
-  command: rm -rf {{dir_index}}/*
+  shell: rm -rf {{ dir_index }}/*
   tags: rm_index
