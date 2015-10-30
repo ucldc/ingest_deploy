@@ -212,6 +212,7 @@ Updating Solr
 
 Currently, Solr updates are run from the majorTom machine. The Solr update looks at the Couchdb changes endpoint. This endpoint has a record for each document that has been created in the database, including deleted documents.
 
+* Log into majorTom
 * To do an incremental update, run: `/usr/local/bin/solr-update.sh`. This will run an incremental update, which is what you will most often want to do. This uses the last changes sequence number that is saved in s3 at solr.ucldc/couchdb_since/<DATA_BRANCH> in order to determine what has changed.
 * To reindex all docs run: `/usr/local/bin/solr-update.sh --since=0`
 
@@ -220,6 +221,7 @@ Currently, Solr updates are run from the majorTom machine. The Solr update looks
 
 Once the solr index is updated, and if it is ready for distribution to the Calisphere front-end website, you can generate an index to store on S3:
 
+* Log into majorTom
 * Run: `/usr/local/bin/solr-index-to-s3.sh stage`, where `stage` is the DATA_BRANCH. (Note: right now, we are only using `stage`, so this is the default. In the future, we may have other branches, i.e. `production`.)
 * This will push the last build Solr index to S3 at the location:
 
