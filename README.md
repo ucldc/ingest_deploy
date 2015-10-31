@@ -204,6 +204,7 @@ Once you've QA checked the results and have completed the harvest, you'll need t
 
 * Log into majorTom
 * Run: `ansible-playbook -i ~/code/ec2.py ~/code/ingest_deploy/ansible/terminate_workers-stage.yml <--limit=10.60.?.?>` . You can use the `limit` parameter to specify a range of IP addresses for deletion.
+* You'll receive a prompt to confirm that you want to spin down the intance; hit Return to confirm.
     
 Updating Solr
 ----------------
