@@ -1,16 +1,14 @@
 ---
 # tasks file for majorTom
 - debug: name=role_home_dir
-- name: stop worker
-  command: /usr/local/bin/stop-rqworker.sh
-  args:
-    removes: "{{ dir_run_rqworker }}/rqworker.pid"
-  # TODO: when rwqoekr.pid
-- name: stop akara
-  command: "{{ dir_venv}}/bin/akara -f {{ dir_code }}/dpla/ingestion/akara.conf stop"
-  args:
-    chdir:  "{{ dir_run_akara }}"
-  #TODO: when: "{{ dir_akara_run }}/logs/akara.pid"
+- name: put bashrc with auto activation of workers_local virturalenv
+  template:
+    src: bashrc.j2
+    dest: ~/.bashrc
+    mode: 0600
+    backup: yes
+    force: yes
+  tags: bashrc
 - name: get ec2 inventory script
   get_url:
     url: https://raw.githubusercontent.com/ansible/ansible/devel/plugins/inventory/ec2.py
