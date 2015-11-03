@@ -1,0 +1,14 @@
+# .bashrc
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+	. /etc/bashrc
+fi
+
+if [ -f ~/.harvester-env ]; then
+        . ~/.harvester-env
+fi
+
+export PATH=~/workers_local/bin:$PATH
+
+# User specific aliases and functions

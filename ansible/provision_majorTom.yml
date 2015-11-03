@@ -8,4 +8,4 @@
   roles:
     - { role: common, sudo: no, tags: common}
     - { role: worker, sudo: no, tags: worker}
-    - { role: majorTom, sudo: no, tags: majorTom}
+    - { role: majorTom, sudo: no, tags: [ majorTom, bashrc ]}
