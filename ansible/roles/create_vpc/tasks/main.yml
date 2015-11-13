@@ -2,7 +2,8 @@
 - debug: msg="VPC basename--> {{ name_env }}"
 
 - { include: create_vpc.yml }
-- { include: create_front_end_security_grp.yml }
+- { include: create_security_grp_ingest_private.yml }
+- { include: create_security_grp_front_end.yml }
 - name: save info needed for creating instances
   template:
     src: save_vpc_information_for_instances.j2
