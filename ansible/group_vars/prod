@@ -6,6 +6,6 @@ sec_grp_ingest_front_id: sg-97b298f2
 sec_grp_ingest_private_id: sg-95b298f0
 DATA_BRANCH: production
 name_suffix: "-{{ DATA_BRANCH| truncate(4) }}"
-couchdb_url: http://10.60.43.123:5984
-solr_url: http://10.60.38.11:8983/solr
+couchdb_url: http://10.60.28.37:5984
+solr_url: http://10.60.27.5:8983/solr
 eip_ingest_front: 52.10.100.133
