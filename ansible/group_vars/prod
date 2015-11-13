@@ -8,3 +8,4 @@ DATA_BRANCH: production
 name_suffix: "-{{ DATA_BRANCH| truncate(4) }}"
 couchdb_url: http://10.60.43.123:5984
 solr_url: http://10.60.38.11:8983/solr
+eip_ingest_front: 52.10.100.133
