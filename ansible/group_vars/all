@@ -1,4 +1,5 @@
 ---
+image_hvm: ami-f0091d91
 tag_project: "{{ project | default('ucldc') }}"
 tag_subproject: "{{ subproject | default('ingest') }}"
 project_name: "{{ tag_project }}-{{ tag_subproject }}"
