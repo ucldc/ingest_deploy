@@ -35,4 +35,6 @@
     state: present
     in_vpc: yes
     public_ip: "{{ eip_ingest_front }}"
+  #in case eip already associated...
+  ignore_errors: yes
   when: prod_env
