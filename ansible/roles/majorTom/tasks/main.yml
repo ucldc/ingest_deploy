@@ -1,6 +1,16 @@
 ---
 # tasks file for majorTom
 - debug: name=role_home_dir
+- name: uninstall centos docker io
+  yum:
+    pkg: docker-io
+    state: absent
+  when: ansible_distribution == "CentOS"
+- name: install amazon linux docker io
+  yum:
+    pkg: docker
+    state: absent
+  when: ansible_distribution == "Amazon"
 - name: put bashrc with auto activation of workers_local virturalenv
   template:
     src: bashrc.j2
