@@ -1,8 +1,6 @@
 ---
 # tasks file for create_instances
 - debug: var=prod_env
-- { include: create_security_grp_ingest_private.yml }
-- { include: create_security_grp_front_end.yml }
 - { include: create_instance_solr.yml, tags: solr }
 - { include: create_instance_couchdb.yml, tags: couchdb }
 # front end created last, needs couchdb & solr ips for proxying
@@ -12,6 +10,7 @@
   template:
     src: save_instance_variables.j2
     dest: roles/create_infrastructure_instances/vars/main-{{ name_suffix }}.yml
+    force: yes
   tags:
       - solr
       - couchdb
@@ -21,8 +20,20 @@
   template:
     src: save_instance_variables.j2
     dest: roles/create_worker_instance/vars/main-{{ name_suffix }}.yml
+    force: yes
   tags:
       - solr
       - couchdb
       - front
       - majorTom
+- name: write current instance ips & such to ~/.ingest-instances
+  lineinfile:
+    dest: ~/.ingest-instances
+    create: yes
+    state: present
+    line: "{{ item }}"
+  with_items:
+    - "ec2_ingest_front: {{ ec2_ingest_front }}"
+    - "ec2_ingest_couchdb: {{ ec2_ingest_couchdb }}"
+    - "ec2_ingest_solr: {{ ec2_ingest_solr }}"
+    - "ec2_ingest_majorTom: {{ ec2_ingest_majorTom }}"

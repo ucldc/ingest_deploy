@@ -6,12 +6,14 @@ couchdb-prod
 solr-prod
 local
 front-prod
+majorTom-prod
 
 [stage:children]
 couchdb-stage
 solr-stage
 local
 front-stage
+majorTom-stage
 
 [solr:children]
 solr-stage
@@ -25,6 +27,10 @@ couchdb-prod
 front-stage
 front-prod
 
+[majorTom:children]
+majorTom-stage
+majorTom-prod
+
 [couchdb-stage]
 couchdb-stage-0 ansible_ssh_host=10.60.27.222 ansible_ssh_user=ec2-user ansible_ssh_private_key_file=~/.ssh/ingest-west-2.pem
 
@@ -34,11 +40,18 @@ solr-stage ansible_ssh_host=10.60.24.83 ansible_ssh_user=ec2-user ansible_ssh_pr
 [front-stage]
 front-stage-0 ansible_ssh_host=52.10.100.133 ansible_ssh_user=ec2-user ansible_ssh_private_key_file=~/.ssh/ingest-west-2.pem
 
+[majorTom-stage]
+majorTom-stage-0 ansible_ssh_host=10.60.21.16 ansible_ssh_user=ec2-user ansible_ssh_private_key_file=~/.ssh/ingest-west-2.pem
+
 [couchdb-prod]
-couchdb-prod-0 ansible_ssh_host=10.60.43.123 ansible_ssh_user=ec2-user ansible_ssh_private_key_file=~/.ssh/ingest-west-2.pem
+couchdb-prod-0 ansible_ssh_host=10.60.28.37 ansible_ssh_user=ec2-user ansible_ssh_private_key_file=~/.ssh/ingest-west-2.pem
 
 [solr-prod]
-solr-prod-0 ansible_ssh_host=10.60.38.11 ansible_ssh_user=ec2-user ansible_ssh_private_key_file=~/.ssh/ingest-west-2.pem
+solr-prod-0 ansible_ssh_host=10.60.27.5 ansible_ssh_user=ec2-user ansible_ssh_private_key_file=~/.ssh/ingest-west-2.pem
 
 [front-prod]
-front-prod-0 ansible_ssh_host=52.11.194.40 ansible_ssh_user=ec2-user ansible_ssh_private_key_file=~/.ssh/ingest-west-2.pem
+front-prod-0 ansible_ssh_host=ingest ansible_ssh_user=ec2-user ansible_ssh_private_key_file=~/.ssh/ingest-west-2.pem
+#front-prod-0 ansible_ssh_host=52.11.194.40 ansible_ssh_user=ec2-user ansible_ssh_private_key_file=~/.ssh/ingest-west-2.pem
+
+[majorTom-prod]
+majorTom-prod-0 ansible_ssh_host=10.60.22.208 ansible_ssh_user=ec2-user ansible_ssh_private_key_file=~/.ssh/ingest-west-2.pem

@@ -2,8 +2,10 @@
 redis_host: x-001.swle7i.0001.usw2.cache.amazonaws.com
 subnet_id_public: subnet-b07689e9
 subnet_id_private: subnet-56758a0f
+sec_grp_ingest_front_id: sg-8a28c5ee
 sec_grp_ingest_private_id: sg-ba28c5de
 DATA_BRANCH: stage
 name_suffix: "-{{ DATA_BRANCH }}"
 couchdb_url: http://10.60.27.222:5984
 solr_url: http://10.60.24.83:8983/solr
+eip_ingest_front: 52.11.194.40
