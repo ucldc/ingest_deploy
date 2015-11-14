@@ -9,6 +9,7 @@
   gather_facts: no
   vars:
       name_suffix: -prod
+      sec_grp_ingest_private_id: sg-95b298f0
   roles:
     - create_worker_instance
 #doesn't work, not yet in ec2.py inventory - include: provision_worker.yml
