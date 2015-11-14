@@ -4,5 +4,4 @@ count: 1
 image_hvm: ami-f0091d91
 instance_type: m3.large
 key_name: ingest
-subnet_id_private: subnet-1bbe676c
 region: us-west-2

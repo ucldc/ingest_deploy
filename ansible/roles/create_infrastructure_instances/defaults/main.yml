@@ -6,13 +6,11 @@ key_name: ingest
 key_name_private: ingest
 region: us-west-2 
 vpc_id: vpc-51802634
-subnet_id_public: subnet-ee63cf99
-subnet_id_private: subnet-1bbe676c
 sec_grp_NAT_id: sg-03185166
-sec_grp_ingest_private:
-  group_id: sg-95b298f0
-sec_grp_front:
-  group_id: sg-97b298f2
+#sec_grp_ingest_private:
+#  group_id: sg-95b298f0
+#sec_grp_front:
+#  group_id: sg-97b298f2
 eip_ingest_front: 52.11.194.40
 volume_size_couchdb: 164
 volume_size_solr: 64
