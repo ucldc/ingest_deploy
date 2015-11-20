@@ -7,9 +7,9 @@
   connection: local
   gather_facts: no
   vars:
-    prod_env: True
+    prod_env: False
   vars_files:
-    - group_vars/prod
+    - group_vars/stage
   tasks:
     - debug: var=prod_env
   roles:
