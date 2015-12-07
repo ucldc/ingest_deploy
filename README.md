@@ -198,7 +198,13 @@ Before you can conduct QA checking, you'll need to update Solr -- see <b>Updatin
 * Log into <a href="https://52.10.100.133/solr/#/dc-collection/query">Solr</a> to conduct queries 
 * Consult the <a href="https://wiki.apache.org/solr/SolrQuerySyntax">Solr guide</a> for additional query details.
 
-### 6. Terminate worker instances
+
+### 6. QA check media.json
+
+To QA check media.json output results, use this URL syntax: `https://s3.amazonaws.com/static.ucldc.cdlib.org/media_json/70d7f57a-db0b-4a1a-b089-cce1cc289c9e-media.json`
+
+
+### 7. Terminate worker instances
 
 Once you've QA checked the results and have completed the harvest, you'll need to terminate the worker instances.
 
