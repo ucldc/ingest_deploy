@@ -3,6 +3,4 @@
 - hosts: tag_Name_ingest_prod_worker
   gather_facts: yes
   tasks:
-    - debug: msg="{{ ec2_id }}"
-    - pause: prompt="ctrl-C TO NOT TERMINATE INSTANCES"
     - include: terminate_workers.yml

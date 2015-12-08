@@ -1,0 +1,9 @@
+---
+- debug: msg="{{ ec2_id }}"
+- pause: prompt="ctrl-C TO NOT START INSTANCES"
+- name: stop instance
+  local_action:
+    module: ec2
+    state: running
+    region: "{{ region }}"
+    instance_ids: "{{ ec2_id }}"
