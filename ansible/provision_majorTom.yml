@@ -6,6 +6,7 @@
     role: majorTom
     dir_role_templates: "roles/{{ role }}/templates"
   roles:
+    - { role: mredar.nightly_security_update_yum, tags: security-up }
     - { role: common, sudo: no, tags: common}
     - { role: worker, sudo: no, tags: worker}
     - { role: majorTom, sudo: no, tags: [ majorTom, bashrc ]}

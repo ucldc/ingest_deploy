@@ -6,5 +6,6 @@
     dir_role_templates: "roles/{{ role }}/templates"
     name_env: "ingest{{ name_suffix }}"
   roles:
+    - { role: mredar.nightly_security_update_yum, tags: security-up }
     - { role: common, sudo: yes }
     - worker

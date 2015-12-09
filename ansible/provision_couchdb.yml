@@ -13,5 +13,6 @@
     - { include: roles/couchdb/tasks/mount_data_volume.yml,
         when: infstab.rc == 1 }
   roles:
+    - { role: mredar.nightly_security_update_yum, tags: security-up }
     - common
     - couchdb
