@@ -2,5 +2,7 @@
 ---
 - hosts: tag_Name_ingest_prod_worker
   gather_facts: yes
+  vars:
+    region: us-west-2
   tasks:
     - include: terminate_workers.yml
