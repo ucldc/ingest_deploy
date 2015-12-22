@@ -6,5 +6,6 @@
     role: ingest_front
     dir_role_templates: "roles/{{ role }}/templates"
   roles:
+    - { role: mredar.nightly_security_update_yum, tags: security-up }
     - common
     - ingest_front

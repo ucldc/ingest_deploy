@@ -6,6 +6,10 @@
 - hosts: localhost
   connection: local
   gather_facts: no
+  vars:
+    prod_env: True
+  vars_files:
+    - group_vars/prod
   tasks:
     - debug: var=prod_env
   roles:

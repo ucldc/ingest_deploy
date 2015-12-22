@@ -1,0 +1,16 @@
+# Create the infrastructure for the ingest process
+# VPC, subnets, security groups, gateway, routing tables,
+# nat instance(can it be the front end?),
+#
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  vars:
+    prod_env: False
+  vars_files:
+    - group_vars/stage
+  tasks:
+    - debug: var=prod_env
+  roles:
+    - create_infrastructure_instances

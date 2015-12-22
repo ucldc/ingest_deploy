@@ -1,0 +1,8 @@
+# stop instances for prod env
+---
+- hosts: tag_Name_ingest_prod*
+  connection: local
+  vars:
+    region: us-west-2
+  tasks:
+    - include: stop_instance.yml
