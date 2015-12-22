@@ -1,2 +1,5 @@
+[default]
+region=us-west-2
+
 [s3]
 calling_format = boto.s3.connection.OrdinaryCallingFormat
