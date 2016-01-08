@@ -2,6 +2,8 @@
 ---
 - debug: msg="{{ ec2_id }}"
 - pause: prompt="ctrl-C TO NOT TERMINATE INSTANCES"
+- name: stop rqworker gracefully
+  shell: /usr/local/bin/stop-rqworker.sh
 - name: terminate workers
   local_action:
     module: ec2
