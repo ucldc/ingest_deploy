@@ -2,6 +2,8 @@
 ---
 - debug: msg="{{ ec2_id }}"
 - pause: prompt="ctrl-C TO NOT TERMINATE INSTANCES"
+  tags:
+    - terminate-instances
 - name: stop rqworker gracefully
   shell: /usr/local/bin/stop-rqworker.sh
   tags: 
@@ -13,4 +15,4 @@
     region: "{{ region }}"
     instance_ids: "{{ ec2_id }}"
   tags:
-    - terminate-instance
+    - terminate-instances
