@@ -5,7 +5,7 @@
 ###- name: get ip of solr
 ###  shell: cat /ip-solr
 ###  register: ip_solr
-- include_vars: basic_auth_users.yml
+- include_vars: digest_auth_users.yml
 - name: copy access key for private machines
   sudo: no
   copy:

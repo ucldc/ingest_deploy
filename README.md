@@ -52,13 +52,13 @@ Will prompt for password that is easy to generate with pwgen.  copy the line in 
 Then run:
 
     ansible-vault --vault-password-file=~/.vault-password-file
-      ingest_deploy/ansible/roles/ingest_front/vars/basic_auth_users.yml
+      ingest_deploy/ansible/roles/ingest_front/vars/digest_auth_users.yml
 
 Entries in this file are htdigest lines, preceded by a - to make a yaml list.
 eg:
 
     ---
-    basic_auth_users:
+    digest_auth_users:
       - "u1:ingest:435srrr3db7b180366ce7e653493ca39"
       - "u1:ingest:rrrr756e5aacde0262130e79a888888c"
       - "u2:ingest:rrrr1cd0cd7rrr7a7839a5c1450bb8bc"
