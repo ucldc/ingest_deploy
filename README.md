@@ -95,7 +95,7 @@ Before initiating a harvest, you'll first need to confirm if the collection has 
 If you do not have results in the "value" parameter, then go to the next step of creating a harvest job.  If you do have results in the "value" parameter, then you'll be conducting a re-harvest. You'll first need to remove the harvested records from CouchDB:
 
 * Log into the majorTom machine.
-* Run this command, adding the key for the collection at the end: `python ~/code/harvester/scripts/delete_collection.py 23065`.
+* Run this command, adding the key for the collection at the end: `python ~/code/harvester/scripts/delete_couchdb_collection.py 23065`.
 * Then proceed with the steps below for creating a new harvest job
 
 ### 2. Create a harvest job
