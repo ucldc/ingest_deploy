@@ -1,21 +1,3 @@
-ingest_deploy
-=============
-
-Ansible, packer and vagrant project for building and running ingest environment
-on AWS and locally.
-Currently only the ansible is working, need to get a local vagrant version
-working....
-
-### Dependencies
-
-<b>Tools</b>
-
-- [VirtualBox](https://www.virtualbox.org/) (Version X.X)
-- [Vagrant](https://www.vagrantup.com/) (Version X.X)
-- [vagrant-vbguest](https://github.com/dotless-de/vagrnat-vbguest/) (`vagrant plugin install vagrant-vbguest`)
-- [Ansible](http://www.ansible.com/home) (Version X.X)
-- if using VirtualBox, install the vagrant-vbguest 
-
 <b>Harvesting infrastructure components</b>
 
 <i>Consult the <a href="https://docs.google.com/drawings/d/18Whi3nZGNgKQ2qh-XnJlV3McItyp-skuGSqH5b_L-X8/edit">harvesting infrastructure diagram</a> for an illustration of the key components.  Ask Mark Redar for access to them; note that you will need to log onto the ingest front machine and then into the majorTom machine to run commands</i>
@@ -322,6 +304,27 @@ To do so in the ingest environment, run `ansible-playbook -i hosts solr_docker_r
 You will then have to run `/usr/local/solr-update.sh --since=0` to reindex the
 whole couchdb database.
 
+
+Development
+-----------
+
+ingest_deploy
+-------------
+
+Ansible, packer and vagrant project for building and running ingest environment
+on AWS and locally.
+Currently only the ansible is working, need to get a local vagrant version
+working....
+
+### Dependencies
+
+<b>Tools</b>
+
+- [VirtualBox](https://www.virtualbox.org/) (Version X.X)
+- [Vagrant](https://www.vagrantup.com/) (Version X.X)
+- [vagrant-vbguest](https://github.com/dotless-de/vagrnat-vbguest/) (`vagrant plugin install vagrant-vbguest`)
+- [Ansible](http://www.ansible.com/home) (Version X.X)
+- if using VirtualBox, install the vagrant-vbguest 
 
 License
 =======
