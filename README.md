@@ -353,10 +353,22 @@ To do so in the ingest environment, run `ansible-playbook -i hosts solr_docker_r
 You will then have to run `/usr/local/solr-update.sh --since=0` to reindex the
 whole couchdb database.
 
+How to find a CouchDB source document for an item in Calisphere
+---------------------------------------------------------------
+
+Tracing back to the document source in CouchDB is critical to diagnose problems with data and images.
+
+Get the Solr id for the item. This is the part of the URL after the /item/ without the final slash. For https://calisphere.org/item/32e2220c1e918cf17f0597d181fa7e3e/, the Solr ID is 32e2220c1e918cf17f0597d181fa7e3e.
+
+Now go to the Solr index of interest and query for the id:
+https://52.10.100.133/solr/dc-collection/select?q=32e2220c1e918cf17f0597d181fa7e3e&wt=json&indent=true
+
+Find the `harvest_id_s` value, in this case "26094--LAPL00050887". Then plug this into CouchDB for the ucldc database:
+https://52.10.100.133/couchdb/ucldc/26094--LAPL00050887 (or with the UI - https://52.10.100.133/couchdb/_utils/document.html?ucldc/26094--LAPL00050887)
+
 Fixes for Common Problems
 -------------------------
 
-TODO: image harvest with redis clear, --get_if_object. Explain how to trace back through solr to couchdb
 ### Image problems
 
 The image harvesting part of the process often has at least partial failures.
@@ -364,9 +376,13 @@ First, just try to run the image harvest for the collection again from the regis
 
 If incorrect images were downloaded, you must manually queue the image harvest to force it to re-fetch images that were found. First, you need to clear the "CouchDB ID -> image url" cache and then set the image harvest to run with the flag --get_if_object (so get the image even if the "object" field exists in the CouchDB document)
 
-* log onto majorTom in the stage environment (52.10.100.133)
-* Run
+First you should check that the `isShownBy` field for the documents in question point to valid images. See [Finding CouchDB Doc for item](#cdbdocforitem) to find the document.
 
+* log onto majorTom in the stage environment (52.10.100.133)
+* Run `python ~/code/harvester/scripts/redis_delete_harvested_images_script.py <collection_id>`. This will produce a file called `delete_image_cache-<ID>` in the current directory.
+* Run `~/redis-3.0.2/src/redis-cli -h $REDIS_HOST < delete_image_cache-<ID>`. This will clear the cache of previously harvested URLs.
+* Queue an image harvest forcing it to get images for documents that already have the `object` field. Run `python ~/code/harvester/scripts/queue_image_harvest.py mredar@gmail.com normal-stage https://registry.cdlib.org/api/v1/collection/<ID>/ --get_if_object`
+* Keep your fingers crossed
 
 Development
 -----------
