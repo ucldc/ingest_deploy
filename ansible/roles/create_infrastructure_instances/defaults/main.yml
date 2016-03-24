@@ -1,5 +1,5 @@
 ---
-image_hvm: ami-f0091d91
+image_hvm: ami-c229c0a2
 image_nat: ami-290f4119
 instance_type: t2.micro
 key_name: ingest
