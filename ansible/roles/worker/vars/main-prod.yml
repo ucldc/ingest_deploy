@@ -1,6 +1,6 @@
 DATA_BRANCH: production
 
-redis_host: x-001.swle7i.0001.usw2.cache.amazonaws.com
+redis_host: x-002.swle7i.0001.usw2.cache.amazonaws.com
 redis_port: 6379
 redis_password: "{{ redis_password_prod }}"
 redis_connect_timeout: 10
