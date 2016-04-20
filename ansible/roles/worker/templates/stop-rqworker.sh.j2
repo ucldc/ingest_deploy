@@ -17,7 +17,12 @@ if [[ $PID_RQW == $rq_running ]]; then
     kill $PID_RQW
 fi
 
+i=0
 while test -d "/proc/$PID_RQW"; do
+	if [ $i -gt 30 ]; then
+		exit 11
+	fi
   sleep 1
+  let i+=1
 done
 /bin/rm {{ dir_run_rqworker }}/rqworker.pid

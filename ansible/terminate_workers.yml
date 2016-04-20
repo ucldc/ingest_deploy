@@ -6,7 +6,6 @@
     - terminate-instances
 - name: stop rqworker gracefully
   shell: /usr/local/bin/stop-rqworker.sh
-  ignore_errors: yes
   tags: 
     - stop-worker
 - name: terminate workers
