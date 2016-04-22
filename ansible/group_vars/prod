@@ -13,3 +13,4 @@ name_suffix: "-{{ DATA_BRANCH| truncate(4) }}"
 couchdb_url: http://10.60.41.14:5984
 solr_url: http://10.60.39.243:8983/solr
 eip_ingest_front: 52.11.194.40
+worker_instance_type: t2.micro
