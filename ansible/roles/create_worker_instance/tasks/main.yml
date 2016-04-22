@@ -1,6 +1,6 @@
 ---
 # tasks file for create_worker_instance
-- debug: var=instance_type
+- debug: var=worker_instance_type
 - name: create a new worker instance in the private vpc
   local_action:
     module: ec2
@@ -9,7 +9,7 @@
     region: "{{ region }}"
     key_name: "{{ key_name }}"
     image: "{{ image_hvm }}"
-    instance_type: "{{ instance_type }}"
+    instance_type: "{{ worker_instance_type }}"
     instance_profile_name: ingest-worker
     group_id: [ "{{ sec_grp_ingest_private_id }}" ]
     wait: true
