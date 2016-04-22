@@ -5,8 +5,10 @@
 * <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> 
 * ingest front machine (stage - 52.10.100.133) and ingest front machine (production - 52.11.194.40), for access to:
  * <a href="https://52.10.100.133/rq/">RQ Dashboard</a>
- * CouchDB <a href="https://52.10.100.133/couchdb/_utils/database.html?ucldc/_all_docs">stage</a>  <a href="https://52.11.194.40/couchdb/_utils/database.html?ucldc/_all_docs">production</a>
- * Solr <a href="https://52.10.100.133/solr/#/dc-collection/query">stage</a> <a href="https://52.11.194.40/solr/#/dc-collection/query">production</a> 
+ * <a href="https://52.10.100.133/couchdb/_utils/database.html?ucldc/_all_docs">CouchDB stage</a>  
+ * <a href="https://52.11.194.40/couchdb/_utils/database.html?ucldc/_all_docs">CouchDB production</a>
+ * <a href="https://52.10.100.133/solr/#/dc-collection/query">Solr stage</a> 
+ * <a href="https://52.11.194.40/solr/#/dc-collection/query">Solr production</a> 
 * Elastic Beanstalk 
 * <a href="https://aws.amazon.com/console/">AWS CloudWatch</a>
 
