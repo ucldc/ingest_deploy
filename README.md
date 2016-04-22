@@ -92,15 +92,15 @@ Conducting a harvest
 Before initiating a harvest, you'll first need to confirm if the collection has previously been harvested -- or if it's a new collection:
 
 * Log into the <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> and look up the collection, to determine the key.  For example, for <a href="https://registry.cdlib.org/admin/library_collection/collection/26189/">"Radiologic Imaging Lab collection"</a>, the key is "26189"
-* Query CouchDB using this URL syntax.  Replace the key parameter with the key for the collection: `https://52.10.100.133/couchdb/ucldc/_design/all_provider_docs/_view/by_provider_name_count?key="26189"`
+* Query CouchDB stage using this URL syntax.  Replace the key parameter with the key for the collection: `https://52.10.100.133/couchdb/ucldc/_design/all_provider_docs/_view/by_provider_name_count?key="26189"`
 
 If you do not have results in the "value" parameter, then go to the next step of creating a harvest job.  If you do have results in the "value" parameter, then you'll be conducting a re-harvest. You'll first need to remove the harvested records from CouchDB:
 
-* Log into the majorTom machine.
+* Log into the majorTom stage machine.
 * Run this command, adding the key for the collection at the end: `python ~/code/harvester/scripts/delete_couchdb_collection.py 23065`.
 * Then proceed with the steps below for creating a new harvest job
 
-### 2. Create a harvest job
+### 2. Create a harvest job in Registry
 
 * Log into the <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> and look up the collection
 * Choose `Start harvest normal stage` from the `Action` drop-down. Note: "normal stage" is the current default. When you provision workers (see below), you can specify which queue(s) they will poll for jobs via the `rq_work_queues` parameter. The example given below sets the workers up to listen for jobs on `normal-stage` and `low-stage`, but you can change this if need be. 
@@ -108,7 +108,7 @@ If you do not have results in the "value" parameter, then go to the next step of
 
 You can now begin to monitor the harvesting process through the <a href="https://52.10.100.133/rq/">RQ Dashboard</a>. At this stage, you'll see the harvest job listed in the queue.
 
-### 3. Harvest the collection through to CouchDB
+### 3. Harvest the collection through to CouchDB stage
 
 The following sections describe the process for harvesting collections through to CouchDB. This is done via the use of "transient" <a href="http://python-rq.org/">Redis Queue</a>-managed (RQ) worker instances, which are created as needed and then deleted after use. Once the workers have been created and provisioned, they will automatically look for jobs in the queue and run the full harvester code for those jobs. The end result is that CouchDB is updated.
 
