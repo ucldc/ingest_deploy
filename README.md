@@ -261,7 +261,7 @@ The `count=##` parameter will set the number of instances to create. For harvest
 
 You should see output in the console as the playbook runs through its tasks. At the end, it will give you a status line. Look for `fail=0` to verify that everything ran OK.
 
-#### 2.2. Provision production workers to act on harvesting 
+#### 2.2. Provision production workers to act on sync
 
 Once this is done and the production worker instances are in a state of "running", you'll need to provision the workers by installing required software, configurations and start running Akara and the worker processes that listen on the queues specified:
 
