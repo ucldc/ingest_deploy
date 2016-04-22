@@ -227,7 +227,7 @@ To QA check media.json output results, use this URL syntax: `https://s3.amazonaw
 You can preview the Solr stage index in the Calisphere UI at <a href="http://calisphere-test.cdlib.org/">http://calisphere-test.cdlib.org/</a>.
 
 
-### 9. Terminate worker instances
+### 9. Terminate stage worker instances
 
 Once you've QA checked the results and have completed the harvest, you'll need to terminate the worker instances.
 
@@ -305,7 +305,7 @@ Once the solr index is updated, and if it is ready for distribution to the Calis
     
 Note that stashing a Solr index on S3 does nothing in terms of updating the Calisphere front-end website. In order to update the web application so that it points to the data represented in the new index, you have to update the Elastic Beanstalk instance  configuration (see below).
 
-### 4. Terminate worker instances
+### 4. Terminate production worker instances
 
 Once you've completed syncing, you'll need to terminate the worker instances.
 
