@@ -84,8 +84,8 @@ From a machine that can already access the ingest front machine with ssh run:
 This will add your public key to the ~/.ssh/authorized_keys for the ec2-user on
 the ingest front machine.
 
-Conducting a harvest
---------------------
+Conducting a harvest 
+--------------------------
 
 ### 1. New harvest or re-harvest?
 
@@ -94,7 +94,7 @@ Before initiating a harvest, you'll first need to confirm if the collection has 
 * Log into the <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> and look up the collection, to determine the key.  For example, for <a href="https://registry.cdlib.org/admin/library_collection/collection/26189/">"Radiologic Imaging Lab collection"</a>, the key is "26189"
 * Query CouchDB stage using this URL syntax.  Replace the key parameter with the key for the collection: `https://52.10.100.133/couchdb/ucldc/_design/all_provider_docs/_view/by_provider_name_count?key="26189"`
 
-If you do not have results in the "value" parameter, then go to the next step of creating a harvest job.  If you do have results in the "value" parameter, then you'll be conducting a re-harvest. You'll first need to remove the harvested records from CouchDB:
+If you do not have results in the "value" parameter, then go to the next step of creating a harvest job.  If you do have results in the "value" parameter, then you'll be conducting a re-harvest. You'll first need to remove the harvested records from CouchDB stage:
 
 * Log into the majorTom stage machine.
 * Run this command, adding the key for the collection at the end: `python ~/code/harvester/scripts/delete_couchdb_collection.py 23065`.
@@ -110,41 +110,27 @@ You can now begin to monitor the harvesting process through the <a href="https:/
 
 ### 3. Harvest the collection through to CouchDB stage
 
-The following sections describe the process for harvesting collections through to CouchDB. This is done via the use of "transient" <a href="http://python-rq.org/">Redis Queue</a>-managed (RQ) worker instances, which are created as needed and then deleted after use. Once the workers have been created and provisioned, they will automatically look for jobs in the queue and run the full harvester code for those jobs. The end result is that CouchDB is updated.
+The following sections describe the process for harvesting collections through to CouchDB stage. This is done via the use of "transient" <a href="http://python-rq.org/">Redis Queue</a>-managed (RQ) worker instances, which are created as needed and then deleted after use. Once the workers have been created and provisioned, they will automatically look for jobs in the queue and run the full harvester code for those jobs. The end result is that CouchDB is updated.
 
-#### 3.1. Create workers
+#### 3.1. Create <a name="createstageworker">stage workers</a>
 
-##### <a name="createstageworker">Stage workers</a>
-* Log into the majorTom machine. (52.10.100.133) 
+* Log into the majorTom stage machine. (52.10.100.133) 
 * To activate the virtualenv in ~/workers_local/, run: `. ~/workers_local/bin/activate`
 * To create some worker machines (bare ec2 instances), run: `ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ingest_deploy/ansible/hosts ~/code/ingest_deploy/ansible/create_worker-stage.yml --extra-vars="count=3"`
-
-##### <a name="createprodworker">Production workers</a>
-Production workers handle the syncing of the couchdb instances, so usually will not be running.
-* Log into the majorTom machine. (52.11.194.40) 
-* To activate the virtualenv in ~/workers_local/, run: `. ~/workers_local/bin/activate`
-* To create some worker machines (bare ec2 instances), run: `ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ingest_deploy/ansible/hosts ~/code/ingest_deploy/ansible/create_worker-prod.yml --extra-vars="count=3"`
 
 The `count=##` parameter will set the number of instances to create. For harvesting one small collection you can set this to `count=1`. To re-harvest all collections, you can set this to `count=20`. For anything in between, use your judgment.
 
 You should see output in the console as the playbook runs through its tasks. At the end, it will give you a status line. Look for `fail=0` to verify that everything ran OK.
 
-#### 3.2. Provision workers to act on harvesting 
+#### 3.2. Provision stage workers to act on harvesting 
 
-Once this is done and the worker instances are in a state of "running", you'll need to provision the workers by installing required software, configurations and start running Akara and the worker processes that listen on the queues specified:
+Once this is done and the stage worker instances are in a state of "running", you'll need to provision the workers by installing required software, configurations and start running Akara and the worker processes that listen on the queues specified:
 
-##### Stage workers
 * Log into the majorTom machine. (52.10.100.133) 
 * To provision the workers, run: `ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ec2.py ~/code/ingest_deploy/ansible/provision_worker-stage.yml --extra-vars='rq_work_queues=["normal-stage","low-stage"]'`
 * Wait for the provisioning to finish; this can take a while, 5-10 minutes is not
 unusual. If the provisioning process stalls, use `ctrl-C` to end the process then re-do the ansible command.
 * Check the status of the the harvesting process through the <a href="https://52.10.100.133/rq/">RQ Dashboard</a>.  You should now see the provisioned workers listed, and acting on the jobs in the queue. You will be able to see the workers running jobs (indicated by a "play" triangle icon) and then finishing (indicated by a "pause" icon).
-
-##### Production workers
-* Log into the majorTom machine. (52.11.194.40) 
-* To provision the workers, run: `ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ec2.py ~/code/ingest_deploy/ansible/provision_worker-prod.yml --extra-vars='rq_work_queues=["normal-prod","low-prod"]'`
-* Wait for the provisioning to finish; this can take a while, 5-10 minutes is not
-
 
 **NOTE:** if you already have provisioned worker machines running jobs, use the
 --limit=<ip range> eg. --limit=10.60.22.\* to make sure you don't reprovision 
@@ -156,18 +142,16 @@ AWS assigns unique subnets to the groups of workers you start, so in general,
 different generations of machines will be distinguished by the different C class
 subnet. This makes the --limit parameter quite useful.
 
-#### 3.3. Verify that the harvests are complete
+#### 3.3. Verify that the harvests are complete in CouchDB stage
 
 The jobs will disappear from queue when they've all been slurped up by the workers. You should then be able to QA check the harvested collection:
 
-* Query CouchDB using this URL syntax.  Replace the key parameter with the key for the collection: `https://52.10.100.133/couchdb/ucldc/_design/all_provider_docs/_view/by_provider_name_count?key="26189"`
+* Query CouchDB stage using this URL syntax.  Replace the key parameter with the key for the collection: `https://52.10.100.133/couchdb/ucldc/_design/all_provider_docs/_view/by_provider_name_count?key="26189"`
 * Results in the "value" parameter indicate the total number of metadata records harvested; this should align with the expected results. 
-* If you have results, continue with QA checking the collection in CouchDB and Solr.
+* If you have results, continue with QA checking the collection in CouchDB stage and Solr stage.
 * If there are no results, you will need to troubleshoot and re-harvest.  See <b>What to do when harvests fail</b> section for details.
 
-### 4. QA check collection in CouchDB
-
-As a next step, QA check the harvested collection in CouchDB; you can also subsequently check the results in Solr.
+### 4. QA check collection in CouchDB stage
 
 The objective of this part of the QA process is to ensure that source metadata (from a harvesting target) is correctly mapped through to CouchDB
 Suggested method is to review the 1) source metadata (e.g., original MARC21  record, original XTF-indexed metadata*) vis-a-vis the 2) a random sample of CouchDB results and 3) <a href="https://docs.google.com/spreadsheets/d/1u2RE9PD0N9GkLQTFNJy3HiH9N5IbKDG52HjJ6JomC9I/edit#gid=265758929">metadata crosswalk</a>. Things to check:
@@ -184,7 +168,7 @@ NOTE: To view the original XTF-indexed metadata for content harvested from Calis
 * Go to Collection Registry, locate the collection that was harvested from XTF, and skip to the "URL harvest" field -- use that URL to generate a result of the XTF-indexed metadata (view source code to see raw XML)
 * Append the following to the URL, to set the number of results: `docsPerPage=###`
 
-<b>Querying CouchDB</b>
+<b>Querying CouchDB stage</b>
 * To generate a results set of metadata records for a given collection in CouchDB, using this URL syntax: `https://52.10.100.133/couchdb/ucldc/_design/all_provider_docs/_list/has_field_value/by_provider_name_wdoc?key="10046"&field=originalRecord.subject&limit=100`. Each metadata record in the results set will have a unique ID  (e.g., 26094--00000001). This can be used for viewing the metadata within the CouchDB UI.
 * Parameters: 
  * <b>field</b>: Optional.  Limit the display output to a particular field. 
@@ -198,19 +182,19 @@ NOTE: To view the original XTF-indexed metadata for content harvested from Calis
 * To view a result of raw CouchDB JSON output:  `https://52.10.100.133/couchdb/ucldc/_design/all_provider_docs/_view/by_provider_name?key="26094"&limit=1&include_docs=true`
 * Consult the <a href="http://wiki.apache.org/couchdb/HTTP_view_API">CouchDB guide</a> for additional query details.
 
-<b>Viewing metadata for an object in CouchDB</b>
+<b>Viewing metadata for an object in CouchDB stage</b>
 
 * Log into <a href="https://52.10.100.133/couchdb/_utils/database.html?ucldc/_all_docs">CouchDB</a>
  * In the "Jump to" box, enter the unique ID for a given  metadata record (e.g., 26094--00000001)
  * You can now view the metadata in either its source format or mapped to CouchDB fields
 
-### 5. QA check collection in Solr
+### 5. QA check collection in Solr stage
 
-The objective of this QA process is to view any results passed from the CouchDB staging instance to the Solr staging instance; it can also be used to verify issues or discrepancies in data between the two instances.  It assumes that the data in CouchDB has been correctly mapped through to Solr; this is a fixed mapping, as documented on the second tab of the <a href="https://docs.google.com/spreadsheets/d/1u2RE9PD0N9GkLQTFNJy3HiH9N5IbKDG52HjJ6JomC9I/edit#gid=2062617414">metadata crosswalk</a>.
+The objective of this QA process is to view any results passed from CouchDB stage to Solr stage; it can also be used to verify issues or discrepancies in data between the two instances.  It assumes that the data in CouchDB has been correctly mapped through to Solr; this is a fixed mapping, as documented on the second tab of the <a href="https://docs.google.com/spreadsheets/d/1u2RE9PD0N9GkLQTFNJy3HiH9N5IbKDG52HjJ6JomC9I/edit#gid=2062617414">metadata crosswalk</a>.
 
 Before you can conduct QA checking, you'll need to update Solr -- see <b>[Updating Solr](#solrupdate)</b> instructions below.
 
-<b>Querying Solr</b>
+<b>Querying Solr stage</b>
 * Log into <a href="https://52.10.100.133/solr/#/dc-collection/query">Solr</a> to conduct queries 
 * Consult the <a href="https://wiki.apache.org/solr/SolrQuerySyntax">Solr guide</a> for additional query details.
 
@@ -220,33 +204,41 @@ Before you can conduct QA checking, you'll need to update Solr -- see <b>[Updati
 To QA check media.json output results, use this URL syntax: `https://s3.amazonaws.com/static.ucldc.cdlib.org/media_json/70d7f57a-db0b-4a1a-b089-cce1cc289c9e-media.json`
 
 
-### 7. Terminate worker instances
+### 7. QA check in Calisphere stage UI
+
+You can preview the Solr stage index in the Calisphere UI at <a href="http://calisphere-test.cdlib.org/">http://calisphere-test.cdlib.org/</a>.
+
+
+### 8. Terminate worker instances
 
 Once you've QA checked the results and have completed the harvest, you'll need to terminate the worker instances.
 
-* Log into majorTom
+* Log into majorTom stage
 * Run: `ansible-playbook -i ~/code/ec2.py ~/code/ingest_deploy/ansible/terminate_workers-stage.yml <--limit=10.60.?.?>` . You can use the `limit` parameter to specify a range of IP addresses for deletion.
 * You'll receive a prompt to confirm that you want to spin down the intance; hit Return to confirm.
     
-## <a name="solrupdate">Updating Solr</a>
+## <a name="solrupdate">Updating Solr stage</a>
 
-### Create a new Solr index based on the current CouchDB instance
+### Create a new Solr stage index, based on what's in CouchDB stage
 
 Currently, Solr updates are run from the majorTom machine. The Solr update looks at the Couchdb changes endpoint. This endpoint has a record for each document that has been created in the database, including deleted documents.
 
-* Log into majorTom
+* Log into majorTom stage
 * To do an incremental update, run: `/usr/local/bin/solr-update.sh`. This will run an incremental update, which is what you will most often want to do. This uses the last changes sequence number that is saved in s3 at solr.ucldc/couchdb_since/<DATA_BRANCH> in order to determine what has changed.
 * To reindex all docs run: `/usr/local/bin/solr-update.sh --since=0`
 * You can check to confirm if the Solr index file was generated by looking at `var/local/solr-update/log/`. The directory lists the Solr files by date, with a timestamp.
 
-**Note: as of March, 2016, updating the stage solr index will immediately update the calisphere-test.cdlib.org data source.** The frequent rebuilding of a stage beanstalk was taking loads of time, now just updating the stage solr index will be reflected on calisphere-test.
 
-### Deleting a collection from Solr
+### Deleting a collection from Solr stage
 
-* log onto majorTom in the environment you want to delete from
+* Log onto majorTom in the environment you want to delete from
 * Run `~/code/harvester/scripts/delete_solr_collection.sh <collection id>`
 
-## <a name="synccouch">Syncing CouchDB</a>
+
+Moving a harvest to production
+--------------------------
+
+### 1. <a name="synccouch">Create a sync job in the Registry</a>
 
 Once the stage CouchDB & Solr look good and the collection looks ready to publish to Calisphere, start by syncing the stage CouchDB to the production CouchDB. The collection will then be able to be updated to production Solr.
 
@@ -254,12 +246,44 @@ In the Registry, edit the collection and check the box "Ready for publication" a
 
 Now select "Queue Sync to production CouchDB for collection" from the action on the Collection page.
 
-## Update Preproduction Solr
+
+### 2. Sync the collection through to CouchDB production
+
+#### 2.1.Create <a name="createprodworker">production workers</a>
+
+Production workers handle the syncing of the couchdb instances, so usually will not be running.
+* Log into the majorTom machine. (52.11.194.40) 
+* To activate the virtualenv in ~/workers_local/, run: `. ~/workers_local/bin/activate`
+* To create some worker machines (bare ec2 instances), run: `ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ingest_deploy/ansible/hosts ~/code/ingest_deploy/ansible/create_worker-prod.yml --extra-vars="count=3"`
+
+The `count=##` parameter will set the number of instances to create. For harvesting one small collection you can set this to `count=1`. To re-harvest all collections, you can set this to `count=20`. For anything in between, use your judgment.
+
+You should see output in the console as the playbook runs through its tasks. At the end, it will give you a status line. Look for `fail=0` to verify that everything ran OK.
+
+#### 2.2. Provision production workers to act on harvesting 
+
+Once this is done and the production worker instances are in a state of "running", you'll need to provision the workers by installing required software, configurations and start running Akara and the worker processes that listen on the queues specified:
+
+* Log into the majorTom machine. (52.11.194.40) 
+* To provision the workers, run: `ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ec2.py ~/code/ingest_deploy/ansible/provision_worker-prod.yml --extra-vars='rq_work_queues=["normal-prod","low-prod"]'`
+* Wait for the provisioning to finish; this can take a while, 5-10 minutes is not unusual.
+
+**NOTE:** if you already have provisioned worker machines running jobs, use the
+--limit=<ip range> eg. --limit=10.60.22.\* to make sure you don't reprovision 
+a currently running machine. Otherwise rerunning the provisioning will put the 
+current running workers in a bad state, and you will then have to log on to the 
+worker and restart the worker process or terminate the machine.  Example of full command: `ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ec2.py ~/code/ingest_deploy/ansible/provision_worker-stage.yml --extra-vars='rq_work_queues=["normal-stage","low-stage"]' --limit=10.60.29.*`
+
+AWS assigns unique subnets to the groups of workers you start, so in general,
+different generations of machines will be distinguished by the different C class
+subnet. This makes the --limit parameter quite useful.
+
+#### 2.3. Update candidate Solr index
 
 [See Updating Solr above](#solrupdate) but log onto the production majorTom throgh the production front end at 52.11.194.40.
-Then follow the same update steps to post the updated CouchDB collection to the candidate solr index.
+Then follow the same update steps to post the updated CouchDB collection to the candidate Solr index.
 
-## <a name="s3index">Generating Solr indexes for S3 (production only)</a>
+#### 2.4. <a name="s3index">Generating Solr indexes for S3 (production only)</a>
 Once the solr index is updated, and if it is ready for distribution to the Calisphere front-end website, you can generate an index to store on S3:
 
 * Log into majorTom in production - 52.11.194.40
@@ -269,6 +293,7 @@ Once the solr index is updated, and if it is ready for distribution to the Calis
     solr.ucldc/indexes/<DATA_BRANCH>/YYYY/MM/solr-index.YYYY-MM-DD-HH_MM_SS.tar.bz2
     
 Note that stashing a Solr index on S3 does nothing in terms of updating the Calisphere front-end website. In order to update the web application so that it points to the data represented in the new index, you have to update the Elastic Beanstalk instance  configuration (see below).
+
     
 Updating Elastic Beanstalk
 --------------------------
