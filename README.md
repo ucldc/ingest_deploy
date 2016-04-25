@@ -273,7 +273,7 @@ Once this is done and the production worker instances are in a state of "running
 --limit=<ip range> eg. --limit=10.60.22.\* to make sure you don't reprovision 
 a currently running machine. Otherwise rerunning the provisioning will put the 
 current running workers in a bad state, and you will then have to log on to the 
-worker and restart the worker process or terminate the machine.  Example of full command: `ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ec2.py ~/code/ingest_deploy/ansible/provision_worker-stage.yml --extra-vars='rq_work_queues=["normal-stage","low-stage"]' --limit=10.60.29.*`
+worker and restart the worker process or terminate the machine.  Example of full command: `ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ec2.py ~/code/ingest_deploy/ansible/provision_worker-prod.yml --extra-vars='rq_work_queues=["normal-prod","low-prod"]' --limit=10.60.29.*`
 
 AWS assigns unique subnets to the groups of workers you start, so in general,
 different generations of machines will be distinguished by the different C class
