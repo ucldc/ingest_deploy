@@ -7,3 +7,4 @@ name_env_suffix: "{{ name_suffix | default('') }}"
 name_env: "{{ tag_subproject }}{{ name_env_suffix }}"
 prod_env: "{{ production | default(False) | bool }}"
 log_datetime_format: "%Y%m%d %H:%M:%S"
+worker_instance_type: m3.large 
