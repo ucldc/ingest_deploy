@@ -126,7 +126,7 @@ You should see output in the console as the playbook runs through its tasks. At 
 
 Once this is done and the stage worker instances are in a state of "running", you'll need to provision the workers by installing required software, configurations and start running Akara and the worker processes that listen on the queues specified:
 
-* Log into the majorTom machine. (52.10.100.133) 
+* Log into the majorTom stage machine. (52.10.100.133) 
 * To provision the workers, run: `ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ec2.py ~/code/ingest_deploy/ansible/provision_worker-stage.yml --extra-vars='rq_work_queues=["normal-stage","low-stage"]'`
 * Wait for the provisioning to finish; this can take a while, 5-10 minutes is not
 unusual. If the provisioning process stalls, use `ctrl-C` to end the process then re-do the ansible command.
@@ -253,7 +253,7 @@ Now select "Queue Sync to production CouchDB for collection" from the action on 
 #### 2.1.Create <a name="createprodworker">production workers</a>
 
 Production workers handle the syncing of the couchdb instances, so usually will not be running.
-* Log into the majorTom machine. (52.11.194.40) 
+* Log into the majorTom production machine. (52.11.194.40) 
 * To activate the virtualenv in ~/workers_local/, run: `. ~/workers_local/bin/activate`
 * To create some worker machines (bare ec2 instances), run: `ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ingest_deploy/ansible/hosts ~/code/ingest_deploy/ansible/create_worker-prod.yml --extra-vars="count=3"`
 
@@ -265,7 +265,7 @@ You should see output in the console as the playbook runs through its tasks. At 
 
 Once this is done and the production worker instances are in a state of "running", you'll need to provision the workers by installing required software, configurations and start running Akara and the worker processes that listen on the queues specified:
 
-* Log into the majorTom machine. (52.11.194.40) 
+* Log into the majorTom production machine. (52.11.194.40) 
 * To provision the workers, run: `ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ec2.py ~/code/ingest_deploy/ansible/provision_worker-prod.yml --extra-vars='rq_work_queues=["normal-prod","low-prod"]'`
 * Wait for the provisioning to finish; this can take a while, 5-10 minutes is not unusual.
 
@@ -273,7 +273,7 @@ Once this is done and the production worker instances are in a state of "running
 --limit=<ip range> eg. --limit=10.60.22.\* to make sure you don't reprovision 
 a currently running machine. Otherwise rerunning the provisioning will put the 
 current running workers in a bad state, and you will then have to log on to the 
-worker and restart the worker process or terminate the machine.  Example of full command: `ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ec2.py ~/code/ingest_deploy/ansible/provision_worker-stage.yml --extra-vars='rq_work_queues=["normal-stage","low-stage"]' --limit=10.60.29.*`
+worker and restart the worker process or terminate the machine.  Example of full command: `ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ec2.py ~/code/ingest_deploy/ansible/provision_worker-prod.yml --extra-vars='rq_work_queues=["normal-prod","low-prod"]' --limit=10.60.29.*`
 
 AWS assigns unique subnets to the groups of workers you start, so in general,
 different generations of machines will be distinguished by the different C class
