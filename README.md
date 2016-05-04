@@ -3,12 +3,12 @@
 <i>Consult the <a href="https://docs.google.com/drawings/d/18Whi3nZGNgKQ2qh-XnJlV3McItyp-skuGSqH5b_L-X8/edit">harvesting infrastructure diagram</a> for an illustration of the key components.  Ask Mark Redar for access to them; note that you will need to log onto the ingest front machine and then into the majorTom machine to run commands, using these <a href="https://sp.ucop.edu/sites/cdl/apg/OACCalisphere%20docs/dsc_putty_connection_instructions.docx">Putty connection  instructions</a> (on Sharepoint)</i>
 
 * <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> 
-* ingest front machine (stage - 52.10.100.133) and ingest front machine (production - 52.11.194.40), for access to:
- * <a href="https://52.10.100.133/rq/">RQ Dashboard</a>
- * <a href="https://52.10.100.133/couchdb/_utils/database.html?ucldc/_all_docs">CouchDB stage</a>  
- * <a href="https://52.11.194.40/couchdb/_utils/database.html?ucldc/_all_docs">CouchDB production</a>
- * <a href="https://52.10.100.133/solr/#/dc-collection/query">Solr stage</a> 
- * <a href="https://52.11.194.40/solr/#/dc-collection/query">Solr production</a> 
+* ingest front machine (stage - harvest-stg.cdlib.org) and ingest front machine (production - harvest-prd.cdlib.org), for access to:
+ * <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>
+ * <a href="https://harvest-stg.cdlib.org/couchdb/_utils/database.html?ucldc/_all_docs">CouchDB stage</a>  
+ * <a href="https://harvest-prd.cdlib.org/couchdb/_utils/database.html?ucldc/_all_docs">CouchDB production</a>
+ * <a href="https://harvest-stg.cdlib.org/solr/#/dc-collection/query">Solr stage</a> 
+ * <a href="https://harvest-prd.cdlib.org/solr/#/dc-collection/query">Solr production</a> 
 * Elastic Beanstalk 
 * <a href="https://aws.amazon.com/console/">AWS CloudWatch</a>
 
@@ -18,14 +18,14 @@ As of February 2016, the process to publish a collection to production is as fol
 2. Select "Queue harvest for collection on normal queue" on the registry page for the collection
 3. Check that there is a worker listening on the queue. If not start one. [Stage Worker](#createstageworker)
 4. Wait until the harvest job finishes, hopefully without error.  Now the collection has been harvested to the **stage CouchDB**.
-5. The first round of QA in CouchDB can be performed there <a href="https://52.10.100.133/couchdb/_utils/database.html?ucldc/_all_docs">CouchDB stage</a>
+5. The first round of QA in CouchDB can be performed there <a href="https://harvest-stg.cdlib.org/couchdb/_utils/database.html?ucldc/_all_docs">CouchDB stage</a>
 6. Push the new CouchDB docs into the stage Solr index. [Updating Solr](#solrupdate)
-7. QA **stage Solr** index in the public interface <a href="https://52.10.100.133/solr/#/dc-collection/query">Solr stage</a>
+7. QA **stage Solr** index in the public interface <a href="https://harvest-stg.cdlib.org/solr/#/dc-collection/query">Solr stage</a>
 8. When ready to publish to production, edit Collection in the registry and check the "Ready for publication" box and save.
 9. Select the "Queue sync to production couchdb for collection" [Syncing CouchDB](#synccouch)
 10. Check that there is a worker in the production environment listening on the normal prod queue, if not start one. [Production Worker](#createprodworker)
 11. Wait until the sync job finishes.  Now the collection has been harvested to the **production CouchDB**.
-12. Sync the new docs to the **production Solr** by running the solr update on the production majorTom. At this point the Collection is in the *<a href="https://52.11.194.40/solr/#/dc-collection/query">new, candidate Calisphere Solr index</a>*
+12. Sync the new docs to the **production Solr** by running the solr update on the production majorTom. At this point the Collection is in the *<a href="https://harvest-prd.cdlib.org/solr/#/dc-collection/query">new, candidate Calisphere Solr index</a>*
 13. Once QA is done on the candidate index and ready to push new one to Calisphere, [push the index to S3](#s3index)
 14. Clone the existing Solr API Elastic Beanstalk and point to the packaged index on S3
 15. Swap the URL from the older Solr API Elastic Beanstalk and the new Elastic Beanstalk.
@@ -92,7 +92,7 @@ Conducting a harvest
 Before initiating a harvest, you'll first need to confirm if the collection has previously been harvested -- or if it's a new collection:
 
 * Log into the <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> and look up the collection, to determine the key.  For example, for <a href="https://registry.cdlib.org/admin/library_collection/collection/26189/">"Radiologic Imaging Lab collection"</a>, the key is "26189"
-* Query CouchDB stage using this URL syntax.  Replace the key parameter with the key for the collection: `https://52.10.100.133/couchdb/ucldc/_design/all_provider_docs/_view/by_provider_name_count?key="26189"`
+* Query CouchDB stage using this URL syntax.  Replace the key parameter with the key for the collection: `https://harvest-stg.cdlib.org/couchdb/ucldc/_design/all_provider_docs/_view/by_provider_name_count?key="26189"`
 
 If you do not have results in the "value" parameter, then go to the next step of creating a harvest job.  If you do have results in the "value" parameter, then you'll be conducting a re-harvest. You'll first need to remove the harvested records from CouchDB stage:
 
@@ -106,7 +106,7 @@ If you do not have results in the "value" parameter, then go to the next step of
 * Choose `Start harvest normal stage` from the `Action` drop-down. Note: "normal stage" is the current default. When you provision workers (see below), you can specify which queue(s) they will poll for jobs via the `rq_work_queues` parameter. The example given below sets the workers up to listen for jobs on `normal-stage` and `low-stage`, but you can change this if need be. 
 * You should then get feedback message verifying that the collections have been queued.
 
-You can now begin to monitor the harvesting process through the <a href="https://52.10.100.133/rq/">RQ Dashboard</a>. At this stage, you'll see the harvest job listed in the queue.
+You can now begin to monitor the harvesting process through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>. At this stage, you'll see the harvest job listed in the queue.
 
 ### 3. Harvest the collection through to CouchDB stage
 
@@ -114,7 +114,7 @@ The following sections describe the process for harvesting collections through t
 
 #### 3.1. Create <a name="createstageworker">stage workers</a>
 
-* Log into the majorTom stage machine. (52.10.100.133) 
+* Log into the majorTom stage machine. (harvest-stg.cdlib.org) 
 * To activate the virtualenv in ~/workers_local/, run: `. ~/workers_local/bin/activate`
 * To create some worker machines (bare ec2 instances), run: `ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ingest_deploy/ansible/hosts ~/code/ingest_deploy/ansible/create_worker-stage.yml --extra-vars="count=3"`
 
@@ -126,11 +126,11 @@ You should see output in the console as the playbook runs through its tasks. At 
 
 Once this is done and the stage worker instances are in a state of "running", you'll need to provision the workers by installing required software, configurations and start running Akara and the worker processes that listen on the queues specified:
 
-* Log into the majorTom stage machine. (52.10.100.133) 
+* Log into the majorTom stage machine. (harvest-stg.cdlib.org) 
 * To provision the workers, run: `ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ec2.py ~/code/ingest_deploy/ansible/provision_worker-stage.yml --extra-vars='rq_work_queues=["normal-stage","low-stage"]'`
 * Wait for the provisioning to finish; this can take a while, 5-10 minutes is not
 unusual. If the provisioning process stalls, use `ctrl-C` to end the process then re-do the ansible command.
-* Check the status of the the harvesting process through the <a href="https://52.10.100.133/rq/">RQ Dashboard</a>.  You should now see the provisioned workers listed, and acting on the jobs in the queue. You will be able to see the workers running jobs (indicated by a "play" triangle icon) and then finishing (indicated by a "pause" icon).
+* Check the status of the the harvesting process through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>.  You should now see the provisioned workers listed, and acting on the jobs in the queue. You will be able to see the workers running jobs (indicated by a "play" triangle icon) and then finishing (indicated by a "pause" icon).
 
 **NOTE:** if you already have provisioned worker machines running jobs, use the
 --limit=<ip range> eg. --limit=10.60.22.\* to make sure you don't reprovision 
@@ -146,7 +146,7 @@ subnet. This makes the --limit parameter quite useful.
 
 The jobs will disappear from queue when they've all been slurped up by the workers. You should then be able to QA check the harvested collection:
 
-* Query CouchDB stage using this URL syntax.  Replace the key parameter with the key for the collection: `https://52.10.100.133/couchdb/ucldc/_design/all_provider_docs/_view/by_provider_name_count?key="26189"`
+* Query CouchDB stage using this URL syntax.  Replace the key parameter with the key for the collection: `https://harvest-stg.cdlib.org/couchdb/ucldc/_design/all_provider_docs/_view/by_provider_name_count?key="26189"`
 * Results in the "value" parameter indicate the total number of metadata records harvested; this should align with the expected results. 
 * If you have results, continue with QA checking the collection in CouchDB stage and Solr stage.
 * If there are no results, you will need to troubleshoot and re-harvest.  See <b>What to do when harvests fail</b> section for details.
@@ -169,7 +169,7 @@ NOTE: To view the original XTF-indexed metadata for content harvested from Calis
 * Append the following to the URL, to set the number of results: `docsPerPage=###`
 
 <b>Querying CouchDB stage</b>
-* To generate a results set of metadata records for a given collection in CouchDB, using this URL syntax: `https://52.10.100.133/couchdb/ucldc/_design/all_provider_docs/_list/has_field_value/by_provider_name_wdoc?key="10046"&field=originalRecord.subject&limit=100`. Each metadata record in the results set will have a unique ID  (e.g., 26094--00000001). This can be used for viewing the metadata within the CouchDB UI.
+* To generate a results set of metadata records for a given collection in CouchDB, using this URL syntax: `https://harvest-stg.cdlib.org/couchdb/ucldc/_design/all_provider_docs/_list/has_field_value/by_provider_name_wdoc?key="10046"&field=originalRecord.subject&limit=100`. Each metadata record in the results set will have a unique ID  (e.g., 26094--00000001). This can be used for viewing the metadata within the CouchDB UI.
 * Parameters: 
  * <b>field</b>: Optional.  Limit the display output to a particular field. 
  * <b>key</b>: Optional.  Limits by collection, using the Collection Registry numeric ID.   
@@ -177,14 +177,14 @@ NOTE: To view the original XTF-indexed metadata for content harvested from Calis
  * <b>originalRecord</b>: Optional.  Limit the display output to a particular metadata field; specify the CouchDB data element (e.g., title, creator) 
  * <b>include_docs="true"</b>: Optional.  Will include complete metadata record within the results set (JSON output) 
  * <b>value</b>:  Optional.  Search for a particular value, within a results set of metadata records from a particular collection.  Note: exact matches only!
-* To generate a results set of data values within a particular element (e.g., Rights), for metadata records from all collections: `https://52.10.100.133/couchdb/ucldc/_design/qa_reports/_view/sourceResource.rights_value?limit=100&group_level=2`
-* To check if there are null data values within a particular element (e.g., isShownAt), for metadata records from all collections: `https://52.10.100.133/couchdb/ucldc/_design/qa_reports/_view/isShownAt_value?limit=100&group_level=2&start_key=["__MISSING__"]`
-* To view a result of raw CouchDB JSON output:  `https://52.10.100.133/couchdb/ucldc/_design/all_provider_docs/_view/by_provider_name?key="26094"&limit=1&include_docs=true`
+* To generate a results set of data values within a particular element (e.g., Rights), for metadata records from all collections: `https://harvest-stg.cdlib.org/couchdb/ucldc/_design/qa_reports/_view/sourceResource.rights_value?limit=100&group_level=2`
+* To check if there are null data values within a particular element (e.g., isShownAt), for metadata records from all collections: `https://harvest-stg.cdlib.org/couchdb/ucldc/_design/qa_reports/_view/isShownAt_value?limit=100&group_level=2&start_key=["__MISSING__"]`
+* To view a result of raw CouchDB JSON output:  `https://harvest-stg.cdlib.org/couchdb/ucldc/_design/all_provider_docs/_view/by_provider_name?key="26094"&limit=1&include_docs=true`
 * Consult the <a href="http://wiki.apache.org/couchdb/HTTP_view_API">CouchDB guide</a> for additional query details.
 
 <b>Viewing metadata for an object in CouchDB stage</b>
 
-* Log into <a href="https://52.10.100.133/couchdb/_utils/database.html?ucldc/_all_docs">CouchDB</a>
+* Log into <a href="https://harvest-stg.cdlib.org/couchdb/_utils/database.html?ucldc/_all_docs">CouchDB</a>
  * In the "Jump to" box, enter the unique ID for a given  metadata record (e.g., 26094--00000001)
  * You can now view the metadata in either its source format or mapped to CouchDB fields
  
@@ -213,7 +213,7 @@ The objective of this QA process is to view any results passed from CouchDB stag
 Before you can conduct QA checking, you'll need to update Solr -- see <b>[Update Solr stage](#solrupdate)</b> instructions.
 
 <b>Querying Solr stage</b>
-* Log into <a href="https://52.10.100.133/solr/#/dc-collection/query">Solr</a> to conduct queries 
+* Log into <a href="https://harvest-stg.cdlib.org/solr/#/dc-collection/query">Solr</a> to conduct queries 
 * Consult the <a href="https://wiki.apache.org/solr/SolrQuerySyntax">Solr guide</a> for additional query details.
 
 
@@ -253,7 +253,7 @@ Now select "Queue Sync to production CouchDB for collection" from the action on 
 #### 2.1.Create <a name="createprodworker">production workers</a>
 
 Production workers handle the syncing of the couchdb instances, so usually will not be running.
-* Log into the majorTom production machine. (52.11.194.40) 
+* Log into the majorTom production machine. (harvest-prd.cdlib.org) 
 * To activate the virtualenv in ~/workers_local/, run: `. ~/workers_local/bin/activate`
 * To create some worker machines (bare ec2 instances), run: `ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ingest_deploy/ansible/hosts ~/code/ingest_deploy/ansible/create_worker-prod.yml --extra-vars="count=3"`
 
@@ -265,7 +265,7 @@ You should see output in the console as the playbook runs through its tasks. At 
 
 Once this is done and the production worker instances are in a state of "running", you'll need to provision the workers by installing required software, configurations and start running Akara and the worker processes that listen on the queues specified:
 
-* Log into the majorTom production machine. (52.11.194.40) 
+* Log into the majorTom production machine. (harvest-prd.cdlib.org) 
 * To provision the workers, run: `ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ec2.py ~/code/ingest_deploy/ansible/provision_worker-prod.yml --extra-vars='rq_work_queues=["normal-prod","low-prod"]'`
 * Wait for the provisioning to finish; this can take a while, 5-10 minutes is not unusual.
 
@@ -298,7 +298,7 @@ Note that on occasion, a collection that has been sync'ed from CouchDB productio
 ### 4. <a name="s3index">Generate candidate Solr indexes for S3</a>
 Once the solr index is updated, and if it is ready for distribution to the Calisphere front-end website, you can generate an index to store on S3:
 
-* Log into majorTom in production - 52.11.194.40
+* Log into majorTom in production - harvest-prd.cdlib.org
 * Run: `/usr/local/bin/solr-index-to-s3.sh`. The DATA_BRANCH is set to `production` in this environment.
 * This will push the last build Solr index to S3 at the location:
 
@@ -408,10 +408,10 @@ Tracing back to the document source in CouchDB is critical to diagnose problems 
 Get the Solr id for the item. This is the part of the URL after the /item/ without the final slash. For https://calisphere.org/item/32e2220c1e918cf17f0597d181fa7e3e/, the Solr ID is 32e2220c1e918cf17f0597d181fa7e3e.
 
 Now go to the Solr index of interest and query for the id:
-https://52.10.100.133/solr/dc-collection/select?q=32e2220c1e918cf17f0597d181fa7e3e&wt=json&indent=true
+https://harvest-stg.cdlib.org/solr/dc-collection/select?q=32e2220c1e918cf17f0597d181fa7e3e&wt=json&indent=true
 
 Find the `harvest_id_s` value, in this case "26094--LAPL00050887". Then plug this into CouchDB for the ucldc database:
-https://52.10.100.133/couchdb/ucldc/26094--LAPL00050887 (or with the UI - https://52.10.100.133/couchdb/_utils/document.html?ucldc/26094--LAPL00050887)
+https://harvest-stg.cdlib.org/couchdb/ucldc/26094--LAPL00050887 (or with the UI - https://harvest-stg.cdlib.org/couchdb/_utils/document.html?ucldc/26094--LAPL00050887)
 
 Fixes for Common Problems
 -------------------------
@@ -425,7 +425,7 @@ If incorrect images were downloaded, you must manually queue the image harvest t
 
 First you should check that the `isShownBy` field for the documents in question point to valid images. See [Finding CouchDB Doc for item](#cdbdocforitem) to find the document.
 
-* log onto majorTom in the stage environment (52.10.100.133)
+* log onto majorTom in the stage environment (harvest-stg.cdlib.org)
 * Run `python ~/code/harvester/scripts/redis_delete_harvested_images_script.py <collection_id>`. This will produce a file called `delete_image_cache-<ID>` in the current directory.
 * Run `~/redis-3.0.2/src/redis-cli -h $REDIS_HOST < delete_image_cache-<ID>`. This will clear the cache of previously harvested URLs.
 * Queue an image harvest forcing it to get images for documents that already have the `object` field. Run `python ~/code/harvester/scripts/queue_image_harvest.py mredar@gmail.com normal-stage https://registry.cdlib.org/api/v1/collection/<ID>/ --get_if_object`
