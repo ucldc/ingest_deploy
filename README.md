@@ -3,7 +3,7 @@
 <i>Consult the <a href="https://docs.google.com/drawings/d/18Whi3nZGNgKQ2qh-XnJlV3McItyp-skuGSqH5b_L-X8/edit">harvesting infrastructure diagram</a> for an illustration of the key components.  Ask Mark Redar for access to them; note that you will need to log onto the ingest front machine and then into the majorTom machine to run commands, using these <a href="https://sp.ucop.edu/sites/cdl/apg/OACCalisphere%20docs/dsc_putty_connection_instructions.docx">Putty connection  instructions</a> (on Sharepoint)</i>
 
 * <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> 
-* ingest front machine (stage - harvest-stg.cdlib.org) and ingest front machine (production - harvest-prd.cdlib.org), for access to:
+* ingest front machine (*stage - harvest-stg.cdlib.org*) and ingest front machine (*production - harvest-prd.cdlib.org*), for access to:
  * <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>
  * <a href="https://harvest-stg.cdlib.org/couchdb/_utils/database.html?ucldc/_all_docs">CouchDB stage</a>  
  * <a href="https://harvest-prd.cdlib.org/couchdb/_utils/database.html?ucldc/_all_docs">CouchDB production</a>
