@@ -94,11 +94,12 @@ Before initiating a harvest, you'll first need to confirm if the collection has 
 * Log into the <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> and look up the collection, to determine the key.  For example, for <a href="https://registry.cdlib.org/admin/library_collection/collection/26189/">"Radiologic Imaging Lab collection"</a>, the key is "26189"
 * Query CouchDB stage using this URL syntax.  Replace the key parameter with the key for the collection: `https://harvest-stg.cdlib.org/couchdb/ucldc/_design/all_provider_docs/_view/by_provider_name_count?key="26189"`
 
-If you do not have results in the "value" parameter, then go to the next step of creating a harvest job.  If you do have results in the "value" parameter, then you'll be conducting a re-harvest. You'll first need to remove the harvested records from CouchDB stage:
+If you do not have results in the "value" parameter, then go to the next step of creating a harvest job.  If you do have results in the "value" parameter, then you'll be conducting a re-harvest. You'll first need to remove the harvested records from CouchDB stage and Solr stage:
 
 * Log into the majorTom stage machine.
-* Run this command, adding the key for the collection at the end: `python ~/code/harvester/scripts/delete_couchdb_collection.py 23065`.
-* Repeat the process above on the majorTom production machine.
+* Run this command to remove the collection from CouchDB stage, adding the key for the collection at the end: `python ~/code/harvester/scripts/delete_couchdb_collection.py 23065`.
+* Then run this command, to update Solr stage: `/usr/local/bin/solr-update.sh`
+* Repeat the process above on the majorTom production machine, to remove the collection from CouchDB production and Solr production.
 * Then proceed with the steps below for creating a new harvest job
 
 ### 2. Create a harvest job in Registry
