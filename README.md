@@ -333,7 +333,7 @@ AWS assigns unique subnets to the groups of workers you start, so in general,
 different generations of machines will be distinguished by the different C class
 subnet. This makes the --limit parameter quite useful.
 
-### 3. <a name="solrprd">Update Solr production</a>
+### 3. <a name="solrprod">Update Solr production</a>
 
 #### 3.1. <a name="solrcandidate">Create a new candidate Solr index, based on what's in CouchDB production</a>
 
@@ -476,7 +476,7 @@ To do so in the ingest environment, run `ansible-playbook -i hosts solr_docker_r
 You will then have to run `/usr/local/solr-update.sh --since=0` to reindex the
 whole couchdb database.
 
-<a name="cdmsearch">How to find a CouchDB source document for an item in Calisphere</a>
+<a name="cdbsearch">How to find a CouchDB source document for an item in Calisphere</a>
 ---------------------------------------------------------------
 
 Tracing back to the document source in CouchDB is critical to diagnose problems with data and images.
