@@ -34,9 +34,55 @@ As of February 2016, the process to publish a collection to production is as fol
 UCLDC Harvesting operations guide
 =================================
 
-CONTENTS
+###CONTENTS
 
 [User accounts](#users)
+* [Adding a monitoring user (one time set up)](#usermonitor)
+* [Adding an admin user  (one time set up)](#useradmin)
+
+[Conducting a harvest](#harvestconducting)
+* [1. New harvest or re-harvest?](#harvestnew)
+* [2. Create a harvest job in Registry](#harvestregistry)
+* [3. Harvest the collection through to CouchDB stage](#harvestcdbstg)
+* [3.1. Create stage workers](#createstageworker)
+* [3.2. Provision stage workers to act on harvesting](#harvestprovisionstg)
+* [3.3. Verify that the harvests are complete in CouchDB stage](#harvestcdbcomplete)
+* [4. QA check collection in CouchDB stage](#harvestcdbqa)
+* [5. Update Solr stage](#solrupdate)
+* [5.1. Create a new Solr stage index, based on what's in CouchDB stage](#solrstg)
+* [5.2. Delete a collection from Solr stage](#solrdelete)
+* [6. QA check collection in Solr stage](#solrqa)
+* [7. QA check media.json](#mediajson)
+* [8. QA check in Calisphere stage UI](#calisphereqa)
+* [9. Terminate stage worker instances](#terminatestg)
+
+[Moving a harvest to production](#harvestprod)
+* [1. Create a sync job in the Registry](#syncregistry)
+* [2. Sync the collection through to CouchDB production](#synccdb)
+* [2.1. Create production workers](#createprodworker)
+* [2.2. Provision production workers to act on sync](#provisionprod)
+* [3. Update Solr production](#solrprod)
+* [3.1. Create a new candidate Solr index, based on what's in CouchDB production](#solrcandidate)
+* [3.2. Delete a collection from candidate Solr index](#solrproddelete)
+* [4. Generate candidate Solr indexes for S3](#s3index)
+* [5. Terminate production worker instances](#terminateprod)
+
+[Updating Elastic Beanstalk with candidate Solr index](#beanstalk)
+
+[Removing collections/items](#removals)
+
+[Other AWS-related admin tasks](#awsadmin)
+
+[Picking up new harvester or ingest code](#newcode)
+
+[What to do when harvests fail](#failures)
+
+[Recreating the Solr Index from scratch](#solrscratch)
+
+[How to find a CouchDB source document for an item in Calisphere](#cdbsearch)
+
+[Fixes for Common Problems](#fixes)
+* [Image problems](#imagefix)
 
 
 
