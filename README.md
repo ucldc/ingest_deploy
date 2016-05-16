@@ -34,6 +34,12 @@ As of February 2016, the process to publish a collection to production is as fol
 UCLDC Harvesting operations guide
 =================================
 
+CONTENTS
+
+[User accounts](#users)
+
+
+
 <a name="users">User accounts</a>
 ----------------
 
