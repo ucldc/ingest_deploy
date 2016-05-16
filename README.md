@@ -344,7 +344,7 @@ subnet. This makes the --limit parameter quite useful.
 
 Note that on occasion, a collection that has been sync'ed from CouchDB production to Solr production may not immediately appear in the latter. To force the sycn, run: `python code/harvester/scripts/sync_couch_collection_to_solr.py <collection id>`
 
-#### 3.2. <a name="solrprddelete">Delete a collection from candidate Solr index</a>
+#### 3.2. <a name="solrproddelete">Delete a collection from candidate Solr index</a>
 
 * Log onto majorTom production
 * Run `~/code/harvester/scripts/delete_solr_collection.sh <collection id>`
