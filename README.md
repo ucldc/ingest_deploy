@@ -34,10 +34,10 @@ As of February 2016, the process to publish a collection to production is as fol
 UCLDC Harvesting operations guide
 =================================
 
-User accounts
+<a name="users">User accounts</a>
 ----------------
 
-### Adding a monitoring user (one time set up)
+### <a name="usermonitor">Adding a monitoring user (one time set up)</a>
 
 
 pull the ucldc/ingest_deploy project
@@ -72,7 +72,7 @@ From a machine that can already access the ingest front machine with ssh run:
 This will install the users.digest to allow access for the monitoring user.
 
 
-### Adding an admin user  (one time set up)
+### <a name="useradmin">Adding an admin user  (one time set up)</a>
 
 add your public ssh to keys file in https://github.com/ucldc/appstrap/tree/master/cdl/ucldc-operator-keys.txt
 
@@ -84,10 +84,10 @@ From a machine that can already access the ingest front machine with ssh run:
 This will add your public key to the ~/.ssh/authorized_keys for the ec2-user on
 the ingest front machine.
 
-Conducting a harvest 
+<a name="harvestconducting">Conducting a harvest</a> 
 --------------------------
 
-### 1. New harvest or re-harvest?
+### 1. <a name="harvestnew">New harvest or re-harvest?</a>
 
 Before initiating a harvest, you'll first need to confirm if the collection has previously been harvested -- or if it's a new collection:
 
@@ -102,7 +102,7 @@ If you do not have results in the "value" parameter, then go to the next step of
 * Repeat the process above on the majorTom production machine, to remove the collection from CouchDB production and Solr production.
 * Then proceed with the steps below for creating a new harvest job
 
-### 2. Create a harvest job in Registry
+### 2. <a name="harvestregistry">Create a harvest job in Registry</a>
 
 * Log into the <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> and look up the collection
 * Choose `Start harvest normal stage` from the `Action` drop-down. Note: "normal stage" is the current default. When you provision workers (see below), you can specify which queue(s) they will poll for jobs via the `rq_work_queues` parameter. The example given below sets the workers up to listen for jobs on `normal-stage` and `low-stage`, but you can change this if need be. 
@@ -110,7 +110,7 @@ If you do not have results in the "value" parameter, then go to the next step of
 
 You can now begin to monitor the harvesting process through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>. At this stage, you'll see the harvest job listed in the queue.
 
-### 3. Harvest the collection through to CouchDB stage
+### 3. <a name="harvestcdbstg">Harvest the collection through to CouchDB stage</a>
 
 The following sections describe the process for harvesting collections through to CouchDB stage. This is done via the use of "transient" <a href="http://python-rq.org/">Redis Queue</a>-managed (RQ) worker instances, which are created as needed and then deleted after use. Once the workers have been created and provisioned, they will automatically look for jobs in the queue and run the full harvester code for those jobs. The end result is that CouchDB is updated.
 
@@ -124,7 +124,7 @@ The `count=##` parameter will set the number of instances to create. For harvest
 
 You should see output in the console as the playbook runs through its tasks. At the end, it will give you a status line. Look for `fail=0` to verify that everything ran OK.
 
-#### 3.2. Provision stage workers to act on harvesting 
+#### 3.2. <a name="harvestprovisionstg">Provision stage workers to act on harvesting</a>
 
 Once this is done and the stage worker instances are in a state of "running", you'll need to provision the workers by installing required software, configurations and start running Akara and the worker processes that listen on the queues specified:
 
@@ -144,7 +144,7 @@ AWS assigns unique subnets to the groups of workers you start, so in general,
 different generations of machines will be distinguished by the different C class
 subnet. This makes the --limit parameter quite useful.
 
-#### 3.3. Verify that the harvests are complete in CouchDB stage
+#### 3.3. <a name="harvestcdbcomplete">Verify that the harvests are complete in CouchDB stage</a>
 
 The jobs will disappear from queue when they've all been slurped up by the workers. You should then be able to QA check the harvested collection:
 
@@ -153,7 +153,7 @@ The jobs will disappear from queue when they've all been slurped up by the worke
 * If you have results, continue with QA checking the collection in CouchDB stage and Solr stage.
 * If there are no results, you will need to troubleshoot and re-harvest.  See <b>What to do when harvests fail</b> section for details.
 
-### 4. QA check collection in CouchDB stage
+### 4. <a name="harvestcdbqa">QA check collection in CouchDB stage</a>
 
 The objective of this part of the QA process is to ensure that source metadata (from a harvesting target) is correctly mapped through to CouchDB
 Suggested method is to review the 1) source metadata (e.g., original MARC21  record, original XTF-indexed metadata*) vis-a-vis the 2) a random sample of CouchDB results and 3) <a href="https://docs.google.com/spreadsheets/d/1u2RE9PD0N9GkLQTFNJy3HiH9N5IbKDG52HjJ6JomC9I/edit#gid=265758929">metadata crosswalk</a>. Things to check:
@@ -193,7 +193,7 @@ NOTE: To view the original XTF-indexed metadata for content harvested from Calis
 
 ### 5.<a name="solrupdate">Update Solr stage</a>
 
-#### 5.1. Create a new Solr stage index, based on what's in CouchDB stage
+#### 5.1. <a name="solrstg">Create a new Solr stage index, based on what's in CouchDB stage</a>
 
 Currently, Solr updates are run from the majorTom machine. The Solr update looks at the Couchdb changes endpoint. This endpoint has a record for each document that has been created in the database, including deleted documents.
 
@@ -202,13 +202,13 @@ Currently, Solr updates are run from the majorTom machine. The Solr update looks
 * To reindex all docs run: `/usr/local/bin/solr-update.sh --since=0`
 * You can check to confirm if the Solr index file was generated by looking at `var/local/solr-update/log/`. The directory lists the Solr files by date, with a timestamp.
 
-#### 5.2. Delete a collection from Solr stage
+#### 5.2. <a name="solrdelete">Delete a collection from Solr stage</a>
 
 * Log onto majorTom in the environment you want to delete from
 * Run `~/code/harvester/scripts/delete_solr_collection.sh <collection id>`
 
 
-### 6. QA check collection in Solr stage
+### 6. <a name="solrqa">QA check collection in Solr stage</a>
 
 The objective of this QA process is to view any results passed from CouchDB stage to Solr stage; it can also be used to verify issues or discrepancies in data between the two instances.  It assumes that the data in CouchDB has been correctly mapped through to Solr; this is a fixed mapping, as documented on the second tab of the <a href="https://docs.google.com/spreadsheets/d/1u2RE9PD0N9GkLQTFNJy3HiH9N5IbKDG52HjJ6JomC9I/edit#gid=2062617414">metadata crosswalk</a>.
 
@@ -219,17 +219,17 @@ Before you can conduct QA checking, you'll need to update Solr -- see <b>[Update
 * Consult the <a href="https://wiki.apache.org/solr/SolrQuerySyntax">Solr guide</a> for additional query details.
 
 
-### 7. QA check media.json
+### 7. <a name="mediajson">QA check media.json</a>
 
 To QA check media.json output results, use this URL syntax: `https://s3.amazonaws.com/static.ucldc.cdlib.org/media_json/70d7f57a-db0b-4a1a-b089-cce1cc289c9e-media.json`
 
 
-### 8. QA check in Calisphere stage UI
+### 8. <a name="calisphereqa">QA check in Calisphere stage UI</a>
 
 You can preview the Solr stage index in the Calisphere UI at <a href="http://calisphere-test.cdlib.org/">http://calisphere-test.cdlib.org/</a>.
 
 
-### 9. Terminate stage worker instances
+### 9. <a name="terminatestg">Terminate stage worker instances</a>
 
 Once you've QA checked the results and have completed the harvest, you'll need to terminate the worker instances.
 
@@ -250,7 +250,7 @@ In the Registry, edit the collection and check the box "Ready for publication" a
 Now select "Queue Sync to production CouchDB for collection" from the action on the Collection page.
 
 
-### 2. Sync the collection through to CouchDB production
+### 2. <a name="synccdb">Sync the collection through to CouchDB production</a>
 
 #### 2.1.Create <a name="createprodworker">production workers</a>
 
@@ -263,7 +263,7 @@ The `count=##` parameter will set the number of instances to create. For harvest
 
 You should see output in the console as the playbook runs through its tasks. At the end, it will give you a status line. Look for `fail=0` to verify that everything ran OK.
 
-#### 2.2. Provision production workers to act on sync
+#### 2.2. <a name="provisionprd">Provision production workers to act on sync</a>
 
 Once this is done and the production worker instances are in a state of "running", you'll need to provision the workers by installing required software, configurations and start running Akara and the worker processes that listen on the queues specified:
 
@@ -281,9 +281,9 @@ AWS assigns unique subnets to the groups of workers you start, so in general,
 different generations of machines will be distinguished by the different C class
 subnet. This makes the --limit parameter quite useful.
 
-### 3. Update Solr production
+### 3. <a name="solrprd">Update Solr production</a>
 
-#### 3.1. Create a new candidate Solr index, based on what's in CouchDB production
+#### 3.1. <a name="solrcandidate">Create a new candidate Solr index, based on what's in CouchDB production</a>
 
 * Log into majorTom production
 * To do an incremental update, run: `/usr/local/bin/solr-update.sh`. This will run an incremental update, which is what you will most often want to do. This uses the last changes sequence number that is saved in s3 at solr.ucldc/couchdb_since/<DATA_BRANCH> in order to determine what has changed.
@@ -292,7 +292,7 @@ subnet. This makes the --limit parameter quite useful.
 
 Note that on occasion, a collection that has been sync'ed from CouchDB production to Solr production may not immediately appear in the latter. To force the sycn, run: `python code/harvester/scripts/sync_couch_collection_to_solr.py <collection id>`
 
-#### 3.2. Delete a collection from candidate Solr index
+#### 3.2. <a name="solrprddelete">Delete a collection from candidate Solr index</a>
 
 * Log onto majorTom production
 * Run `~/code/harvester/scripts/delete_solr_collection.sh <collection id>`
@@ -308,7 +308,7 @@ Once the solr index is updated, and if it is ready for distribution to the Calis
     
 Note that stashing a Solr index on S3 does nothing in terms of updating the Calisphere front-end website. In order to update the web application so that it points to the data represented in the new index, you have to update the Elastic Beanstalk instance  configuration (see below).
 
-### 5. Terminate production worker instances
+### 5. <a name="terminateprod">Terminate production worker instances</a>
 
 Once you've completed syncing, you'll need to terminate the worker instances.
 
@@ -317,7 +317,7 @@ Once you've completed syncing, you'll need to terminate the worker instances.
 * You'll receive a prompt to confirm that you want to spin down the intance; hit Return to confirm.
 
     
-Updating Elastic Beanstalk with candidate Solr index
+<a name="beanstalk">Updating Elastic Beanstalk with candidate Solr index</a>
 --------------------------
 
 This section describes how to update an Elastic Beanstalk configuration to point to a new candidate Solr index stored on S3. This will update the specified Calisphere front-end web application so that it points to the data from Solr.
@@ -355,10 +355,32 @@ NOTE: need scripts to automate this.
 
 TODO: add how to run the QA spreadsheet generating code
 
-Other AWS-related admin tasks
+
+<a name="removals">Removing collections/items from publication</a>
+--------------------------
+### <a name="removalitem">Individual items</a>
+
+* Log into CouchDB stage; search for and delete the specific item record
+* Then run this command, to update Solr stage: `/usr/local/bin/solr-update.sh`
+* Repeat the process on CouchDB production
+
+-or-
+
+* Create a list of the CouchDB identifiers for the items, and add them to a file (one per line)
+* Run the `delete_couchdb_id_list.py` script in the harvester directory against the file:`python ~/code/harvester/scripts/delete_couchdb_id_list.py <file with list of ids>`
+
+### <a name="removalcollection">Entire collection</a>
+
+* Log into the majorTom stage machine.
+* Run this command to remove the collection from CouchDB stage, adding the key for the collection at the end: `python ~/code/harvester/scripts/delete_couchdb_collection.py 23065`.
+* Then run this command, to update Solr stage: `/usr/local/bin/solr-update.sh`
+* Follow the process of sync'ing the collection through to CouchDB production
+
+
+<a name="awsadmin">Other AWS-related admin tasks
 -----------------------------
 
-### Picking up new harvester or ingest code
+### <a name="newcode">Picking up new harvester or ingest code</a>
 
 When new harvester or ingest code is pushed, you need to create a new generation
 of worker machines to pick up the new code:
@@ -367,7 +389,7 @@ of worker machines to pick up the new code:
 * Then go through the worker create process again, creating and provisioning
 machines as needed.
 
-What to do when harvests fail
+<a name="failures">What to do when harvests fail</a>
 -----------------------------
 
 First take a look at the RQ Dashboard. There will be a bit of the error message
@@ -391,7 +413,7 @@ If this doesn't get you enough information, you can ssh to a worker instance and
 watch the logs real time if you like. tail -f /var/local/rqworker/worker.log or
 /var/local/akara/logs/error.log.
 
-Recreating the Solr Index from scratch
+<a name="solrscratch">Recreating the Solr Index from scratch</a>
 --------------------------------------
 
 The solr index is run in a docker container. To make changes to the schema or
@@ -402,7 +424,7 @@ To do so in the ingest environment, run `ansible-playbook -i hosts solr_docker_r
 You will then have to run `/usr/local/solr-update.sh --since=0` to reindex the
 whole couchdb database.
 
-How to find a CouchDB source document for an item in Calisphere
+<a name="cdmsearch">How to find a CouchDB source document for an item in Calisphere</a>
 ---------------------------------------------------------------
 
 Tracing back to the document source in CouchDB is critical to diagnose problems with data and images.
@@ -415,10 +437,10 @@ https://harvest-stg.cdlib.org/solr/dc-collection/select?q=32e2220c1e918cf17f0597
 Find the `harvest_id_s` value, in this case "26094--LAPL00050887". Then plug this into CouchDB for the ucldc database:
 https://harvest-stg.cdlib.org/couchdb/ucldc/26094--LAPL00050887 (or with the UI - https://harvest-stg.cdlib.org/couchdb/_utils/document.html?ucldc/26094--LAPL00050887)
 
-Fixes for Common Problems
+<a name="commonfixes">Fixes for Common Problems</a>
 -------------------------
 
-### Image problems
+### <a name="imagefix">Image problems</a>
 
 The image harvesting part of the process often has at least partial failures.
 First, just try to run the image harvest for the collection again from the registry. Hopefully that fixes.
