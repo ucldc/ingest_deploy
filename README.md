@@ -81,7 +81,7 @@ UCLDC Harvesting operations guide
 
 [How to find a CouchDB source document for an item in Calisphere](#cdbsearch)
 
-[Fixes for Common Problems](#fixes)
+[Fixes for Common Problems](#commonfixes)
 * [Image problems](#imagefix)
 
 
