@@ -355,7 +355,7 @@ Note that on occasion, a collection that has been sync'ed from CouchDB productio
 ### 4. <a name="solrprodqa">QA check candidate Solr index in Calisphere UI</a>
 You can QA the candidate Solr index on your local workstation, following [these steps](https://github.com/ucldc/public_interface) ("Windows install")
 
-Point the public_interface python to `https://harvest-prd.cdlib.org/solr_api`.
+In the run.bat configuration file, point UCLDC_SOLR_URL to `https://harvest-prd.cdlib.org/solr_api`.
 
 ### 5. <a name="s3index">Generate candidate Solr indexes for S3</a>
 Once the solr index is updated, and if it is ready for distribution to the Calisphere front-end website, you can generate an index to store on S3:
