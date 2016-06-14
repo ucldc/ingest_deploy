@@ -280,7 +280,11 @@ To QA check media.json output results, use this URL syntax: `https://s3.amazonaw
 
 ### 8. <a name="calisphereqa">QA check in Calisphere stage UI</a>
 
-You can preview the Solr stage index in the Calisphere UI at <a href="http://calisphere-test.cdlib.org/">http://calisphere-test.cdlib.org/</a>.
+You can preview the Solr stage index in the Calisphere UI at <a href="http://calisphere-test.cdlib.org/">http://calisphere-test.cdlib.org/</a>. Note that caching may prevent updates from immediately showing.
+
+To immediately view results, you can QA the Solr stage index on your local workstation, following these steps ("Windows install"). 
+
+In the run.bat configuration file, point UCLDC_SOLR_URL to `https://harvest-stg.cdlib.org/solr_api`.
 
 
 ### 9. <a name="terminatestg">Terminate stage worker instances</a>
