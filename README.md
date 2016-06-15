@@ -65,8 +65,9 @@ UCLDC Harvesting operations guide
 * [3.1. Create a new candidate Solr index, based on what's in CouchDB production](#solrcandidate)
 * [3.2. Delete a collection from candidate Solr index](#solrproddelete)
 * [4. QA check candidate Solr index in Calisphere UI](#solrprodqa)
-* [5. Generate candidate Solr indexes for S3](#s3index)
-* [6. Terminate production worker instances](#terminateprod)
+* [5. Review QA report for candidate Solr index](#solrprodreport)
+* [6. Generate candidate Solr indexes for S3](#s3index)
+* [7. Terminate production worker instances](#terminateprod)
 
 [Updating Elastic Beanstalk with candidate Solr index](#beanstalk)
 
@@ -361,7 +362,12 @@ You can QA the candidate Solr index on your local workstation, following [these 
 
 In the run.bat configuration file, point UCLDC_SOLR_URL to `https://harvest-prd.cdlib.org/solr_api`.
 
-### 5. <a name="s3index">Generate candidate Solr indexes for S3</a>
+
+### 5. <a name="solrprodreport">Review QA report for candidate Solr index</a>
+Generate and review a QA report for the candidate Solr index, following [these steps](https://github.com/mredar/ucldc_api_data_quality/tree/master/reporting).  The QA report summarizes differences in collections in the candidate Solr index compared with the current production index.
+
+
+### 6. <a name="s3index">Generate candidate Solr indexes for S3</a>
 Once the solr index is updated, and if it is ready for distribution to the Calisphere front-end website, you can generate an index to store on S3:
 
 * Log into majorTom in production - harvest-prd.cdlib.org
@@ -372,7 +378,7 @@ Once the solr index is updated, and if it is ready for distribution to the Calis
     
 Note that stashing a Solr index on S3 does nothing in terms of updating the Calisphere front-end website. In order to update the web application so that it points to the data represented in the new index, you have to update the Elastic Beanstalk instance  configuration (see below).
 
-### 6. <a name="terminateprod">Terminate production worker instances</a>
+### 7. <a name="terminateprod">Terminate production worker instances</a>
 
 Once you've completed syncing, you'll need to terminate the worker instances.
 
