@@ -65,7 +65,7 @@ UCLDC Harvesting operations guide
 * [3.1. Create a new candidate Solr index, based on what's in CouchDB production](#solrcandidate)
 * [3.2. Delete a collection from candidate Solr index](#solrproddelete)
 * [4. QA check candidate Solr index in Calisphere UI](#solrprodqa)
-* [5. Review QA report for candidate Solr index](#solrprodreport)
+* [5. Generate and review QA report for candidate Solr index](#solrprodreport)
 * [6. Generate candidate Solr indexes for S3](#s3index)
 * [7. Terminate production worker instances](#terminateprod)
 
@@ -363,7 +363,7 @@ You can QA the candidate Solr index on your local workstation, following [these 
 In the run.bat configuration file, point UCLDC_SOLR_URL to `https://harvest-prd.cdlib.org/solr_api`.
 
 
-### 5. <a name="solrprodreport">Review QA report for candidate Solr index</a>
+### 5. <a name="solrprodreport">Generate and review QA report for candidate Solr index</a>
 Generate and review a QA report for the candidate Solr index, following [these steps](https://github.com/mredar/ucldc_api_data_quality/tree/master/reporting).  The QA report summarizes differences in collections in the candidate Solr index compared with the current production index.
 
 
