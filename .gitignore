@@ -1,3 +1,4 @@
+ansible/roles/mredar.nightly_security_update_yum
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
