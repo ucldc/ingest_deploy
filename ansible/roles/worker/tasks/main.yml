@@ -15,6 +15,11 @@
 - { include: install_packages.yml }
 - name: make user ~/bin directory
   file: path=/home/{{ ansible_ssh_user }}/bin state=directory
+- name: install dbus dependencies
+  yum: 
+    pkg: dbus-glib-devel 
+    state: present
+  sudo: yes
 - name: make virtualenv directory
   file: path={{ dir_venv }} state=directory
 - name: pull ingest harvester code to local box
