@@ -154,7 +154,7 @@ When establishing the entries, you'll need to determine the harvesting endpoint:
 
 ### 2. <a name="deepharvest">Deep harvesting from Nuxeo</a>
 
-If harvesting from Nuxeo: once you've added the collection(s) to the Collection Registry, you'll need to run the "deep harvest" steps outlined at <a href="https://github.com/barbarahui/nuxeo-calisphere">https://github.com/barbarahui/nuxeo-calisphere</a>.  
+If harvesting from Nuxeo: once you've added the collection(s) to the Collection Registry, complete the "deep harvest" steps outlined at <a href="https://github.com/barbarahui/nuxeo-calisphere">https://github.com/barbarahui/nuxeo-calisphere</a>.  
 
 
 <a name="harvestconducting">Conducting a harvest</a> 
