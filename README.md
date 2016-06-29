@@ -40,6 +40,10 @@ UCLDC Harvesting operations guide
 * [Adding a monitoring user (one time set up)](#usermonitor)
 * [Adding an admin user  (one time set up)](#useradmin)
 
+[Preliminary setup](#prelim)
+* [1. Add collection to the Registry and define harvesting endpoint](#registrycollection)
+* [2. Deep harvesting from Nuxeo](#deepharvest)
+
 [Conducting a harvest](#harvestconducting)
 * [1. New harvest or re-harvest?](#harvestnew)
 * [2. Create a harvest job in Registry](#harvestregistry)
@@ -137,6 +141,21 @@ From a machine that can already access the ingest front machine with ssh run:
 
 This will add your public key to the ~/.ssh/authorized_keys for the ec2-user on
 the ingest front machine.
+
+
+<a name="prelim">Preliminary setup</a> 
+--------------------------
+### 1. <a name="registrycollection">Add collection to the Registry and define harvesting endpoint</a>
+
+The first step in the harvesting process is to add the collection(s) for harvesting into the <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a>.  This process is described further in Section 8 of our <a href="https://sp.ucop.edu/sites/cdl/apg/_layouts/15/WopiFrame.aspx?sourcedoc=/sites/cdl/apg/OACCalisphere%20docs/dsc_maintenance_procedures.doc&action=default&DefaultItemOpen=1">OAC/Calisphere Operations and Maintenance Procedures</a>. 
+
+When establishing the entries, you'll need to determine the harvesting endpoint: Nuxeo, OAC, or an external source.
+
+
+### 2. <a name="deepharvest">Deep harvesting from Nuxeo</a>
+
+If harvesting from Nuxeo: once you've added the collection(s) to the Collection Registry, you'll need to run the "deep harvest" steps outlined at <a href="https://github.com/barbarahui/nuxeo-calisphere">https://github.com/barbarahui/nuxeo-calisphere</a>.  
+
 
 <a name="harvestconducting">Conducting a harvest</a> 
 --------------------------
