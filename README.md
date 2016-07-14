@@ -516,6 +516,8 @@ whole couchdb database.
 <a name="cdbsearch">How to find a CouchDB source document for an item in Calisphere</a>
 ---------------------------------------------------------------
 
+#### See the new tool for automating this here: https://github.com/mredar/ucldc_api_data_quality/blob/master/reporting/README.md
+
 Tracing back to the document source in CouchDB is critical to diagnose problems with data and images.
 
 Get the Solr id for the item. This is the part of the URL after the /item/ without the final slash. For https://calisphere.org/item/32e2220c1e918cf17f0597d181fa7e3e/, the Solr ID is 32e2220c1e918cf17f0597d181fa7e3e.
@@ -560,11 +562,7 @@ working....
 
 <b>Tools</b>
 
-- [VirtualBox](https://www.virtualbox.org/) (Version X.X)
-- [Vagrant](https://www.vagrantup.com/) (Version X.X)
-- [vagrant-vbguest](https://github.com/dotless-de/vagrnat-vbguest/) (`vagrant plugin install vagrant-vbguest`)
 - [Ansible](http://www.ansible.com/home) (Version X.X)
-- if using VirtualBox, install the vagrant-vbguest 
 
 License
 =======
