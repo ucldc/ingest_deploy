@@ -217,6 +217,38 @@ AWS assigns unique subnets to the groups of workers you start, so in general,
 different generations of machines will be distinguished by the different C class
 subnet. This makes the --limit parameter quite useful.
 
+#### 3.2.a <a name="workerstatus">Worker instance status
+
+Sometimes the status of the worker instances is unclear.
+
+You can use the ec2.py dynamic ansible inventory script with jq to parse the json to find info about the state of the worker instances.
+
+
+First, refresh the cache for the dynamic inventory:
+
+```sh
+~/code/ec2.py --refresh-cache
+```
+
+To see the current IPs for the workers, use jq to filter like so:
+
+```sh
+~/code/ec2.py | jq '.tag_Name_ingest_stage_worker'
+```
+
+You can then see the state of the instance by filtering on the IP:
+
+```sh
+~/code/ec2.py | jq '._meta.hostvars["<ip address for instance>"].ec2_state'
+```
+
+This will tell you if it is running or not.
+
+To get more information about the instace, just do less filtering:
+```sh
+~/code/ec2.py | jq -C '._meta.hostvars["<ip address for instance>"]' | less -R
+```
+
 #### 3.3. <a name="harvestcdbcomplete">Verify that the harvests are complete in CouchDB stage</a>
 
 The jobs will disappear from queue when they've all been slurped up by the workers. You should then be able to QA check the harvested collection:
