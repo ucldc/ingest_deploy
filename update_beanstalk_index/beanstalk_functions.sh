@@ -19,7 +19,7 @@ function check_api_url()
     # check the search url, should be working
     set +o errexit
     echo "CHECK API URL: ${url_api}"
-    curl --insecure --fail --header "X-Authentication-Token: ${API_KEY}" ${url_api} > /dev/null
+    curl --insecure --fail --header "X-Authentication-Token: ${SOLR_API_KEY}" ${url_api} > /dev/null
     #wget --no-check-certificate --header "X-Authentication-Token: ${API_KEY}" -q ${url_api}
     last_exit=$?
     if [ $last_exit -ne 0 ]; then
