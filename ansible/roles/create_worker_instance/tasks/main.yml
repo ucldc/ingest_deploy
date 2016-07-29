@@ -24,6 +24,7 @@
       device_type: gp2
       volume_size: 8
       delete_on_termination: yes
+    spot_price: "{{ spot_bid_price }}"
   register: ec2_worker
 # http://codepoets.co.uk/2014/ansible-random-things/
 - name: clear previous instance ips if they match
