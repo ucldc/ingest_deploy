@@ -197,6 +197,18 @@ The `count=##` parameter will set the number of instances to create. For harvest
 
 You should see output in the console as the playbook runs through its tasks. At the end, it will give you a status line. Look for `fail=0` to verify that everything ran OK.
 
+The default instance creation will attempt to get instances from the "spot" market so that it is cheaper to run the workers. Sometimes the spot market price can get very high and the spot instances won't work. You can check the pricing by issuing the following command on majorTom:
+
+```sh
+aws ec2 describe-spot-price-history --instance-types m3.large --availability-zone us-west-2c --product-description "Linux/UNIX (Amazon VPC)" --max-items 2
+```
+
+Our spot bid price is set to .133 which is the current (20160803) on demand price. If the history of spot prices is greater than that or if you see large fluctuations in the pricing, you can request an on-demand instance instead by adding "ondemand=true" to the extra-vars, e.g. :
+
+```sh
+ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ingest_deploy/ansible/hosts ~/code/ingest_deploy/ansible/create_worker-stage.yml --extra-vars="count=3 ondemand=True"
+```
+
 #### 3.2. <a name="harvestprovisionstg">Provision stage workers to act on harvesting</a>
 
 Once this is done and the stage worker instances are in a state of "running", you'll need to provision the workers by installing required software, configurations and start running Akara and the worker processes that listen on the queues specified:
