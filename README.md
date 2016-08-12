@@ -42,7 +42,7 @@ UCLDC Harvesting operations guide
 
 [Preliminary setup](#prelim)
 * [1. Add collection to the Registry and define harvesting endpoint](#registrycollection)
-* [2. Deep harvesting from Nuxeo](#deepharvest)
+* [2. Pre-processing files from Nuxeo](#deepharvest)
 
 [Conducting a harvest](#harvestconducting)
 * [1. New harvest or re-harvest?](#harvestnew)
@@ -152,9 +152,9 @@ The first step in the harvesting process is to add the collection(s) for harvest
 When establishing the entries, you'll need to determine the harvesting endpoint: Nuxeo, OAC, or an external source.
 
 
-### 2. <a name="deepharvest">Deep harvesting from Nuxeo</a>
+### 2. <a name="deepharvest">Pre-processing files from Nuxeo</a>
 
-If harvesting from Nuxeo: once you've added the collection(s) to the Collection Registry, complete the "deep harvest" steps outlined at <a href="https://github.com/barbarahui/nuxeo-calisphere">https://github.com/barbarahui/nuxeo-calisphere</a>.  
+If harvesting from Nuxeo ("deep harvesting"): once you've added the collection(s) to the Collection Registry, you'll need to complete the steps outlined at <a href="https://github.com/barbarahui/nuxeo-calisphere">https://github.com/barbarahui/nuxeo-calisphere</a> to pre-process files in Nuxeo. Once this step is done, harvest the collection following the procedures below.  
 
 
 <a name="harvestconducting">Conducting a harvest</a> 
