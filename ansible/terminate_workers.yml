@@ -7,7 +7,8 @@
 - name: stop rqworker gracefully
   shell: /usr/local/bin/stop-rqworker.sh
   tags: 
-    - stop-worker
+    - stop-rqworker
+  ignore_errors: yes
 - name: terminate workers
   local_action:
     module: ec2
