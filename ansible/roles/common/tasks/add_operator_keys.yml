@@ -17,3 +17,8 @@
     state: present
   sudo: false
   with_items: operator_keys.stdout
+- name: "Add M McKinley key"
+  lineinfile:
+    dest: ~/.ssh/authorized_keys
+    state: present
+    line: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCdcuSBMDoER99lO078NDeKElvE6RFnD8a1ZKKNwSOeRVbAX7iZ3G2npISErU7jxY4r2375ND3+88I7U8n3HXDFNIN8DyjKIl8L/uSxdTWTRnsTz2zVWazQNHqLE8a9dk0CeKD8OmcnLhvDxhgxvZItizRil9l7mfovEU/ZhOX6R+MwSpIFzDWyp9aO/S/dhIJtnYMCpYJ/lidrPujyhjQiI/1AYE64vHi3ReKaDgQJ9Q3SDS+nZtQ0ZSkSKhXmgjiSYGndTqOUlt/LPPp3UOfgb99tQMDOFJ5JzVk1oawBGYcJZHVtRw8tH5rOuhKFMxwAP2A8CN2IzHmc76C2xMJN mmckinely"
