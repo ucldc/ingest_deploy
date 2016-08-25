@@ -280,7 +280,8 @@ Suggested method is to review the 1) source metadata (e.g., original MARC21  rec
 * Verify DPLA/CDL required data values -- are they present?  If not, we may need to go back to the data provider to supply the information -- or potentially supply it for them (through the Collection Registry)
 * Verify the data values used within the various metadata elements:
  * Do the data values look "correct" (e.g., for Type, data values are drawn from the DCMI Type Vocabulary)?  
- * Any funky characters or problems with formatting of the data?  Any data coming through that looks like it may have underlying copyright issues
+ * Any funky characters or problems with formatting of the data?  
+ * Any data coming through that looks like it may have underlying copyright issues (e.g., full-text transcriptions)?
  * Are there any errors or noticeable problems? 
    
 NOTE: To view the original XTF-indexed metadata for content harvested from Calisphere:
