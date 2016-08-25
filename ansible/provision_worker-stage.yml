@@ -6,6 +6,9 @@
     dir_role_templates: "roles/{{ role }}/templates"
     name_suffix: -stage
     name_env: "ingest{{ name_suffix }}"
+    num_hosts: "{{ groups['tag_Name_ingest_stage_worker'] | length }}"
+  pre_tasks:
+    - debug: var=num_hosts
   roles:
     - { role: mredar.nightly_security_update_yum, tags: security-up }
     - { role: common, sudo: yes }
