@@ -423,7 +423,7 @@ Note that on occasion, a collection that has been sync'ed from CouchDB productio
 
 
 ### 4. <a name="solrprodreport">Generate and review QA report for candidate Solr index</a>
-Generate and review a QA report for the candidate Solr index, following [these steps](https://github.com/mredar/ucldc_api_data_quality/tree/master/reporting).  The QA report summarizes differences in collections in the candidate Solr index compared with the current production index.
+Generate and review a QA report for the candidate Solr index, following [these steps](https://github.com/mredar/ucldc_api_data_quality/tree/master/reporting).  The main QA report in particular summarizes differences in item counts in the candidate Solr index compared with the current production index.
 
 
 ### 5. <a name="solrprodqa">QA check candidate Solr index in Calisphere UI</a>
