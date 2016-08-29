@@ -55,7 +55,7 @@ UCLDC Harvesting operations guide
 * [5. Update Solr stage](#solrupdate)
 * [5.1. Create a new Solr stage index, based on what's in CouchDB stage](#solrstg)
 * [5.2. Delete a collection from Solr stage](#solrdelete)
-* [6. QA check collection in Solr stage](#solrqa)
+* [6. Generate and review QA report for Solr stage index](#solrqa)
 * [7. QA check media.json](#mediajson)
 * [8. QA check in Calisphere stage UI](#calisphereqa)
 * [9. Terminate stage worker instances](#terminatestg)
@@ -68,8 +68,8 @@ UCLDC Harvesting operations guide
 * [3. Update Solr production](#solrprod)
 * [3.1. Create a new candidate Solr index, based on what's in CouchDB production](#solrcandidate)
 * [3.2. Delete a collection from candidate Solr index](#solrproddelete)
-* [4. QA check candidate Solr index in Calisphere UI](#solrprodqa)
-* [5. Generate and review QA report for candidate Solr index](#solrprodreport)
+* [4. Generate and review QA report for candidate Solr index](#solrprodreport)
+* [5. QA check candidate Solr index in Calisphere UI](#solrprodqa)
 * [6. Generate candidate Solr indexes for S3](#s3index)
 * [7. Terminate production worker instances](#terminateprod)
 
@@ -329,9 +329,9 @@ Currently, Solr updates are run from the majorTom machine. The Solr update looks
 
 ### 6. <a name="solrqa">QA check collection in Solr stage</a>
 
-The objective of this QA process is to view any results passed from CouchDB stage to Solr stage; it can also be used to verify issues or discrepancies in data between the two instances.  It assumes that the data in CouchDB has been correctly mapped through to Solr; this is a fixed mapping, as documented on the second tab of the <a href="https://docs.google.com/spreadsheets/d/1u2RE9PD0N9GkLQTFNJy3HiH9N5IbKDG52HjJ6JomC9I/edit#gid=2062617414">metadata crosswalk</a>.
+Generate and review a QA report for the Solr stage index, following <a href="https://github.com/mredar/ucldc_api_data_quality/tree/master/reporting">these steps</a>. The "Duplicates and missing QA spreadsheet" in particular indicates cases where harvested records lack required metadata.
 
-Before you can conduct QA checking, you'll need to update Solr -- see <b>[Update Solr stage](#solrupdate)</b> instructions.
+Note that you can additionally view the raw results in Solr stage; this may be helpful to verify mapping issues or discrepancies in data between CouchDB and Solr stage.  Make sure you update Solr before QA'ing -- see <b>[Update Solr stage](#solrupdate)</b> instructions.
 
 <b>Querying Solr stage</b>
 * Log into <a href="https://harvest-stg.cdlib.org/solr/#/dc-collection/query">Solr</a> to conduct queries 
@@ -421,14 +421,15 @@ Note that on occasion, a collection that has been sync'ed from CouchDB productio
 * Run `~/code/harvester/scripts/delete_solr_collection.sh <collection id>`
 * Run `/usr/local/bin/solr-update.sh`
 
-### 4. <a name="solrprodqa">QA check candidate Solr index in Calisphere UI</a>
+
+### 4. <a name="solrprodreport">Generate and review QA report for candidate Solr index</a>
+Generate and review a QA report for the candidate Solr index, following [these steps](https://github.com/mredar/ucldc_api_data_quality/tree/master/reporting).  The QA report summarizes differences in collections in the candidate Solr index compared with the current production index.
+
+
+### 5. <a name="solrprodqa">QA check candidate Solr index in Calisphere UI</a>
 You can QA the candidate Solr index on your local workstation, following [these steps](https://github.com/ucldc/public_interface) ("Windows install")
 
 In the run.bat configuration file, point UCLDC_SOLR_URL to `https://harvest-prd.cdlib.org/solr_api`.
-
-
-### 5. <a name="solrprodreport">Generate and review QA report for candidate Solr index</a>
-Generate and review a QA report for the candidate Solr index, following [these steps](https://github.com/mredar/ucldc_api_data_quality/tree/master/reporting).  The QA report summarizes differences in collections in the candidate Solr index compared with the current production index.
 
 
 ### 6. <a name="s3index">Generate candidate Solr indexes for S3</a>
