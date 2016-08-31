@@ -561,7 +561,6 @@ First you should check that the `isShownBy` field for the documents in question 
 * log onto majorTom in the stage environment (harvest-stg.cdlib.org)
 * Run `python ~/code/harvester/scripts/redis_delete_harvested_images_script.py <collection_id>`. This will produce a file called `delete_image_cache-<collection_id>` in the current directory.
 * Run `~/redis-3.0.2/src/redis-cli -h $REDIS_HOST < delete_image_cache-<collection_id>`. This will clear the cache of previously harvested URLs.
-* From the Registry, queue an image harvest forcing it to get images for documents that already have the `object` field. 
 * Run `python ~/code/harvester/scripts/queue_image_harvest.py mredar@gmail.com normal-stage https://registry.cdlib.org/api/v1/collection/<collection_id>/ --get_if_object`
 * Keep your fingers crossed
 
