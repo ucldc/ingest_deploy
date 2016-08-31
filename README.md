@@ -457,36 +457,8 @@ Once you've completed syncing, you'll need to terminate the worker instances.
 
 This section describes how to update an Elastic Beanstalk configuration to point to a new candidate Solr index stored on S3. This will update the specified Calisphere front-end web application so that it points to the data from Solr.
 
-Go into the Elastic Beanstalk control panel and select the ucldc-solr application.
-![ucldc-solr app view](docs/images/screen_shot_ucldc_solr_app.png)
-Select the existing environment you want to replace and clone the environment:
-![ucldc-solr clone env](docs/images/screen_shot_clone_env.png)
-If a new ami is available, choose it. Otherwise the defaults should be good. The
-URL will be swapped later so the current one doesn't matter.
-![ucldc-solr clone env config](docs/images/screen_shot_clone_env-config.png)
-Wait for the cloning to finish, this can take a while, 15 minutes is not
-unusual. Eventually you will see this:
-![ucldc-solr clone env ready](docs/images/screen_shot_clone_env-ready.png)
-Choose the "configuration" screen & go to the "software configuration" screen:
-![ucldc-solr clone config screen](docs/images/screen_shot_clone_env-software-config.png)
-Change the INDEX_PATH Environment Property to point to the new index on S3, then
-click apply and wait for the new environment to be ready again. (Health should
-be "Green")
-Then from the environment Dashboard, select the "Rebuild Environment" action:
-![ucldc-solr clone rebuild](docs/images/screen_shot_clone_env-rebuild.png)
-Again this can take a while. During the rebuild, the new solr index will be
-pulled to the beanstalk machines.
-Now QA against the newly cloned environment's URL. Once the QA looks OK, the
-final step is to swap URLs with the existing index environment. From the new
-environment select the action "Swap Environment URLs". You will go to this
-screen and select the currently active environment:
-![ucldc-solr swap URLs](docs/images/screen_shot_clone_env-swap.png)
-Click the swap button & in a few seconds the old URL will point to the new
-environment.
-Once everything checks out well with the new index, you can terminate the older
-environment.
-
-NOTE: need scripts to automate this.
+Log on to the production majorTom and then follow the instructions here:
+[update_beanstalk](update_beanstalk_index)
 
 TODO: add how to run the QA spreadsheet generating code
 
