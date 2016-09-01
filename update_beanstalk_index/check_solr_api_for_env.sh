@@ -1,9 +1,10 @@
 #! /bin/env bash
+my_dir="$(dirname "$0")"
 
 set -o errexit
 set -o errtrace
 
-source beanstalk_functions.sh
+source ${my_dir}/beanstalk_functions.sh
 
 if [ $# -ne 1 ]; then
     echo "$0 <env name>"
