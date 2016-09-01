@@ -66,6 +66,7 @@ If both look right, swap the URLs and the new index will be live
 
 ```shell
 eb swap -n <destination environment> <source environment>
+eb swap -n ucldc-solr-1 ucldc-solr
 ```
 
 
