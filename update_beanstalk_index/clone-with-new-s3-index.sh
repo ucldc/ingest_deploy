@@ -10,7 +10,7 @@ if [ $# -ne 1 ]; then
     exit 1
 fi
 
-source beanstalk_functions.sh
+source ${my_dir}/beanstalk_functions.sh
 
 set -o nounset
 
