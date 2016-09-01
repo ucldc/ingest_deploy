@@ -1,9 +1,10 @@
 #!/bin/env bash
+my_dir="$(dirname "$0")"
 
 set -o errexit
 set -o errtrace
 
-source beanstalk_functions.sh
+source ${my_dir}/beanstalk_functions.sh
 
 # update an existing environment and point to the given new index in S3
 if [ $# -ne 2 ]; then
