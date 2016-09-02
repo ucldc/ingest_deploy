@@ -170,7 +170,7 @@ Before initiating a harvest, you'll first need to confirm if the collection has 
 If you do not have results in the "value" parameter, then go to the next step of creating a harvest job.  If you do have results in the "value" parameter, then you'll be conducting a re-harvest. You'll first need to remove the harvested records from CouchDB stage and Solr stage:
 
 * Log into the majorTom stage machine.
-* Run this command to remove the collection from CouchDB stage, adding the key for the collection at the end: `python ~/code/harvester/scripts/delete_couchdb_collection.py 23065`.
+* Run this command to remove the collection from CouchDB stage, adding the key for the collection at the end: `~/code/harvester/scripts/delete_couchdb_collection.py 23065`.
 * Then run this command, to update Solr stage: `/usr/local/bin/solr-update.sh`
 * Repeat the process above on the majorTom production machine, to remove the collection from CouchDB production and Solr production.
 * Then proceed with the steps below for creating a new harvest job
