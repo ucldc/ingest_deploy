@@ -479,7 +479,7 @@ TODO: add how to run the QA spreadsheet generating code
 ### <a name="removalcollection">Entire collection</a>
 
 * Log into the majorTom stage machine.
-* Run this command to remove the collection from CouchDB stage, adding the key for the collection at the end: `python ~/code/harvester/scripts/delete_couchdb_collection.py 23065`.
+* Run this command to remove the collection from CouchDB stage, adding the key for the collection at the end: `~/code/harvester/scripts/delete_couchdb_collection.py 23065`.
 * Then run this command, to update Solr stage: `/usr/local/bin/solr-update.sh`
 * Follow the process of sync'ing the collection through to CouchDB production
 
