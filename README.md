@@ -474,7 +474,7 @@ TODO: add how to run the QA spreadsheet generating code
 -or-
 
 * Create a list of the CouchDB identifiers for the items, and add them to a file (one per line)
-* Run the `delete_couchdb_id_list.py` script in the harvester directory against the file:`python ~/code/harvester/scripts/delete_couchdb_id_list.py <file with list of ids>`
+* Run the `delete_couchdb_id_list.py` script in the harvester directory against the file:`~/code/harvester/scripts/delete_couchdb_id_list.py <file with list of ids>`
 
 ### <a name="removalcollection">Entire collection</a>
 
