@@ -504,17 +504,22 @@ there. Hopefully this would identify the error and you can modify whatever is
 going wrong.
 
 If you need more extensive access to logs, they are all stored on the AWS
-CloudWatch platform. Go to the CloudWatch page in the AWS console and choose the
-"Logs" page.
-![ucldc-cw logs](docs/images/screen_shot_cloudwatch_logs_page.png)
+CloudWatch platform. 
 The /var/local/rqworker & /var/local/akara contain the logs from the worker
 processes & the Akara server on a worker instance.
 The logs are named with the instance id & ip address, e.g. ingest-stage-i-127546c9-10.60.28.224
-![ucldc-cw rqworker-log-page](docs/images/screen_shot_cloudwatch_rqworker-logs-page.png)
-You will probably need to use the sorting by "Last Event Time" to get the most
-recent logs. Find the log of interest by IP or instance id & click through. You
-will then see the logs for that worker instance:
-![ucldc-cw rqworker-log](docs/images/screen_shot_cloudwatch_rqworker-log.png)
+
+From the majorTom machine you can access the logs on CloudWatch using the scripts in the logs_from_cli directory.
+
+First, get the IPs of the worker machines by running `logs_from_cli/get_worker_ips.sh`
+
+Then for the worker whose logs you want to examine:
+`logs_from_cli/get_log_events_for_worker.sh <worker ip>`
+
+This is an output of the rqworker log.
+
+If you need to go back further in the log history or for the akara server on a
+worker, for now ask Mark.
 
 If this doesn't get you enough information, you can ssh to a worker instance and
 watch the logs real time if you like. tail -f /var/local/rqworker/worker.log or
