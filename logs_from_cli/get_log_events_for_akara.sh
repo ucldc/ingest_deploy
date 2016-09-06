@@ -13,7 +13,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" # http://stackoverflow.c
 source ${DIR}/info_functions.sh
 
 if [ "$#" != 1 ]; then
-    echo "get_log_events_for_worker.sh <worker ip>"
+    echo "get_log_events_for_akara.sh <worker ip>"
     exit 11
 fi
 
@@ -23,5 +23,5 @@ jq_search="._meta.hostvars[\"${worker_ip}\"].ec2_id"
 instance_id=$(~/code/ec2.py | jq ${jq_search}| tr --delete '"' )
 log_stream_name=ingest-stage-${instance_id}-${worker_ip}
 echo $log_stream_name
-aws  logs get-log-events --log-group-name "/var/local/rqworker" --log-stream-name  ${log_stream_name}
+aws  logs get-log-events --log-group-name "/var/local/akara" --log-stream-name  ${log_stream_name}
 echo "LOG STREAM NAME=${log_stream_name}"

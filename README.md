@@ -514,12 +514,12 @@ From the majorTom machine you can access the logs on CloudWatch using the script
 First, get the IPs of the worker machines by running `logs_from_cli/get_worker_ips.sh`
 
 Then for the worker whose logs you want to examine:
-`logs_from_cli/get_log_events_for_worker.sh <worker ip>`
+`logs_from_cli/get_log_events_for_rqworker.sh <worker ip>`
 
-This is an output of the rqworker log.
+This is an output of the rqworker log, for the akara log use:
+`logs_from_cli/get_log_events_for_akara.sh <worker ip>`
 
-If you need to go back further in the log history or for the akara server on a
-worker, for now ask Mark.
+If you need to go back further in the log history, for now ask Mark.
 
 If this doesn't get you enough information, you can ssh to a worker instance and
 watch the logs real time if you like. tail -f /var/local/rqworker/worker.log or
