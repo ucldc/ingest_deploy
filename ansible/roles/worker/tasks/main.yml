@@ -14,7 +14,7 @@
   template: src=id_rsa.pub mode=600 dest=~/.ssh/id_rsa.pub 
 - { include: install_packages.yml }
 - name: make user ~/bin directory
-  file: path=/home/{{ ansible_ssh_user }}/bin state=directory
+  file: path=/home/{{ ansible_user }}/bin state=directory
 - name: install dbus dependencies
   yum: 
     pkg: dbus-glib-devel 
@@ -54,31 +54,31 @@
   file:
     path: "{{ dir_run }}/{{ run_dir_solr }}"
     state: directory
-    owner: "{{ ansible_ssh_user }}"
-    group: "{{ ansible_ssh_user }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
 - name: create run_dir_solr log dir
   sudo: yes
   file:
     path: "{{ dir_run }}/{{ run_dir_solr }}/log"
     state: directory
-    owner: "{{ ansible_ssh_user }}"
-    group: "{{ ansible_ssh_user }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
 - name: put solr-index-to-s3 in dir_bin
   sudo: yes
   template:
       src: solr-index-to-s3.sh.j2
       dest: "{{dir_bin}}/solr-index-to-s3.sh"
       mode: "0775"
-      owner: "{{ ansible_ssh_user }}"
-      group: "{{ ansible_ssh_user }}"
+      owner: "{{ ansible_user }}"
+      group: "{{ ansible_user }}"
 - name: put solr-update in dir_bin
   sudo: yes
   template:
       src: solr-update.sh.j2
       dest: "{{dir_bin}}/solr-update.sh"
       mode: "0775"
-      owner: "{{ ansible_ssh_user }}"
-      group: "{{ ansible_ssh_user }}"
+      owner: "{{ ansible_user }}"
+      group: "{{ ansible_user }}"
 ################################################################################
 #configure akara
 ################################################################################
@@ -96,9 +96,9 @@
   file:
     path: "{{ dir_run_akara }}"
     state: directory
-    owner: "{{ ansible_ssh_user }}"
-    group: "{{ ansible_ssh_user }}"
-    group: "{{ ansible_ssh_user }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
 - name: setup akara run dir
   command: "{{ dir_venv}}/bin/akara -f {{ dir_code }}/dpla/ingestion/akara.conf setup"
   args:
@@ -116,9 +116,9 @@
   file:
     path: "{{ dir_run_rqworker }}"
     state: directory
-    owner: "{{ ansible_ssh_user }}"
-    group: "{{ ansible_ssh_user }}"
-    group: "{{ ansible_ssh_user }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
 - name: make profiles dir
   file:
     path: "{{ dir_run_rqworker }}/profiles"
@@ -146,16 +146,16 @@
     src: start-rqworker.sh.j2
     dest: "{{ dir_bin }}start-rqworker.sh"
     mode: "0775"
-    owner: "{{ ansible_ssh_user }}"
-    group: "{{ ansible_ssh_user }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
 - name: put stop rqworker file in place
   sudo: yes
   template:
     src: stop-rqworker.sh.j2
     dest: "{{ dir_bin }}stop-rqworker.sh"
     mode: "0775"
-    owner: "{{ ansible_ssh_user }}"
-    group: "{{ ansible_ssh_user }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
 - name: halt.local to call stop rqworker in place
   sudo: yes
   template:

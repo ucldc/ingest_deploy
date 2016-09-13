@@ -1,7 +1,7 @@
 ---
 # defaults file for provision_worker
-dir_code: /home/{{ ansible_ssh_user }}/code/
-dir_venv: /home/{{ ansible_ssh_user }}/workers_local/
+dir_code: /home/{{ ansible_user }}/code/
+dir_venv: /home/{{ ansible_user }}/workers_local/
 dir_run: /var/local/
 dir_run_akara: "{{ dir_run }}akara"
 dir_run_rqworker: "{{ dir_run }}rqworker"
