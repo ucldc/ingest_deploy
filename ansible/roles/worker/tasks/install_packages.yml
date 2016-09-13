@@ -10,6 +10,8 @@
     - make
     - libxslt-devel
     - libxml2-devel
+    - libffi-devel
+    - openssl-devel
 - name: install amazon specific python libs
   when: ansible_distribution == "Amazon"
   sudo: yes
