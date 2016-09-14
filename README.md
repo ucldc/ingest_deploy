@@ -75,7 +75,7 @@ UCLDC Harvesting operations guide
 
 [Updating Elastic Beanstalk with candidate Solr index](#beanstalk)
 
-Additional resources
+[Additional resources](#addtl)
 * [Removing collections/items](#removals)
 * [Other AWS-related admin tasks](#awsadmin)
 * [Picking up new harvester or ingest code](#newcode)
@@ -357,7 +357,7 @@ Once you've QA checked the results and have completed the harvest, you'll need t
 * You'll receive a prompt to confirm that you want to spin down the intance; hit Return to confirm.
 
 
-Moving a harvest to production
+<a name="harvestprod">Moving a harvest to production</a>
 --------------------------
 
 ### 1. <a name="synccouch">Create a sync job in the Registry</a>
@@ -447,9 +447,11 @@ Once you've completed syncing, you'll need to terminate the worker instances.
 * Run: `ansible-playbook -i ~/code/ec2.py ~/code/ingest_deploy/ansible/terminate_workers-prod.yml <--limit=10.60.?.?>` . You can use the `limit` parameter to specify a range of IP addresses for deletion.
 * You'll receive a prompt to confirm that you want to spin down the intance; hit Return to confirm.
 
-    
-<a name="beanstalk">Updating Elastic Beanstalk with candidate Solr index</a>
+
+<a name="addtl">Additional resources</a> 
 --------------------------
+    
+###<a name="beanstalk">Updating Elastic Beanstalk with candidate Solr index</a>
 
 This section describes how to update an Elastic Beanstalk configuration to point to a new candidate Solr index stored on S3. This will update the specified Calisphere front-end web application so that it points to the data from Solr.
 
@@ -459,9 +461,9 @@ Log on to the production majorTom and then follow the instructions here:
 TODO: add how to run the QA spreadsheet generating code
 
 
-<a name="removals">Removing collections/items from publication</a>
---------------------------
-### <a name="removalitem">Individual items</a>
+###<a name="removals">Removing collections/items from publication</a>
+
+#### <a name="removalitem">Individual items</a>
 
 * Log into CouchDB stage; search for and delete the specific item record
 * Then run this command, to update Solr stage: `/usr/local/bin/solr-update.sh`
@@ -472,7 +474,7 @@ TODO: add how to run the QA spreadsheet generating code
 * Create a list of the CouchDB identifiers for the items, and add them to a file (one per line)
 * Run the `delete_couchdb_id_list.py` script in the harvester directory against the file:`~/code/harvester/scripts/delete_couchdb_id_list.py <file with list of ids>`
 
-### <a name="removalcollection">Entire collection</a>
+#### <a name="removalcollection">Entire collection</a>
 
 * Log into the majorTom stage machine.
 * Run this command to remove the collection from CouchDB stage, adding the key for the collection at the end: `~/code/harvester/scripts/delete_couchdb_collection.py 23065`.
@@ -480,10 +482,9 @@ TODO: add how to run the QA spreadsheet generating code
 * Follow the process of sync'ing the collection through to CouchDB production
 
 
-<a name="awsadmin">Other AWS-related admin tasks
------------------------------
+###<a name="awsadmin">Other AWS-related admin tasks
 
-### <a name="newcode">Picking up new harvester or ingest code</a>
+#### <a name="newcode">Picking up new harvester or ingest code</a>
 
 When new harvester or ingest code is pushed, you need to create a new generation
 of worker machines to pick up the new code:
@@ -492,8 +493,7 @@ of worker machines to pick up the new code:
 * Then go through the worker create process again, creating and provisioning
 machines as needed.
 
-<a name="solrscratch">Recreating the Solr Index from scratch</a>
---------------------------------------
+###<a name="solrscratch">Recreating the Solr Index from scratch</a>
 
 The solr index is run in a docker container. To make changes to the schema or
 other configurations, you need to recreate the docker image for the container.
@@ -503,8 +503,7 @@ To do so in the ingest environment, run `ansible-playbook -i hosts solr_docker_r
 You will then have to run `/usr/local/solr-update.sh --since=0` to reindex the
 whole couchdb database.
 
-<a name="cdbsearch">How to find a CouchDB source document for an item in Calisphere</a>
----------------------------------------------------------------
+###<a name="cdbsearch">How to find a CouchDB source document for an item in Calisphere</a>
 
 #### See the new tool for automating this here: https://github.com/mredar/ucldc_api_data_quality/blob/master/reporting/README.md
 
