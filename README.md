@@ -447,10 +447,8 @@ Once you've completed syncing, you'll need to terminate the worker instances.
 * You'll receive a prompt to confirm that you want to spin down the intance; hit Return to confirm.
 
 
-<a name="addtl">Additional resources</a> 
+<a name="beanstalk">Updating Elastic Beanstalk with candidate Solr index</a>
 --------------------------
-    
-###<a name="beanstalk">Updating Elastic Beanstalk with candidate Solr index</a>
 
 This section describes how to update an Elastic Beanstalk configuration to point to a new candidate Solr index stored on S3. This will update the specified Calisphere front-end web application so that it points to the data from Solr.
 
@@ -459,6 +457,9 @@ Log on to the production majorTom and then follow the instructions here:
 
 TODO: add how to run the QA spreadsheet generating code
 
+
+<a name="addtl">Additional resources</a> 
+--------------------------
 
 ###<a name="removals">Removing collections/items from publication</a>
 
