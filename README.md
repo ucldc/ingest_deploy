@@ -77,7 +77,6 @@ UCLDC Harvesting operations guide
 
 [Additional resources](#addtl)
 * [Removing collections/items](#removals)
-* [Other AWS-related admin tasks](#awsadmin)
 * [Picking up new harvester or ingest code](#newcode)
 * [Recreating the Solr Index from scratch](#solrscratch)
 * [How to find a CouchDB source document for an item in Calisphere](#cdbsearch)
@@ -482,9 +481,7 @@ TODO: add how to run the QA spreadsheet generating code
 * Follow the process of sync'ing the collection through to CouchDB production
 
 
-###<a name="awsadmin">Other AWS-related admin tasks
-
-#### <a name="newcode">Picking up new harvester or ingest code</a>
+### <a name="newcode">Picking up new harvester or ingest code</a>
 
 When new harvester or ingest code is pushed, you need to create a new generation
 of worker machines to pick up the new code:
