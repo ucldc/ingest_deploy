@@ -75,19 +75,15 @@ UCLDC Harvesting operations guide
 
 [Updating Elastic Beanstalk with candidate Solr index](#beanstalk)
 
-[Removing collections/items](#removals)
-
-[Other AWS-related admin tasks](#awsadmin)
-
-[Picking up new harvester or ingest code](#newcode)
-
-[What to do when harvests fail](#failures)
-
-[Recreating the Solr Index from scratch](#solrscratch)
-
-[How to find a CouchDB source document for an item in Calisphere](#cdbsearch)
+Additional resources
+* [Removing collections/items](#removals)
+* [Other AWS-related admin tasks](#awsadmin)
+* [Picking up new harvester or ingest code](#newcode)
+* [Recreating the Solr Index from scratch](#solrscratch)
+* [How to find a CouchDB source document for an item in Calisphere](#cdbsearch)
 
 [Fixes for Common Problems](#commonfixes)
+* [What to do when harvests fail](#failures)
 * [Image problems](#imagefix)
 
 
@@ -496,35 +492,6 @@ of worker machines to pick up the new code:
 * Then go through the worker create process again, creating and provisioning
 machines as needed.
 
-<a name="failures">What to do when harvests fail</a>
------------------------------
-
-First take a look at the RQ Dashboard. There will be a bit of the error message
-there. Hopefully this would identify the error and you can modify whatever is
-going wrong.
-
-If you need more extensive access to logs, they are all stored on the AWS
-CloudWatch platform. 
-The /var/local/rqworker & /var/local/akara contain the logs from the worker
-processes & the Akara server on a worker instance.
-The logs are named with the instance id & ip address, e.g. ingest-stage-i-127546c9-10.60.28.224
-
-From the majorTom machine you can access the logs on CloudWatch using the scripts in the logs_from_cli directory.
-
-First, get the IPs of the worker machines by running `logs_from_cli/get_worker_ips.sh`
-
-Then for the worker whose logs you want to examine:
-`logs_from_cli/get_log_events_for_rqworker.sh <worker ip>`
-
-This is an output of the rqworker log, for the akara log use:
-`logs_from_cli/get_log_events_for_akara.sh <worker ip>`
-
-If you need to go back further in the log history, for now ask Mark.
-
-If this doesn't get you enough information, you can ssh to a worker instance and
-watch the logs real time if you like. tail -f /var/local/rqworker/worker.log or
-/var/local/akara/logs/error.log.
-
 <a name="solrscratch">Recreating the Solr Index from scratch</a>
 --------------------------------------
 
@@ -553,6 +520,34 @@ https://harvest-stg.cdlib.org/couchdb/ucldc/26094--LAPL00050887 (or with the UI 
 
 <a name="commonfixes">Fixes for Common Problems</a>
 -------------------------
+
+### <a name="failures">What to do when harvests fail</a>
+
+First take a look at the RQ Dashboard. There will be a bit of the error message
+there. Hopefully this would identify the error and you can modify whatever is
+going wrong.
+
+If you need more extensive access to logs, they are all stored on the AWS
+CloudWatch platform. 
+The /var/local/rqworker & /var/local/akara contain the logs from the worker
+processes & the Akara server on a worker instance.
+The logs are named with the instance id & ip address, e.g. ingest-stage-i-127546c9-10.60.28.224
+
+From the majorTom machine you can access the logs on CloudWatch using the scripts in the logs_from_cli directory.
+
+First, get the IPs of the worker machines by running `logs_from_cli/get_worker_ips.sh`
+
+Then for the worker whose logs you want to examine:
+`logs_from_cli/get_log_events_for_rqworker.sh <worker ip>`
+
+This is an output of the rqworker log, for the akara log use:
+`logs_from_cli/get_log_events_for_akara.sh <worker ip>`
+
+If you need to go back further in the log history, for now ask Mark.
+
+If this doesn't get you enough information, you can ssh to a worker instance and
+watch the logs real time if you like. tail -f /var/local/rqworker/worker.log or
+/var/local/akara/logs/error.log.
 
 ### <a name="imagefix">Image problems</a>
 
