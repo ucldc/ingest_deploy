@@ -450,10 +450,11 @@ Once you've completed syncing, you'll need to terminate the worker instances.
 <a name="beanstalk">Updating Elastic Beanstalk with candidate Solr index</a>
 --------------------------
 
-This section describes how to update an Elastic Beanstalk configuration to point to a new candidate Solr index stored on S3. This will update the specified Calisphere front-end web application so that it points to the data from Solr.
+This section describes how to update an Elastic Beanstalk configuration to point to a new candidate Solr index stored on S3. This will update the specified Calisphere front-end web application so that it points to the data from Solr:
 
-Log on to the production majorTom and then follow the instructions here:
+* Log on to the production majorTom and then follow the instructions here:
 [update_beanstalk](update_beanstalk_index)
+* After any new index is moved into publication, run the following commands, so that ARK URLs correctly resolve for any new incoming harvested objects with embedded ARKs: https://gist.github.com/tingletech/475ff92147b6f93f6c3f60cebdf5e507
 
 TODO: add how to run the QA spreadsheet generating code
 
