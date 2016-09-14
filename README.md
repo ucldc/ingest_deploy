@@ -75,19 +75,14 @@ UCLDC Harvesting operations guide
 
 [Updating Elastic Beanstalk with candidate Solr index](#beanstalk)
 
-[Removing collections/items](#removals)
-
-[Other AWS-related admin tasks](#awsadmin)
-
-[Picking up new harvester or ingest code](#newcode)
-
-[What to do when harvests fail](#failures)
-
-[Recreating the Solr Index from scratch](#solrscratch)
-
-[How to find a CouchDB source document for an item in Calisphere](#cdbsearch)
+[Additional resources](#addtl)
+* [Removing collections/items](#removals)
+* [Picking up new harvester or ingest code](#newcode)
+* [Recreating the Solr Index from scratch](#solrscratch)
+* [How to find a CouchDB source document for an item in Calisphere](#cdbsearch)
 
 [Fixes for Common Problems](#commonfixes)
+* [What to do when harvests fail](#failures)
 * [Image problems](#imagefix)
 
 
@@ -361,7 +356,7 @@ Once you've QA checked the results and have completed the harvest, you'll need t
 * You'll receive a prompt to confirm that you want to spin down the intance; hit Return to confirm.
 
 
-Moving a harvest to production
+<a name="harvestprod">Moving a harvest to production</a>
 --------------------------
 
 ### 1. <a name="synccouch">Create a sync job in the Registry</a>
@@ -451,21 +446,25 @@ Once you've completed syncing, you'll need to terminate the worker instances.
 * Run: `ansible-playbook -i ~/code/ec2.py ~/code/ingest_deploy/ansible/terminate_workers-prod.yml <--limit=10.60.?.?>` . You can use the `limit` parameter to specify a range of IP addresses for deletion.
 * You'll receive a prompt to confirm that you want to spin down the intance; hit Return to confirm.
 
-    
+
 <a name="beanstalk">Updating Elastic Beanstalk with candidate Solr index</a>
 --------------------------
 
-This section describes how to update an Elastic Beanstalk configuration to point to a new candidate Solr index stored on S3. This will update the specified Calisphere front-end web application so that it points to the data from Solr.
+This section describes how to update an Elastic Beanstalk configuration to point to a new candidate Solr index stored on S3. This will update the specified Calisphere front-end web application so that it points to the data from Solr:
 
-Log on to the production majorTom and then follow the instructions here:
+* Log on to the production majorTom and then follow the instructions here:
 [update_beanstalk](update_beanstalk_index)
+* After any new index is moved into publication, run the following commands, so that ARK URLs correctly resolve for any new incoming harvested objects with embedded ARKs: https://gist.github.com/tingletech/475ff92147b6f93f6c3f60cebdf5e507
 
 TODO: add how to run the QA spreadsheet generating code
 
 
-<a name="removals">Removing collections/items from publication</a>
+<a name="addtl">Additional resources</a> 
 --------------------------
-### <a name="removalitem">Individual items</a>
+
+###<a name="removals">Removing collections/items from publication</a>
+
+#### <a name="removalitem">Individual items</a>
 
 * Log into CouchDB stage; search for and delete the specific item record
 * Then run this command, to update Solr stage: `/usr/local/bin/solr-update.sh`
@@ -476,16 +475,13 @@ TODO: add how to run the QA spreadsheet generating code
 * Create a list of the CouchDB identifiers for the items, and add them to a file (one per line)
 * Run the `delete_couchdb_id_list.py` script in the harvester directory against the file:`~/code/harvester/scripts/delete_couchdb_id_list.py <file with list of ids>`
 
-### <a name="removalcollection">Entire collection</a>
+#### <a name="removalcollection">Entire collection</a>
 
 * Log into the majorTom stage machine.
 * Run this command to remove the collection from CouchDB stage, adding the key for the collection at the end: `~/code/harvester/scripts/delete_couchdb_collection.py 23065`.
 * Then run this command, to update Solr stage: `/usr/local/bin/solr-update.sh`
 * Follow the process of sync'ing the collection through to CouchDB production
 
-
-<a name="awsadmin">Other AWS-related admin tasks
------------------------------
 
 ### <a name="newcode">Picking up new harvester or ingest code</a>
 
@@ -496,8 +492,34 @@ of worker machines to pick up the new code:
 * Then go through the worker create process again, creating and provisioning
 machines as needed.
 
-<a name="failures">What to do when harvests fail</a>
------------------------------
+###<a name="solrscratch">Recreating the Solr Index from scratch</a>
+
+The solr index is run in a docker container. To make changes to the schema or
+other configurations, you need to recreate the docker image for the container.
+
+To do so in the ingest environment, run `ansible-playbook -i hosts solr_docker_rebuild.yml`.  This will remove the docker container & image, rebuild the image, remove the index files and run a new container based on the latest solr config in https://github.com/ucldc/solr_api/.
+
+You will then have to run `/usr/local/solr-update.sh --since=0` to reindex the
+whole couchdb database.
+
+###<a name="cdbsearch">How to find a CouchDB source document for an item in Calisphere</a>
+
+#### See the new tool for automating this here: https://github.com/mredar/ucldc_api_data_quality/blob/master/reporting/README.md
+
+Tracing back to the document source in CouchDB is critical to diagnose problems with data and images.
+
+Get the Solr id for the item. This is the part of the URL after the /item/ without the final slash. For https://calisphere.org/item/32e2220c1e918cf17f0597d181fa7e3e/, the Solr ID is 32e2220c1e918cf17f0597d181fa7e3e.
+
+Now go to the Solr index of interest and query for the id:
+https://harvest-stg.cdlib.org/solr/dc-collection/select?q=32e2220c1e918cf17f0597d181fa7e3e&wt=json&indent=true
+
+Find the `harvest_id_s` value, in this case "26094--LAPL00050887". Then plug this into CouchDB for the ucldc database:
+https://harvest-stg.cdlib.org/couchdb/ucldc/26094--LAPL00050887 (or with the UI - https://harvest-stg.cdlib.org/couchdb/_utils/document.html?ucldc/26094--LAPL00050887)
+
+<a name="commonfixes">Fixes for Common Problems</a>
+-------------------------
+
+### <a name="failures">What to do when harvests fail</a>
 
 First take a look at the RQ Dashboard. There will be a bit of the error message
 there. Hopefully this would identify the error and you can modify whatever is
@@ -524,35 +546,6 @@ If you need to go back further in the log history, for now ask Mark.
 If this doesn't get you enough information, you can ssh to a worker instance and
 watch the logs real time if you like. tail -f /var/local/rqworker/worker.log or
 /var/local/akara/logs/error.log.
-
-<a name="solrscratch">Recreating the Solr Index from scratch</a>
---------------------------------------
-
-The solr index is run in a docker container. To make changes to the schema or
-other configurations, you need to recreate the docker image for the container.
-
-To do so in the ingest environment, run `ansible-playbook -i hosts solr_docker_rebuild.yml`.  This will remove the docker container & image, rebuild the image, remove the index files and run a new container based on the latest solr config in https://github.com/ucldc/solr_api/.
-
-You will then have to run `/usr/local/solr-update.sh --since=0` to reindex the
-whole couchdb database.
-
-<a name="cdbsearch">How to find a CouchDB source document for an item in Calisphere</a>
----------------------------------------------------------------
-
-#### See the new tool for automating this here: https://github.com/mredar/ucldc_api_data_quality/blob/master/reporting/README.md
-
-Tracing back to the document source in CouchDB is critical to diagnose problems with data and images.
-
-Get the Solr id for the item. This is the part of the URL after the /item/ without the final slash. For https://calisphere.org/item/32e2220c1e918cf17f0597d181fa7e3e/, the Solr ID is 32e2220c1e918cf17f0597d181fa7e3e.
-
-Now go to the Solr index of interest and query for the id:
-https://harvest-stg.cdlib.org/solr/dc-collection/select?q=32e2220c1e918cf17f0597d181fa7e3e&wt=json&indent=true
-
-Find the `harvest_id_s` value, in this case "26094--LAPL00050887". Then plug this into CouchDB for the ucldc database:
-https://harvest-stg.cdlib.org/couchdb/ucldc/26094--LAPL00050887 (or with the UI - https://harvest-stg.cdlib.org/couchdb/_utils/document.html?ucldc/26094--LAPL00050887)
-
-<a name="commonfixes">Fixes for Common Problems</a>
--------------------------
 
 ### <a name="imagefix">Image problems</a>
 
