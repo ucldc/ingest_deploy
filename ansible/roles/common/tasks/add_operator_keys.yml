@@ -11,12 +11,11 @@
   register: operator_keys
 - 
   name: "Add UCLDC operator keys to authorized_keys"
-  lineinfile: 
+  blockinfile: 
     dest: ~/.ssh/authorized_keys
-    line: "{{ item }}"
+    block: "{{ operator_keys.stdout }}"
     state: present
   sudo: false
-  with_items: operator_keys.stdout
 - name: "Add M McKinley key"
   lineinfile:
     dest: ~/.ssh/authorized_keys
