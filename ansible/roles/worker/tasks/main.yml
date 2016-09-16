@@ -38,7 +38,6 @@
   pip:
     state: present
     requirements: "{{ dir_code }}/dpla/ingestion/requirements.txt"
-    #executable: pip2.7
     virtualenv: "{{ dir_venv }}"
 - name: put .boto in place for strict cert checking fix
 # https://github.com/boto/boto/issues/2836
