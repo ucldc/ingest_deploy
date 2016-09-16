@@ -20,6 +20,40 @@
     pkg: dbus-glib-devel 
     state: present
   sudo: yes
+- name: create run termination check script
+  template:
+    src: run_handle_termination.sh.j2
+    dest: "/home/{{ ansible_user }}/bin/run_handle_termination.sh"
+    mode: "0775"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+- name: create termination check script
+  template:
+    src: handle-termination.sh.j2
+    dest: "/home/{{ ansible_user }}/bin/handle-termination.sh"
+    mode: "0775"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+- name: install monit
+  yum:
+    pkg: monit
+    state: present
+  sudo: yes
+- name: install monit.conf
+  template:
+    src: monit.conf.j2
+    dest: /etc/monit.conf
+  sudo: yes
+  notify: reload monit
+- name: install handle-termination monit script
+  template:
+    src: handle-termination.monit.j2
+    dest: /etc/monit.d/handle-termination.monit
+  sudo: yes
+  notify: reload monit
+- name: monit validate
+  command: monit validate
+  sudo: yes
 - name: make virtualenv directory
   file: path={{ dir_venv }} state=directory
 - name: pull ingest harvester code to local box
@@ -46,13 +80,6 @@
   command: "{{ dir_venv }}/bin/python {{ dir_code }}/harvester/setup.py install"
   args:
     chdir: "{{ dir_code }}/harvester"
-- name: create termination check script
-  template:
-    src: handle-termination.sh.j2
-    dest: "/home/{{ ansible_user }}/bin/handle-termination.sh"
-    mode: "0775"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
 ## configure solr-index-to-s3
 # TODO: queue for worker
 - name: create run_dir_solr run dir
