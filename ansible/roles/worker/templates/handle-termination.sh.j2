@@ -1,0 +1,13 @@
+echo $$ > {{ dir_run_rqworker }}/handle-termination.pid
+while [[ 1 ]]
+do
+if `curl -s http://169.254.169.254/latest/meta-data/spot/termination-time | grep -q .*T.*Z`; then
+	echo 'TERMINATING'
+	worker_pid=`echo {{ dir_run_rqworker }}/rqworker.pid`
+    kill -s SIGTERM ${worker_pid} 
+    kill -s SIGTERM ${worker_pid} 
+else
+echo "NOT TERMINATING"
+sleep 5
+fi
+done
