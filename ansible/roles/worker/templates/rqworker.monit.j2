@@ -1,9 +1,0 @@
-check process rqworker
-    with pidfile "{{ dir_run_rqworker }}/rqworker.pid"
-    start program "/bin/su - {{ ansible_user }} -c '/home/{{ ansible_user }}/bin/start-rqworker.sh'" with timeout 60 seconds
-    stop program "/home/{{ ansible_user }}/bin/stop-rqworker.sh"
-
-check process handle-termination
-    with pidfile "/home/{{ ansible_user }}/bin/handle-termination.pid"
-    start program "/bin/su - {{ ansible_user }} -c '/home/{{ ansible_user }}/bin/handle-termination.sh'" with timeout 10 seconds
-	stop program stop = "/bin/bash -c 'kill -s SIGTERM `cat /hom/{{ ansible_user }}/bin/handle-termination.pid`'"
