@@ -1,4 +1,4 @@
-echo $$ > {{ dir_run_rqworker }}/handle-termination.pid
+echo $$ > /home/{{ ansible_user }}/bin/handle-termination.pid
 while [[ 1 ]]
 do
 if `curl -s http://169.254.169.254/latest/meta-data/spot/termination-time | grep -q .*T.*Z`; then

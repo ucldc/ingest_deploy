@@ -1,0 +1,4 @@
+check process handle-termination
+    with pidfile "/home/{{ ansible_user }}/bin/handle-termination.pid"
+    start program "/bin/su - {{ ansible_user }} -c '/home/{{ ansible_user }}/bin/run_handle_termination.sh'" with timeout 10 seconds
+	stop program = "/bin/bash -c 'kill -s SIGTERM `cat /home/{{ ansible_user }}/bin/handle-termination.pid`'"
