@@ -284,7 +284,8 @@ NOTE: To view the original XTF-indexed metadata for content harvested from Calis
 * Append the following to the URL, to set the number of results: `docsPerPage=###`
 
 <b>Querying CouchDB stage</b>
-* To generate a results set of metadata records for a given collection in CouchDB, using this URL syntax: `https://harvest-stg.cdlib.org/couchdb/ucldc/_design/all_provider_docs/_list/has_field_value/by_provider_name_wdoc?key="10046"&field=originalRecord.subject&limit=100`. Each metadata record in the results set will have a unique ID  (e.g., 26094--00000001). This can be used for viewing the metadata within the CouchDB UI.
+* Generate a count of all objects for a given collection in CouchDB:  `https://harvest-stg.cdlib.org/couchdb/ucldc/_design/all_provider_docs/_view/by_provider_name_count?key="26189"`
+* Generate a results set of metadata records for a given collection in CouchDB, using this URL syntax: `https://harvest-stg.cdlib.org/couchdb/ucldc/_design/all_provider_docs/_list/has_field_value/by_provider_name_wdoc?key="10046"&field=originalRecord.subject&limit=100`. Each metadata record in the results set will have a unique ID  (e.g., 26094--00000001). This can be used for viewing the metadata within the CouchDB UI.
 * Parameters: 
  * <b>field</b>: Optional.  Limit the display output to a particular field. 
  * <b>key</b>: Optional.  Limits by collection, using the Collection Registry numeric ID.   
@@ -332,6 +333,8 @@ Note that you can additionally view the raw results in Solr stage; this may be h
 
 <b>Querying Solr stage</b>
 * Log into <a href="https://harvest-stg.cdlib.org/solr/#/dc-collection/query">Solr</a> to conduct queries 
+* Generate a count of all objects for a given collection in Solr:  `https://harvest-stg.cdlib.org/solr/dc-collection/select?q=collection_url%3A%22https%3A%2F%2Fregistry.cdlib.org%2Fapi%2Fv1%2Fcollection%2F26203%2F%22&wt=json&rows=0&indent=true`
+* Generates counts for all collections: `https://harvest-stg.cdlib.org/solr/dc-collection/select?q=*%3A*&rows=0&wt=json&indent=true&facet=true&facet.query=true&facet.field=collection_url&facet.limit=-1&facet.sort=count`
 * Consult the <a href="https://wiki.apache.org/solr/SolrQuerySyntax">Solr guide</a> for additional query details.
 
 
