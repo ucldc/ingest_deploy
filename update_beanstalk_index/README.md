@@ -90,7 +90,7 @@ Environment details for: ucldc-solr
  Health: Green
  ```
 
-* If both look right, swap the URLs and the new index will be live (eb swap -n <destination environment> <source environment>):
+* If both look right, swap the URLs and the new index will be live (`eb swap -n <destination environment> <source environment>`):
 
 ```shell
 eb swap -n ucldc-solr-1 ucldc-solr
