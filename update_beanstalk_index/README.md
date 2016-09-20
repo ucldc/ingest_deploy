@@ -8,21 +8,28 @@ The beanstalk is hosted in the Oregon (us-west-2) AWS region. The application na
 
 The process to create a new production index is as follows:
 
-1. push the index to S3
-2. clone the existing environment
-3. in the cloned environment, set the env var INDEX_PATH to the new index sub-path in S3
-4. Rebuild the cloned environment
-5. check that the cloned environment is serving up the new index
-6. Swap URLs from existing environment to the new cloned environment
+1. Optimize the solr index
+2. push the index to S3
+3. clone the existing environment
+4. in the cloned environment, set the env var INDEX_PATH to the new index sub-path in S3
+5. Rebuild the cloned environment
+6. check that the cloned environment is serving up the new index
+7. Swap URLs from existing environment to the new cloned environment
 
 This will put in place the new index.
 
 Generally, I then rebuild the original environment and swap back so the name of the environment remains `ucldc-solr`. Not really necessary but makes it a bit easier to remember what's what.
 
 ## Step 1
+Optimize the solr index. Go to the core admin page in solr production:
+https://harvest-prd.cdlib.org/solr/#/~cores/dc-collection. Hit the `optimize`
+button. Wait a while & keep refreshing until the index reports being 
+optimized and current.
+
+## Step 2
 To push a new index to S3, first run `/usr/local/bin/solr-index-to-s3.sh` on the production environment majorTom instance. You can look at the log at `/var/local/solr-update/log/solr-index-to-s3-YYYYMMDD_HHMMSS.out`. Find the `s3_file_path` reports it will be something like: `"s3_file_path": "s3://solr.ucldc/indexes/production/2016/06/solr-index.2016-06-21-19_53_40.tar.bz2"`. Take the part from the year on ( 2016/06/solr-index.2016-06-21-19_53_40.tar.bz2 ) as the input to the command to clone the existing environment.
 
-## Steps 2-4
+## Steps 3-5
 The script `clone-with-new-s3-index.sh` will do steps 2 to 4 above.
 
 First, check what environments are running:
@@ -44,7 +51,7 @@ eb printenv <NEW_ENV_NAME>
 
 and see that INDEX_PATH is updated to the value passed to the script.
 
-## Step 5
+## Step 6
 Check the new environments URL for the proper search results. Run 
 ```shell
 cname_for_env.sh <environment name>
@@ -55,7 +62,7 @@ You can check that the URL is up by running:
 ./check_solr_api_for_env.sh <environment name>
 ```
 
-## Step 6
+## Step 7
 Swap URLs from the existing environment to the new cloned environment running the updated solr index.
 First, check what environment has the ucldc-solr.us-west-1.elasticbeanstalk.com CNAME:
 ```shell
