@@ -38,24 +38,20 @@ To push a new index to S3:
 ## Steps 3-5
 The script `clone-with-new-s3-index.sh` will do steps 2 to 4 above.
 
-First, check what environments are running:
+* First, check what environments are running:
 ```shell
 eb list
 ```
 
-Edit the new-beanstalk.env file. The ENV_NAME is the source environment to clone, NEW_ENV_NAME is the name of the new cloned environment. API_KEY is our api access key. Source this to get the values of the env vars set `. new-beastalk.env` Now run
+* Edit the new-beanstalk.env file. The ENV_NAME is the source environment to clone, NEW_ENV_NAME is the name of the new cloned environment. API_KEY is our api access key. Source this to get the values of the env vars set `. new-beastalk.env` Now run the following, where the new index path is from Step #1. This command will take a good while.
 ```shell
 ./clone-with-new-s3-index.sh <new index path>
 ```
-where the new index path is from Step #1.
 
-This command will take a good while.
-When it finishes, you should be able to run:
+* When it finishes, you should be able to run the following, and see that INDEX_PATH is updated to the value passed to the script.
 ```shell
 eb printenv <NEW_ENV_NAME>
 ```
-
-and see that INDEX_PATH is updated to the value passed to the script.
 
 ## Step 6
 Check the new environments URL for the proper search results:
