@@ -1,19 +1,19 @@
 # Building beanstalk for UCLDC Solr index
 
-The solr index that powers the Calisphere website is hosted on the AWS Elasticbeanstalk platform.
+The Solr index that powers the Calisphere website is hosted on the AWS Elastic Beanstalk platform.
 
 The CNAME solr.calisphere.org points to https://ucldc-solr.us-west-2.elasticbeanstalk.com, whichever beanstalk environment which is at this address will be the server for our search requests.
 
-The beanstalk is hosted in the Oregon (us-west-2) AWS region. The application name is ucldc-solr. Currently it runs on only one micro ec2 instance.
+The Beanstalk is hosted in the Oregon (us-west-2) AWS region. The application name is ucldc-solr. Currently it runs on only one micro ec2 instance.
 
 The process to create a new production index is as follows:
 
-1. Optimize the solr index
-2. push the index to S3
-3. clone the existing environment
-4. in the cloned environment, set the env var INDEX_PATH to the new index sub-path in S3
+1. Optimize the Solr index
+2. Push the index to S3
+3. Clone the existing environment
+4. In the cloned environment, set the env var INDEX_PATH to the new index sub-path in S3
 5. Rebuild the cloned environment
-6. check that the cloned environment is serving up the new index
+6. Check that the cloned environment is serving up the new index
 7. Swap URLs from existing environment to the new cloned environment
 
 This will put in place the new index.
@@ -90,10 +90,9 @@ Environment details for: ucldc-solr
  Health: Green
  ```
 
-* If both look right, swap the URLs and the new index will be live
+* If both look right, swap the URLs and the new index will be live (eb swap -n <destination environment> <source environment>):
 
 ```shell
-eb swap -n <destination environment> <source environment>
 eb swap -n ucldc-solr-1 ucldc-solr
 ```
 
