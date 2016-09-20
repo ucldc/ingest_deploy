@@ -27,7 +27,7 @@ button. Wait a while & keep refreshing until the index reports being
 optimized and current.
 
 ## Step 2
-To push a new index to S3, first run `/usr/local/bin/solr-index-to-s3.sh` on the production environment majorTom instance. You can look at the log at `/var/local/solr-update/log/solr-index-to-s3-YYYYMMDD_HHMMSS.out`. Find the `s3_file_path` reports it will be something like: `"s3_file_path": "s3://solr.ucldc/indexes/production/2016/06/solr-index.2016-06-21-19_53_40.tar.bz2"`. Take the part from the year on ( 2016/06/solr-index.2016-06-21-19_53_40.tar.bz2 ) as the input to the command to clone the existing environment.
+To push a new index to S3, first run `/usr/local/bin/solr-index-to-s3.sh` on the production environment majorTom instance. You can look at the log at `/var/local/solr-update/log/solr-index-to-s3-YYYYMMDD_HHMMSS.out` (e.g., `ls -lrth /var/local/solr-update/log/` to list all logs). Find the `s3_file_path` reports it will be something like: `"s3_file_path": "s3://solr.ucldc/indexes/production/2016/06/solr-index.2016-06-21-19_53_40.tar.bz2"`. Take the part from the year on ( 2016/06/solr-index.2016-06-21-19_53_40.tar.bz2 ) as the input to the command to clone the existing environment.
 
 ## Steps 3-5
 The script `clone-with-new-s3-index.sh` will do steps 2 to 4 above.
