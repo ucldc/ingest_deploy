@@ -21,13 +21,11 @@ This will put in place the new index.
 Generally, I then rebuild the original environment and swap back so the name of the environment remains `ucldc-solr`. Not really necessary but makes it a bit easier to remember what's what.
 
 ## Step 1
-Optimize the solr index: 
-* Go to the core admin page in solr production:
+Optimize the Solr index: 
+* Go to the core admin page in Solr production:
 https://harvest-prd.cdlib.org/solr/#/~cores/dc-collection. 
-* Hit the `optimize`
-button. 
-* Wait a while & keep refreshing until the index reports being 
-optimized and current.
+* Hit the `optimize` button. 
+* Wait a while & keep refreshing until the index reports being optimized and current.
 
 ## Step 2
 To push a new index to S3: 
@@ -43,7 +41,8 @@ The script `clone-with-new-s3-index.sh` will do steps 2 to 4 above.
 eb list
 ```
 
-* Edit the new-beanstalk.env file. The ENV_NAME is the source environment to clone, NEW_ENV_NAME is the name of the new cloned environment. API_KEY is our api access key. Source this to get the values of the env vars set `. new-beastalk.env` Now run the following, where the new index path is from Step #1. This command will take a good while.
+* Edit the new-beanstalk.env file. The ENV_NAME is the source environment to clone, NEW_ENV_NAME is the name of the new cloned environment. API_KEY is our api access key. Source this to get the values of the env vars set `. new-beastalk.env` 
+* Now run the following, where the new index path is from Step #1. This command will take a good while.
 ```shell
 ./clone-with-new-s3-index.sh <new index path>
 ```
