@@ -69,6 +69,21 @@ First, check what environment has the ucldc-solr.us-west-1.elasticbeanstalk.com 
 eb status <env name>
 ```
 
+Here's an example of a healthy status report:
+```
+Environment details for: ucldc-solr
+ Application name: ucldc-solr
+ Region: us-west-2
+ Deployed Version: new-nginx-index-html
+ Environment ID: e-dmmzpvb2vj
+ Platform: 64bit Amazon Linux 2016.03 v2.1.3 running Docker 1.11.1
+ Tier: WebServer-Standard
+ CNAME: ucldc-solr.us-west-2.elasticbeanstalk.com
+ Updated: 2016-09-10 02:09:01.062000+00:00
+ Status: Ready
+ Health: Green
+ ```
+
 If both look right, swap the URLs and the new index will be live
 
 ```shell
