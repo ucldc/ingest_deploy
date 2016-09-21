@@ -1,6 +1,7 @@
 ---
 # tasks file for majorTom
-- debug: name=role_home_dir
+- name: include vaulted passwords
+  include_vars: ./roles/common/vars/all_secrets.yml
 - name: uninstall centos docker io
   sudo: yes
   yum:
@@ -24,28 +25,40 @@
 - name: get ec2 inventory script
   get_url:
     url: https://raw.githubusercontent.com/ansible/ansible/devel/contrib/inventory/ec2.py
-    dest: "{{ role_home_dir.stdout }}/code/ec2.py"
+    dest: ~/code/ec2.py
     mode: 0755
 - name: copy ec2 inventory ini
   copy:
     src: ec2.ini
-    dest: "{{ role_home_dir.stdout }}/code/ec2.ini"
+    dest: ~/code/ec2.ini
     mode: 0644
 - name: read in ingest private key from vaulted file
   include_vars: ingest-private.pem.yml
 - name: put ingest-private.pem in place
   template:
     src: ingest-private.pem.j2
-    dest: "{{ role_home_dir.stdout }}/.ssh/ingest-private.pem"
+    dest: ~/.ssh/ingest-private.pem
     mode: 0600
 - name: set .ssh dir
   file:
     state: directory
     mode: 0700
-    dest: "{{ role_home_dir.stdout }}/.ssh"
+    dest: ~/.ssh
 - name: put ssh config in place to make ingest-private default identity
   template:
     src: ssh_config
-    dest: "{{ role_home_dir.stdout }}/.ssh/config"
+    dest: ~/.ssh/config
     mode: 0600
+    owner: ec2-user
+- name: put update beanstalk scripts into ~/bin
+  copy:
+    src: ../update_beanstalk_index/
+    dest: ~/bin/
+    mode: 0700
+    owner: ec2-user
+- name: put the update beanstalk basic env file in place
+  template:
+    src: ../update_beanstalk_index/new-beanstalk.env.tmpl
+    dest: ~/bin/new-beanstalk.env
+    mode: 0700
     owner: ec2-user
