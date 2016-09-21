@@ -25,11 +25,12 @@ Optimize the Solr index:
 * Go to the core admin page in Solr production:
 https://harvest-prd.cdlib.org/solr/#/~cores/dc-collection. 
 * Hit the `optimize` button. 
-* Wait a while & keep refreshing until the index reports being optimized and current.
+* Wait a while and keep refreshing until the index reports being optimized and current.
 
 ## Step 2
 To push a new index to S3: 
 * First run `/usr/local/bin/solr-index-to-s3.sh` on the production environment majorTom instance. 
+* Wait a while; it will take some time for the new index to be packaged and zipped on S3.
 * Look at the log at `/var/local/solr-update/log/solr-index-to-s3-YYYYMMDD_HHMMSS.out` (e.g., `ls -lrth /var/local/solr-update/log/` to list all logs). Find the `s3_file_path` reports it will be something like: `"s3_file_path": "s3://solr.ucldc/indexes/production/2016/06/solr-index.2016-06-21-19_53_40.tar.bz2"`. 
 * Take the part from the year on ( 2016/06/solr-index.2016-06-21-19_53_40.tar.bz2 ) as the input to the command to clone the existing environment.
 
