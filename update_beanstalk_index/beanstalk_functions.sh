@@ -31,7 +31,8 @@ function check_api_url()
         echo -e "\033[1;31m Check ${url_api} before swapping \033[0m"
         echo -e "\033[1;31m wget --no-check-certificate --header \"X-Authentication-Token: <api_key>\"  ${url_api} before swapping \033[0m"
     else
-        echo -e "\033[94m OK - ${env_name} API\033[0m"
+		numFound=`curl --insecure --fail --header "X-Authentication-Token: ${SOLR_API_KEY}" ${url_api} | jq '.response.numFound'`
+        echo -e "\033[94m OK - ${env_name} API - \033[91m${numFound} items\033[0m"
     fi
 }
 
