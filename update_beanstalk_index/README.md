@@ -2,9 +2,9 @@
 
 The Solr index that powers the Calisphere website is hosted on the AWS Elastic Beanstalk platform.
 
-The CNAME solr.calisphere.org points to https://ucldc-solr.us-west-2.elasticbeanstalk.com, whichever beanstalk environment which is at this address will be the server for our search requests.
+The CNAME `solr.calisphere.org` points to https://ucldc-solr.us-west-2.elasticbeanstalk.com, whichever Beanstalk environment which is at this address will be the server for our search requests.
 
-The Beanstalk is hosted in the Oregon (us-west-2) AWS region. The application name is ucldc-solr. Currently it runs on only one micro ec2 instance.
+The Beanstalk is hosted in the Oregon (us-west-2) AWS region. The application name is `ucldc-solr`. Currently it runs on only one micro EC2 instance.
 
 The process to create a new production index is as follows:
 
@@ -55,11 +55,10 @@ eb printenv <NEW_ENV_NAME>
 ## Step 6
 Check the new environments URL for the proper search results:
 
-* Run 
+* Run the following, to confirm the URL that is associated with the environment: 
 ```shell
 ~/code/ingest_deploy/update_beanstalk_index/cname_for_env.sh <environment name>
 ```
-This will tell you what URL the environment is associated with.
 
 * You can check that the URL is up by running:
 ```shell
@@ -96,5 +95,5 @@ eb swap -n ucldc-solr-1 ucldc-solr
 ```
 
 
-## Updating the ucldc-solr environment
-I have been then updating the ucdlc-solr environment and then swapping the url back, so that the environment we have up is always named "ucldc-solr", but this is not required. The important thing is that the ucdlc-solr.us-west-2.elasticbeanstalk.com/solr/query URL works.
+## Updating the `ucldc-solr` environment
+I have been then updating the `ucdlc-solr` environment and then swapping the URL back, so that the environment we have up is always named `ucldc-solr`, but this is not required. The important thing is that the ucdlc-solr.us-west-2.elasticbeanstalk.com/solr/query URL works.
