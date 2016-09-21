@@ -10,7 +10,7 @@ if [ $# -ne 1 ]; then
     exit 1
 fi
 
-source ${my_dir}/beanstalk_functions.sh
+source "${my_dir}/beanstalk_functions.sh"
 
 set -o nounset
 
@@ -20,7 +20,7 @@ echo "ENV_NAME=${ENV_NAME}"
 echo "NEW_ENV_NAME=${NEW_ENV_NAME}"
 
 #blocks until status "OK"
-eb clone ${ENV_NAME} -n ${NEW_ENV_NAME} --cname ${NEW_ENV_NAME} --timeout=20
+eb clone "${ENV_NAME} -n ${NEW_ENV_NAME} --cname ${NEW_ENV_NAME} --timeout=20"
 
-update_index ${NEW_ENV_NAME} ${new_index_path}
-check_api_url ${NEW_ENV_NAME}
+update_index "${NEW_ENV_NAME} ${new_index_path}"
+check_api_url "${NEW_ENV_NAME}"
