@@ -18,7 +18,7 @@ function check_api_url()
     url_api=https://${env_cname}/solr/query
     # check the search url, should be working
     set +o errexit
-    echo "CHECK API URL: \033[96m${url_api}\033[0m"
+    echo -e "CHECK API URL: \e[36m ${url_api} \e[0m"
     curl --insecure --fail --header "X-Authentication-Token: ${SOLR_API_KEY}" ${url_api} > /dev/null
     last_exit=$?
     if [ $last_exit -ne 0 ]; then
