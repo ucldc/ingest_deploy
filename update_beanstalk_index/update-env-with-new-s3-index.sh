@@ -17,5 +17,5 @@ set -o nounset
 env_name=$1
 new_index_path=$2
 
-update_index "${env_name} ${new_index_path}"
+update_index "${env_name}" "${new_index_path}"
 check_api_url "${env_name}"
