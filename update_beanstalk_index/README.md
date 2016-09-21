@@ -31,7 +31,7 @@ https://harvest-prd.cdlib.org/solr/#/~cores/dc-collection
 To push a new index to S3: 
 * First run `/usr/local/bin/solr-index-to-s3.sh` on the production environment majorTom instance. *This process will take a while*. (It takes some time for the new index to be packaged and zipped on S3).
 * Look at the log at `/var/local/solr-update/log/solr-index-to-s3-YYYYMMDD_HHMMSS.out` (e.g., `ls -lrth /var/local/solr-update/log/` to list all logs). Find the `s3_file_path` reports it will be something like: `"s3_file_path": "s3://solr.ucldc/indexes/production/2016/06/solr-index.2016-06-21-19_53_40.tar.bz2"`. 
-* Take the part from the year on ( 2016/06/solr-index.2016-06-21-19_53_40.tar.bz2 ) as the input to the command to clone the existing environment.
+* Take the part from the year on (e.g., 2016/06/solr-index.2016-06-21-19_53_40.tar.bz2) as the input to the command to clone the existing environment. Use this as the `<new index path>` in the subsequent steps.
 
 ## Steps 3-5
 The script `clone-with-new-s3-index.sh` will do steps 2 to 4 above.
@@ -42,7 +42,7 @@ eb list
 ```
 
 * Edit the new-beanstalk.env file. The ENV_NAME is the source environment to clone, NEW_ENV_NAME is the name of the new cloned environment. API_KEY is our api access key. Source this to get the values of the env vars set `. new-beastalk.env` 
-* Now run the following, where the new index path is from Step #1. *This process will take a while*
+* Now run the following, where the `<new index path>` is the value from Step #1 (e.g., 2016/06/solr-index.2016-06-21-19_53_40.tar.bz2). *This process will take a while*
 ```shell
 ~/code/ingest_deploy/update_beanstalk_index/clone-with-new-s3-index.sh <new index path>
 ```
