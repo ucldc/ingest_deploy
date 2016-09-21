@@ -37,7 +37,7 @@ To push a new index to S3:
 ## Steps 3-5
 The script `clone-with-new-s3-index.sh` will do steps 2 to 4 above.
 
-* First, check what environments are running:
+* First, check what environments are running.  Run this from your home directory (e.g., /home/ec2-user):
 ```shell
 eb list
 ```
