@@ -23,7 +23,7 @@ Generally, I then rebuild the original environment and swap back so the name of 
 ## Step 1
 Optimize the Solr index: 
 * Go to the core admin page in Solr production:
-https://harvest-prd.cdlib.org/solr/#/~cores/dc-collection. 
+https://harvest-prd.cdlib.org/solr/#/~cores/dc-collection
 * Hit the `optimize` button. *This process will take a while*
 * Keep refreshing until the index reports being optimized and current.
 
