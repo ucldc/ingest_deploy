@@ -45,7 +45,7 @@ eb list
 
 * Edit the new-beanstalk.env file. The ENV_NAME is the source environment to clone, NEW_ENV_NAME is the name of the new cloned environment. API_KEY is our api access key. Source this to get the values of the env vars set `. new-beastalk.env` Now run the following, where the new index path is from Step #1. This command will take a good while.
 ```shell
-./clone-with-new-s3-index.sh <new index path>
+~/code/ingest_deploy/update_beanstalk_index/clone-with-new-s3-index.sh <new index path>
 ```
 
 * When it finishes, you should be able to run the following, and see that INDEX_PATH is updated to the value passed to the script.
@@ -58,13 +58,13 @@ Check the new environments URL for the proper search results:
 
 * Run 
 ```shell
-./cname_for_env.sh <environment name>
+~/code/ingest_deploy/update_beanstalk_index/cname_for_env.sh <environment name>
 ```
 This will tell you what URL the environment is associated with.
 
 * You can check that the URL is up by running:
 ```shell
-./check_solr_api_for_env.sh <environment name>
+~/code/ingest_deploy/update_beanstalk_index/check_solr_api_for_env.sh <environment name>
 ```
 
 ## Step 7
@@ -99,4 +99,3 @@ eb swap -n ucldc-solr-1 ucldc-solr
 
 ## Updating the ucldc-solr environment
 I have been then updating the ucdlc-solr environment and then swapping the url back, so that the environment we have up is always named "ucldc-solr", but this is not required. The important thing is that the ucdlc-solr.us-west-2.elasticbeanstalk.com/solr/query URL works.
-
