@@ -21,6 +21,11 @@ new_index_path=$3
 echo "old environment=${old_env}"
 echo "new environment=${new_env}"
 
+env_cname=$(cname_for_env "${new_env}")
+if [[ ${env_cname} == ERROR* ]]; then
+    echo -e "\033[1;31m CNAME is in use: ${env_cname}\033[0m"
+    exit 9
+fi
 #blocks until status "OK"
 eb clone "${old_env}" -n "${new_env}" --cname "${new_env}" --timeout=20
 
