@@ -94,6 +94,10 @@ function update_index()
     echo "env_name=${env_name}"
     #check that this env is NOT pointed at the prodcution index
     env_cname=$(cname_for_env "${env_name}")
+    if [[ ${env_cname} == ERROR* ]]; then
+        echo -e "\033[1;31m CNAME is in use: ${env_cname}\033[0m"
+        exit 9
+    fi
     if [ "$env_cname" == "ucldc-solr.us-west-2.elasticbeanstalk.com" ]; then
         echo
         echo -e "\033[38;5;216m!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\033[0m"
