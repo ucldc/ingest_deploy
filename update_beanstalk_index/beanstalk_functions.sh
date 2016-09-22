@@ -1,3 +1,6 @@
+trap "echo ========killed========" SIGINT SIGTERM
+trap "echo ========exited========" EXIT
+
 function cname_for_env()
 {
     set -u
@@ -35,6 +38,40 @@ function check_api_url()
     fi
 }
 
+function s3_file_exists()
+{
+    # check that the s3_index_path exists.
+    set -u
+    s3_index_path=$1
+    #with errexit set, it exits when this fails
+    exitcode=0
+    aws s3 ls "${s3_index_path}" > /dev/null || exitcode=$?
+    if [ ${exitcode} -ne 0 ]; then
+        echo -e "\033[1;31m S3 index file does not exist: ${s3_index_path} \033[0m"
+        exit 11
+    else
+		# aws s3 ls works on partial paths, need to check that result is
+		# the same as the passed in path
+		# this input:
+		# s3://solr.ucldc/indexes/production/2016/09/solr-index.2016-09-21-22_26_55
+		# passes above and returns the name of tar.bz2 file there
+
+		parent_path=${s3_index_path%/*}
+		resp=$(aws s3 ls "${s3_index_path}") 
+		fname=''
+		for y in $resp
+		do
+			fname=$y
+		done
+		built_path="${parent_path}/${fname}"
+		if [ ${s3_index_path} != ${built_path} ]; then
+			echo -e "\033[1;31m THIS DOES NOT SEEM VALID: ${s3_index_path} \033[0m"
+			exit
+		fi
+        echo -e "\033[1;31m S3 index file exists, proceeding: ${s3_index_path} \033[0m"
+    fi
+}
+
 function poll_until_ok()
 {
     set -u
@@ -52,7 +89,7 @@ function update_index()
 # Update the index running on the given environment with the new index S3 sub-path
     set -u
     env_name=$1
-    index_path=$2
+    s3_index_path=$2
 
     echo "env_name=${env_name}"
     #check that this env is NOT pointed at the prodcution index
@@ -69,10 +106,16 @@ function update_index()
         exit 111
     fi
 
+    s3_file_exists "${s3_index_path}"
     # the eb version blocks until this is complete
-    eb setenv -e "${env_name}" INDEX_PATH="${index_path}"
+    resp_setenv=$(eb setenv -e "${env_name}" S3_INDEX_PATH="${s3_index_path}")
+    # if fails, resp starts with ERROR
+    if [[ ${resp_setenv} == ERROR* ]]; then
+        echo -e "\033[1;31m Failed to setenv : ${resp_setenv}\033[0m"
+        exit 9
+    fi
     # non-blocking
-    # aws elasticbeanstalk update-environment --application-name ucldc-solr --environment-name ${env_name} --option-settings Namespace=aws:elasticbeanstalk:application:environment,OptionName=INDEX_PATH,Value=$i{ndex_path}
+    # aws elasticbeanstalk update-environment --application-name ucldc-solr --environment-name ${env_name} --option-settings Namespace=aws:elasticbeanstalk:application:environment,OptionName=S3_INDEX_PATH,Value=$i{ndex_path}
 
     # non-blocking
     aws elasticbeanstalk rebuild-environment --environment-name "${env_name}"
