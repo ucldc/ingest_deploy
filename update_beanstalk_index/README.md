@@ -57,12 +57,12 @@ Check the new environments URL for the proper search results:
 
 * Run the following, to confirm the URL that is associated with the environment: 
 ```shell
-~/code/ingest_deploy/update_beanstalk_index/cname_for_env.sh <environment name>
+~/code/ingest_deploy/update_beanstalk_index/cname_for_env.sh <ENV_NAME>
 ```
 
 * You can check that the URL is up by running:
 ```shell
-~/code/ingest_deploy/update_beanstalk_index/check_solr_api_for_env.sh <environment name>
+~/code/ingest_deploy/update_beanstalk_index/check_solr_api_for_env.sh <ENV_NAME>
 ```
 
 ## Step 7
@@ -70,7 +70,7 @@ Swap URLs from the existing environment to the new cloned environment running th
 
 * First, check what environment has the ucldc-solr.us-west-1.elasticbeanstalk.com CNAME:
 ```shell
-eb status <env name>
+eb status <ENV_NAME>
 ```
 
 Here's an example of a healthy status report:
