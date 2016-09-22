@@ -56,9 +56,3 @@
     dest: ~/bin/
     mode: 0700
     owner: ec2-user
-- name: put the update beanstalk basic env file in place
-  template:
-    src: ../update_beanstalk_index/new-beanstalk.env.tmpl
-    dest: ~/bin/new-beanstalk.env
-    mode: 0700
-    owner: ec2-user
