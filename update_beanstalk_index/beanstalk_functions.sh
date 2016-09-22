@@ -1,5 +1,5 @@
 trap "echo ========killed========" SIGINT SIGTERM
-trap "echo ========exited========" EXIT
+#trap "echo ========exited========" EXIT
 
 function cname_for_env()
 {
