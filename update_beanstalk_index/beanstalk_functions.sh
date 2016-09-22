@@ -34,7 +34,7 @@ function check_api_url()
         echo -e "\033[1;31m wget --no-check-certificate --header \"X-Authentication-Token: <api_key>\"  ${url_api} before swapping \033[0m"
     else
 		numFound=$(curl --insecure --fail --header "X-Authentication-Token: ${SOLR_API_KEY}" "${url_api}" | jq '.response.numFound')
-        echo -e "\033[94m OK - ${env_name} API - \033[91m${numFound} items\033[0m"
+        echo -e "\033[94m OK - ${env_name} API - \033[35m${numFound} items\033[0m"
     fi
 }
 
@@ -68,7 +68,7 @@ function s3_file_exists()
 			echo -e "\033[1;31m THIS DOES NOT SEEM VALID: ${s3_index_path} \033[0m"
 			exit
 		fi
-        echo -e "\033[1;31m S3 index file exists, proceeding: ${s3_index_path} \033[0m"
+        echo -e "\033[1;36m S3 index file exists, proceeding: ${s3_index_path} \033[0m"
     fi
 }
 
