@@ -81,7 +81,7 @@ Environment details for: ucldc-solr
  Environment ID: e-dmmzpvb2vj
  Platform: 64bit Amazon Linux 2016.03 v2.1.3 running Docker 1.11.1
  Tier: WebServer-Standard
- CNAME: ucldc-solr.us-west-2.elasticbeanstalk.com
+ CNAME: ucldc-solr.us-west-1.elasticbeanstalk.com
  Updated: 2016-09-10 02:09:01.062000+00:00
  Status: Ready
  Health: Green
