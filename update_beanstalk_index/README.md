@@ -43,12 +43,12 @@ eb list
 
 * Now run the following, where the `<new index path>` is the value from Step #1 (e.g., 2016/06/solr-index.2016-06-21-19_53_40.tar.bz2). *This process will take a while*
 ```shell
-update_beanstalk_index/clone-with-new-s3-index.sh <old env name> <new_env_name> <new index path>
+update_beanstalk_index/clone-with-new-s3-index.sh <old env name> <new env name> <new index path>
 ```
 
 * When it finishes, you should be able to run the following, and see that INDEX_PATH is updated to the value passed to the script.
 ```shell
-eb printenv <new_env_name>
+eb printenv <new env name>
 ```
 
 ## Step 6
@@ -56,12 +56,12 @@ Check the new environments URL for the proper search results:
 
 * Run the following, to confirm the URL that is associated with the environment: 
 ```shell
-cname_for_env.sh <new_env_name>
+cname_for_env.sh <new env name>
 ```
 
 * You can check that the URL is up by running:
 ```shell
-check_solr_api_for_env.sh <new_env_name>
+check_solr_api_for_env.sh <new env name>
 ```
 
 ## Step 7
@@ -69,7 +69,7 @@ Swap URLs from the existing environment to the new cloned environment running th
 
 * First, check what environment has the ucldc-solr.us-west-1.elasticbeanstalk.com CNAME:
 ```shell
-eb status <new_env_name>
+eb status <new env name>
 ```
 
 Here's an example of a healthy status report:
