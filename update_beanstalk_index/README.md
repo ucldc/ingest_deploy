@@ -72,7 +72,7 @@ Swap URLs from the existing environment to the new cloned environment running th
 eb status <new env name>
 ```
 
-Here's an example of a healthy status report:
+Also, check the status and health of the environment.  Here's an example of a happy environment:
 ```
 Environment details for: ucldc-solr
  Application name: ucldc-solr
