@@ -34,7 +34,7 @@ To push a new index to S3:
 * This is the value to pass into the update environment command
 
 ## Steps 3-5
-The script `clone-with-new-s3-index.sh` will do steps 2 to 4 above.
+The script `clone-with-new-s3-index.sh` will do steps 3 to 5 above.
 
 * First, check what environments are running.  Run this from your home directory (e.g., /home/ec2-user):
 ```shell
@@ -67,7 +67,7 @@ check_solr_api_for_env.sh <new env name>
 ## Step 7
 Swap URLs from the existing environment to the new cloned environment running the updated solr index:
 
-* First, check what environment has the ucldc-solr.us-west-1.elasticbeanstalk.com CNAME:
+* First, check what environment has the ucldc-solr.us-west-2.elasticbeanstalk.com CNAME:
 ```shell
 eb status <new env name>
 ```
@@ -81,7 +81,7 @@ Environment details for: ucldc-solr
  Environment ID: e-dmmzpvb2vj
  Platform: 64bit Amazon Linux 2016.03 v2.1.3 running Docker 1.11.1
  Tier: WebServer-Standard
- CNAME: ucldc-solr.us-west-1.elasticbeanstalk.com
+ CNAME: ucldc-solr.us-west-2.elasticbeanstalk.com
  Updated: 2016-09-10 02:09:01.062000+00:00
  Status: Ready
  Health: Green
