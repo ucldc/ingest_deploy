@@ -6,7 +6,7 @@ set -o errtrace
 
 # clone a new environment and point to the given new index in S3
 if [ $# -ne 3 ]; then
-    echo "clone-with-new-s3-index.sh <old env> <new env> <s3 path to new index>"
+    echo -e "\033[1;31m clone-with-new-s3-index.sh <old env> <new env> <s3 path to new index>\033[0m"
     exit 1
 fi
 

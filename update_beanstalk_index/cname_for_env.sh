@@ -7,7 +7,7 @@ set -o errtrace
 source "${my_dir}/beanstalk_functions.sh"
 
 if [ $# -ne 1 ]; then
-    echo "$0 <env name>"
+    echo -e "\033[1;31m$0 <env name>\033[0m"
     exit 1
 fi
 env_name=$1

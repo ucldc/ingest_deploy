@@ -8,7 +8,7 @@ source "${my_dir}/beanstalk_functions.sh"
 
 # update an existing environment and point to the given new index in S3
 if [ $# -ne 2 ]; then
-    echo "$0 <env name> <s3 path to new index>"
+    echo -e "\033[1;31m$0 <env name> <s3 path to new index>\033[0m"
     exit 1
 fi
 
