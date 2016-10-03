@@ -43,7 +43,7 @@ eb list
 
 * Now run the following, where the `<new index path>` is the value from Step #1 (e.g., s3://solr.ucldc/indexes/production/2016/06/solr-index.2016-06-21-19_53_40.tar.bz2). *This process will take a while*.  Again, by convention, we name the existing environment (`<old env name>`) `ucldc-solr`.  By convention, we have been naming the new environment (`<new env name>`) `ucldc-solr-1`.   
 ```shell
-update_beanstalk_index/clone-with-new-s3-index.sh <old env name> <new env name> <new index path>
+clone-with-new-s3-index.sh <old env name> <new env name> <new index path>
 ```
 
 * When it finishes, you should be able to run the following, and see that INDEX_PATH is updated to the value passed to the script.
