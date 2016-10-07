@@ -460,6 +460,7 @@ This section describes how to update an Elastic Beanstalk configuration to point
 * Log on to the production majorTom and then follow the instructions here:
 [update_beanstalk](update_beanstalk_index)
 * After any new index is moved into publication, run the following commands, so that ARK URLs correctly resolve for any new incoming harvested objects with embedded ARKs: https://gist.github.com/tingletech/475ff92147b6f93f6c3f60cebdf5e507
+* Last, update our Google Doc that lists out new collections that were published. (The entries can be cut-and-pasted from the <a href="https://github.com/mredar/ucldc_api_data_quality/tree/master/reporting">QA reporting spreadsheet</a>): https://docs.google.com/spreadsheets/d/1FI2h6JXrqUdONDjRBETeQjO_vkusIuG5OR5GWUmKp1c/edit#gid=0 . Sherri uses this Google Doc for CDLINFO postings, highlighting newly-published collections.
 
 TODO: add how to run the QA spreadsheet generating code
 
