@@ -41,7 +41,7 @@ The script `clone-with-new-s3-index.sh` will do steps 3 to 5 above.
 eb list
 ```
 
-* Now run the following, where the `<new index path>` is the value from Step #1 (e.g., s3://solr.ucldc/indexes/production/2016/06/solr-index.2016-06-21-19_53_40.tar.bz2). *This process will take a while*.  Again, by convention, we name the existing environment (`<old env name>`) `ucldc-solr`.  By convention, we have been naming the new environment (`<new env name>`) `ucldc-solr-1`.   
+* Now run the following, where the `<new index path>` is the value from Step #1 (e.g., s3://solr.ucldc/indexes/production/2016/06/solr-index.2016-06-21-19_53_40.tar.bz2). *This process will take a while*.  Again, by convention, we name the existing environment (`<old env name>`) `ucldc-solr`.  By convention, we have been naming the new environment (`<new env name>`) `ucldc-solr-clone`.   
 ```shell
 clone-with-new-s3-index.sh <old env name> <new env name> <new index path>
 ```
@@ -90,7 +90,7 @@ Environment details for: ucldc-solr
 * If both look right, swap the URLs and the new index will be live (`eb swap -n <new env name> <old env name>`):
 
 ```shell
-eb swap -n ucldc-solr-1 ucldc-solr
+eb swap -n ucldc-solr-clone ucldc-solr
 ```
 
 
@@ -99,6 +99,10 @@ I have been then updating the `ucdlc-solr` environment and then swapping the URL
 
 The `update-env-with-new-s3-index.sh` command will update an existing beanstalk environment to the new index path. e.g.
 
-`update-env-with-new-s3-index.sh ucldc-solr-clone s3://solr.ucldc/indexes/production/2016/09/solr-index.2016-09-21-22_26_55.tar.bz2`
+`update-env-with-new-s3-index.sh ucldc-solr s3://solr.ucldc/indexes/production/2016/09/solr-index.2016-09-21-22_26_55.tar.bz2`
 
 Once that is run, you can swap CNAMEs to the updated environment.
+
+`eb swap -n ucldc-solr-clone ucldc-solr`
+
+Then the ucldc-solr environment is once again be the production environment with the CNAME ucdlc-solr.us-west-2.elasticbeanstalk.com attached to it.
