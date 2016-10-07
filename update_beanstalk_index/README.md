@@ -96,3 +96,9 @@ eb swap -n ucldc-solr-1 ucldc-solr
 
 ## Updating the `ucldc-solr` environment
 I have been then updating the `ucdlc-solr` environment and then swapping the URL back, so that the environment we have up is always named `ucldc-solr`, but this is not required. The important thing is that the ucdlc-solr.us-west-2.elasticbeanstalk.com/solr/query URL works.
+
+The `update-env-with-new-s3-index.sh` command will update an existing beanstalk environment to the new index path. e.g.
+
+`update-env-with-new-s3-index.sh ucldc-solr-clone s3://solr.ucldc/indexes/production/2016/09/solr-index.2016-09-21-22_26_55.tar.bz2`
+
+Once that is run, you can swap CNAMEs to the updated environment.
