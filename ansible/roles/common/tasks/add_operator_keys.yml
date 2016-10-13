@@ -20,7 +20,7 @@
   lineinfile:
     dest: ~/.ssh/authorized_keys
     state: present
-    line: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCdcuSBMDoER99lO078NDeKElvE6RFnD8a1ZKKNwSOeRVbAX7iZ3G2npISErU7jxY4r2375ND3+88I7U8n3HXDFNIN8DyjKIl8L/uSxdTWTRnsTz2zVWazQNHqLE8a9dk0CeKD8OmcnLhvDxhgxvZItizRil9l7mfovEU/ZhOX6R+MwSpIFzDWyp9aO/S/dhIJtnYMCpYJ/lidrPujyhjQiI/1AYE64vHi3ReKaDgQJ9Q3SDS+nZtQ0ZSkSKhXmgjiSYGndTqOUlt/LPPp3UOfgb99tQMDOFJ5JzVk1oawBGYcJZHVtRw8tH5rOuhKFMxwAP2A8CN2IzHmc76C2xMJN mmckinely"
+    line: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDK5pfP/RNh866vqNhLjZDu26MsZAIASGpD1e+YO1Pbg8y0nPaCJoFiFbD3fwM+b8FBNsoUNWuuWULtqMquhWE6whLM7ZcPuXDxDxRh/VPQV1NNJ7GKlBk9dhp8LiZ8sMOtQKkUWVC1jZ7BVjhXe7NhSC2xVn9nA9djvnDpnBtwUmdxNHDfhXje3Yrpc0f94wXkXB21Ki9MhF/yAEhM7AUvO3G9tBOmShI/K9BbrjqU2DW0f9vaBGcwH5aYOHsXYzboB5L77B99aUVXYYmjfbLNhYfmfDUV2uMpTU50W2ZJ/aHz5DlAI4U4zyad29rquJQxToDQPKyj8428pBHR180n mmckinle@CDL-MMCKINL-9M.local"
 - name: "Add GAMontoya key"
   lineinfile:
     dest: ~/.ssh/authorized_keys
