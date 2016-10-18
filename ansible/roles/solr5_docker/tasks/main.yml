@@ -17,10 +17,10 @@
   docker_image: name={{ docker_image_name }} path={{ dir_code }} state=present
 - name: docker run the image with appropriate flags
   sudo: yes
-  docker: 
+  docker_container: 
     name: solr
     image: "{{ docker_image_name }}"
     ports: 8983:8983
-    state: restarted
+    state: started
     restart_policy: always
     volumes: /opt/solr/data/:/opt/solr/server/solr/dc-collection/data:rw
