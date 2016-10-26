@@ -1,0 +1,28 @@
+---
+- hosts: localhost
+  connection: local
+  vars:
+    role_user: hrv-stg
+    data_branch: stage
+    name_suffix: -stg
+  roles:
+    - { role: blackstar, become: yes, become_user: hrv-stg, tags: [ blackstar ]}
+
+
+# Need to templatize the harvester-env, hosts file
+# Make the commands identical for these
+# Transfer solr_update to workers
+# everything keyed on env vars
+# ID what actually needs to be put in role account
+# don't need code dirs, just scripts & env?
+#
+#
+# 2 playbooks, one for stage one for prod
+# fill in env vars, setup virtualenv? (can share?) hosts fill in
+# need secrets?
+#
+# need to run in each:
+# create worker, provision worker
+# move solr updater to workers & add to avram
+#
+
