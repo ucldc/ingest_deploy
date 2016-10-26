@@ -3,6 +3,6 @@
 - name: include vaulted passwords
   include_vars: ./roles/common/vars/all_secrets.yml
 - name: get correct urls for environment
-  include_vars:  "./roles/common/vars/main{{ name_suffix }}.yml"
+  include_vars:  "./roles/worker/vars/main{{ name_suffix }}.yml"
 - name: make user ~/bin directory
-  file: path=/home/{{ ansible_user }}/bin state=directory
+  file: path=/home/{{ role_user }}/bin state=directory

@@ -1,4 +1,6 @@
 ansible/roles/mredar.nightly_security_update_yum
+# ansible retry files
+*.retry
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
