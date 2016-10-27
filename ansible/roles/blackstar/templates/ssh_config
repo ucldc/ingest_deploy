@@ -1,0 +1,15 @@
+Host 10.60.*
+    StrictHostKeyChecking no
+    IdentityFile ~/.ssh/ingest-private.pem
+
+Host solr
+    HostName {{ solr_ip }}
+    User ec2-user
+
+Host couchdb
+    HostName {{ couchdb_ip }}
+    User ec2-user
+
+Host front
+    HostName {{ front_ip }}
+    User ec2-user

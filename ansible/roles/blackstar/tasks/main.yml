@@ -16,19 +16,34 @@
   template:
     src: ansible.cfg.j2
     dest: "/home/{{ role_user }}/.ansible.cfg"
+- name: put harvester environment vars file in place
+  template:
+    src: ./roles/worker/templates/harvester-env.j2
+    dest: "/home/{{ role_user }}/.harvester-env"
+- name: set .ssh dir
+  file:
+    state: directory
+    mode: 0700
+    dest: ~/.ssh
+- name: put ingest-private.pem in place
+  template:
+    src: ingest-private.pem.j2
+    dest: "/home/{{ role_user }}/.ssh/ingest-private.pem"
+    mode: 0400
+- name: put ssh config in place
+  template:
+    src: ssh_config
+    dest: "/home/{{ role_user }}/.ssh/config"
+    mode: 0400
+- name: put ansible hosts file in place for data_branch
+  template:
+    src: hosts.j2
+    dest: "/home/{{ role_user }}/hosts"
 - name: install ansible
   pip:
     name: ansible
     state: present
     virtualenv: "/home/{{ role_user }}/python2"
-- name: put harvester environment vars file in place
-  template:
-    src: ./roles/worker/templates/harvester-env.j2
-    dest: "/home/{{ role_user }}/.harvester-env"
-- name: put ansible hosts file in place for data_branch
-  template:
-    src: hosts.j2
-    dest: "/home/{{ role_user }}/hosts"
 - name: make user ~/bin directory
   file:
     path: "/home/{{ role_user }}/bin"
