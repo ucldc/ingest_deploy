@@ -23,3 +23,8 @@
   file:
     state: absent
     path: "/home/{{ role_user }}/tmp/redis-stable"
+- name: put script with default server port in plac
+  copy:
+    src: redis
+    dest: "/home/{{ role_user }}/bin/redis"
+    mode: 0500
