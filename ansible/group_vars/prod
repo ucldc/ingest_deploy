@@ -10,8 +10,10 @@ sec_grp_ingest_private:
   group_id: "{{ sec_grp_ingest_private_id }}"
 DATA_BRANCH: production
 name_suffix: "-{{ DATA_BRANCH| truncate(4) }}"
-couchdb_url: http://10.60.41.14:5984
-solr_url: http://10.60.39.243:8983/solr
+couchdb_ip: 10.60.41.14
+couchdb_url: http://{{ couchdb_ip }}:5984
+solr_ip: 10.60.39.243
+solr_url: http://{{ solr_ip }}:8983/solr
 eip_ingest_front: 52.11.194.40
 worker_instance_type: t2.micro
 spot_bid_price: .013
