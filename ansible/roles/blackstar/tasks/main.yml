@@ -44,16 +44,20 @@
     name: ansible
     state: present
     virtualenv: "/home/{{ role_user }}/python2"
-- name: grab harvester code for install
-  git:
-    repo: https://github.com/ucldc/harvester
-    dest: "/home/{{ role_user}}/tmp/harvester"
+- name: check if harvester already installed
+  stat:
+    path: "/home/{{ role_user }}/python2/lib/python2.7/site-packages/UCLDC_Harvester-0.8.1-py2.7.egg"
+  register: harvester_egg
 - name: install harvester code
-  shell: /home/{{ role_user }}/python2/bin/python setup.py install
-  args:
-    chdir: "/home/{{ role_user}}/tmp/harvester"
+  include: install_harvester.yml
+  when: harvester_egg.stat.exists == False
+- name: check if redis helper installed
+  stat:
+    path: "/home/{{ role_user}}/bin/redis"
+  register: redis_helper
 - name: install redis client
   include: install_redis.yml
+  when: redis_helper.stat.exists == False
 - name: make user ~/bin directory
   file:
     path: "/home/{{ role_user }}/bin"
