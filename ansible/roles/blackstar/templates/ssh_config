@@ -1,6 +1,7 @@
 Host 10.60.*
     StrictHostKeyChecking no
     IdentityFile ~/.ssh/ingest-private.pem
+    User ec2-user
 
 Host solr
     HostName {{ solr_ip }}
