@@ -4,5 +4,32 @@
   include_vars: ./roles/common/vars/all_secrets.yml
 - name: get correct urls for environment
   include_vars:  "./roles/worker/vars/main{{ name_suffix }}.yml"
+- name: get vaulted passwords & URLs for environment
+  include_vars:  "./roles/worker/vars/vaulted.yml"
+- name: get environment specific
+  include_vars: "./group_vars/{{ data_branch }}"
+- name: put profile in place, to unset PYTHON_INSTALL_LAYOUT
+  copy:
+    src: .bash_profile
+    dest: "/home/{{ role_user }}/.bash_profile"
+- name: put .ansible.cfg to point to local hosts file
+  template:
+    src: ansible.cfg.j2
+    dest: "/home/{{ role_user }}/.ansible.cfg"
+- name: install ansible
+  pip:
+    name: ansible
+    state: present
+    virtualenv: "/home/{{ role_user }}/python2"
+- name: put harvester environment vars file in place
+  template:
+    src: ./roles/worker/templates/harvester-env.j2
+    dest: "/home/{{ role_user }}/.harvester-env"
+- name: put ansible hosts file in place for data_branch
+  template:
+    src: hosts.j2
+    dest: "/home/{{ role_user }}/hosts"
 - name: make user ~/bin directory
-  file: path=/home/{{ role_user }}/bin state=directory
+  file:
+    path: "/home/{{ role_user }}/bin"
+    state: directory

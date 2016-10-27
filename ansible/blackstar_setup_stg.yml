@@ -5,9 +5,10 @@
     role_user: hrv-stg
     data_branch: stage
     name_suffix: -stage
+    couchdb_item_database: ucldc
+    dpla_config_file: None
   roles:
     - { role: blackstar, become: yes, become_user: hrv-stg, tags: [ blackstar ]}
-
 
 # Need to templatize the harvester-env, hosts file
 # Make the commands identical for these

@@ -17,3 +17,4 @@ solr_url: http://{{ solr_ip }}:8983/solr
 eip_ingest_front: 52.11.194.40
 worker_instance_type: t2.micro
 spot_bid_price: .013
+front_ip: 10.60.2.105
