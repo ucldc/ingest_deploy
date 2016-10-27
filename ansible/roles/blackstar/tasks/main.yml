@@ -44,6 +44,18 @@
     name: ansible
     state: present
     virtualenv: "/home/{{ role_user }}/python2"
+- name: grab harvester code for install
+  git:
+    repo: https://github.com/ucldc/harvester
+    dest: "/home/{{ role_user}}/tmp/harvester"
+- name: install harvester code
+  shell: /home/{{ role_user }}/python2/bin/python setup.py install
+  args:
+    chdir: "/home/{{ role_user}}/tmp/harvester"
+- name: remove harvester repo
+  file:
+    path: "/home/{{ role_user}}/tmp"
+    state: absent
 - name: make user ~/bin directory
   file:
     path: "/home/{{ role_user }}/bin"
