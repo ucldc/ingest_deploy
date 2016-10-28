@@ -29,7 +29,7 @@ https://harvest-prd.cdlib.org/solr/#/~cores/dc-collection
 
 ## Step 2
 To push a new index to S3: 
-* First run `/usr/local/bin/solr-index-to-s3.sh` on the production environment majorTom instance. Only do this if the index is really ready to go to production. *This process will take a while*. (It takes some time for the new index to be packaged and zipped on S3).
+* First run `/usr/local/bin/solr-index-to-s3.sh` on the production environment majorTom instance. *Only do this if the index is really ready to go to production. This process will take a while*. (It takes some time for the new index to be packaged and zipped on S3).
 * Look at the log at `/var/local/solr-update/log/solr-index-to-s3-YYYYMMDD_HHMMSS.out` (e.g., `ls -lrth /var/local/solr-update/log/` to list all logs). Find the `s3_file_path` reports it will be something like: `"s3_file_path": "s3://solr.ucldc/indexes/production/2016/06/solr-index.2016-06-21-19_53_40.tar.bz2"`. 
 * This is the value to pass into the update environment command
 
