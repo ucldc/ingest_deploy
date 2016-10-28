@@ -28,3 +28,8 @@
     src: redis.sh
     dest: "/home/{{ role_user }}/bin/redis.sh"
     mode: 0500
+- name: make redis.sh runnable as just redis
+  file:
+    dest: "/home/{{ role_user }}/bin/redis"
+    state: link
+    src: "/home/{{ role_user }}/bin/redis.sh"

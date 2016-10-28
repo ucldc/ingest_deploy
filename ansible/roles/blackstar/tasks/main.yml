@@ -12,10 +12,6 @@
   copy:
     src: .bash_profile
     dest: "/home/{{ role_user }}/.bash_profile"
-- name: put .ansible.cfg to point to local hosts file
-  template:
-    src: ansible.cfg.j2
-    dest: "/home/{{ role_user }}/.ansible.cfg"
 - name: put harvester environment vars file in place
   template:
     src: ./roles/worker/templates/harvester-env.j2
@@ -67,6 +63,13 @@
   file:
     path: "/home/{{ role_user }}/bin"
     state: directory
+- name: put log helpers in place
+  copy:
+    src: ../logs_from_cli/
+    dest: "/home/{{ role_user }}/bin"
+    mode: 0700
+- name: install ansible playbooks and suporting files
+  include: install_ansible_playbooks.yml
 - name: remove temporary working directory
   file:
     path: "/home/{{ role_user}}/tmp"
