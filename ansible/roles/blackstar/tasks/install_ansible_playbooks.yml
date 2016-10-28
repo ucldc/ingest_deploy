@@ -1,0 +1,53 @@
+---
+- name: put .ansible.cfg to point to local hosts file & roles dir
+  template:
+    src: ansible.cfg.j2
+    dest: "/home/{{ role_user }}/.ansible.cfg"
+- name: make directories for code
+  file:
+    path: "/home/{{ role_user }}/code/ansible"
+    state: directory
+- name: get ec2 inventory script
+  get_url:
+    url: https://raw.githubusercontent.com/ansible/ansible/devel/contrib/inventory/ec2.py
+    dest: "/home/{{ role_user }}/code/ec2.py"
+    mode: 0755
+- name: copy ec2 inventory ini
+  copy:
+    src: ec2.ini
+    dest: "/home/{{ role_user }}/code/ec2.ini"
+    mode: 0644
+- name: copy common role
+  copy:
+    src: roles/common
+    dest: "/home/{{ role_user }}/code/ansible/roles/"
+- name: copy create worker role
+  copy:
+    src: roles/create_worker_instance
+    dest: "/home/{{ role_user }}/code/ansible/roles/"
+- name: copy worker role
+  copy:
+    src: roles/worker
+    dest: "/home/{{ role_user }}/code/ansible/roles/"
+- name: copy awslogs role
+  copy:
+    src: roles/awslogs
+    dest: "/home/{{ role_user }}/code/ansible/roles/"
+- name: install nightly security role
+  shell: "/home/{{ role_user }}/python2/bin/ansible-galaxy install mredar.nightly_security_update_yum"
+- name: copy all group vars
+  copy:
+    src: group_vars/all
+    dest: "/home/{{ role_user }}/code/ansible/group_vars/"
+- name: copy data_branch group vars
+  copy:
+    src: "group_vars/{{ data_branch }}"
+    dest: "/home/{{ role_user }}/code/ansible/group_vars/"
+- name: copy create playbook
+  copy:
+    src: create_worker.yml
+    dest: "/home/{{ role_user }}/code/ansible/"
+- name: template provision playbook
+  template:
+    src: provision_worker.yml.j2
+    dest: "/home/{{ role_user }}/code/ansible/provision_worker.yml"
