@@ -44,6 +44,11 @@
     name: ansible
     state: present
     virtualenv: "/home/{{ role_user }}/python2"
+- name: make ~/tmp for working directory
+  file:
+    state: directory
+    mode: 0755
+    dest: ~/tmp
 - name: check if harvester already installed
   stat:
     path: "/home/{{ role_user }}/python2/lib/python2.7/site-packages/UCLDC_Harvester-0.8.1-py2.7.egg"
@@ -53,7 +58,7 @@
   when: harvester_egg.stat.exists == False
 - name: check if redis helper installed
   stat:
-    path: "/home/{{ role_user}}/bin/redis"
+    path: "/home/{{ role_user}}/bin/redis.sh"
   register: redis_helper
 - name: install redis client
   include: install_redis.yml
