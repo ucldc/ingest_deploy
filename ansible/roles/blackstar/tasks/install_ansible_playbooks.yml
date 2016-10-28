@@ -51,3 +51,7 @@
   template:
     src: provision_worker.yml.j2
     dest: "/home/{{ role_user }}/code/ansible/provision_worker.yml"
+- name: template terminate playbook
+  template:
+    src: terminate_workers.yml.j2
+    dest: "/home/{{ role_user }}/code/ansible/terminate_workers.yml"

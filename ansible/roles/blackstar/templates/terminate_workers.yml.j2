@@ -1,0 +1,25 @@
+#jinja2:variable_start_string:'[%' , variable_end_string:'%]'
+# terminate workers for this environment
+---
+- hosts: tag_Name_ingest_[% data_branch %]_worker
+  gather_facts: yes
+  vars:
+    region: us-west-2
+  tasks:
+  - debug: msg="{{ ec2_id }}"
+  - pause: prompt="ctrl-C TO NOT TERMINATE INSTANCES"
+    tags:
+      - terminate-instances
+  - name: stop rqworker gracefully
+    shell: /usr/local/bin/stop-rqworker.sh
+    tags: 
+      - stop-rqworker
+    ignore_errors: yes
+  - name: terminate workers
+    local_action:
+      module: ec2
+      state: absent
+      region: "{{ region }}"
+      instance_ids: "{{ ec2_id }}"
+    tags:
+      - terminate-instances
