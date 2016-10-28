@@ -51,7 +51,7 @@
   register: harvester_egg
 - name: install harvester code
   include: install_harvester.yml
-  when: harvester_egg.stat.exists == False
+#  when: harvester_egg.stat.exists == False
 - name: check if redis helper installed
   stat:
     path: "/home/{{ role_user}}/bin/redis.sh"
