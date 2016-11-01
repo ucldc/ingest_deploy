@@ -8,6 +8,10 @@
     src: vault_pass_ingest
     dest: "/home/{{ role_user }}/.vault_pass_ingest"
     mode: 0400
+- name: touch .ssh/known_hosts
+  file:
+    path: "/home/{{ role_user }}/.ssh/known_hosts"
+    state: touch
 - name: make directories for code
   file:
     path: "/home/{{ role_user }}/code/ansible"
@@ -49,9 +53,9 @@
     src: "group_vars/{{ data_branch }}"
     dest: "/home/{{ role_user }}/code/ansible/group_vars/"
 - name: copy create playbook
-  copy:
-    src: create_worker.yml
-    dest: "/home/{{ role_user }}/code/ansible/"
+  template:
+    src: create_worker.yml.j2
+    dest: "/home/{{ role_user }}/code/ansible/create_worker.yml"
 - name: template provision playbook
   template:
     src: provision_worker.yml.j2
