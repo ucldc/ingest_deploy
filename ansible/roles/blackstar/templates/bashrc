@@ -1,12 +1,6 @@
-# .bash_profile
-
+# .bashrc
 # crazy pip install messup here
 unset PYTHON_INSTALL_LAYOUT
-
-# Get the aliases and functions
-if [ -f ~/.bashrc ]; then
-	. ~/.bashrc
-fi
 
 # set the harvester env vars
 if [ -f ~/.harvester-env ]; then
@@ -23,3 +17,9 @@ if [ -f ${HOME}/python2/bin/activate ]; then
 fi
 
 export PATH
+
+# set prompt to indicate data_branch
+
+if [[ $- == *i* ]]; then
+    export PS1="{{ data_branch }}\$ "
+fi

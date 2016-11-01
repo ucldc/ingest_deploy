@@ -4,7 +4,7 @@
   vars:
     role_user: hrv-prd
     data_branch: production
-    name_suffix: -production
+    name_suffix: "-production"
     couchdb_item_database: ucldc
     dpla_config_file: None
     ansible_python_interpreter: /usr/bin/python

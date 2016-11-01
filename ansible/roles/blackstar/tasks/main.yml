@@ -8,10 +8,15 @@
   include_vars:  "./roles/worker/vars/vaulted.yml"
 - name: get environment specific
   include_vars: "./group_vars/{{ data_branch }}"
-- name: put profile in place, to unset PYTHON_INSTALL_LAYOUT
-  file:
-    src: .bash_profile
+- name: put .bash_profile in place, to unset PYTHON_INSTALL_LAYOUT
+  copy:
+    src: bash_profile
     dest: "/home/{{ role_user }}/.bash_profile"
+    mode: 0644
+- name: put .bashrc in place, to use virtualenv & setup env
+  template:
+    src: bashrc
+    dest: "/home/{{ role_user }}/.bashrc"
     mode: 0644
 - name: put harvester environment vars file in place
   template:
@@ -63,7 +68,7 @@
   register: redis_helper
 - name: install redis client
   include: install_redis.yml
-  when: redis_helper.stat.exists == False
+  when: redis_helper.stat.exists == False and data_branch == "stage"
 - name: put log helpers in place
   copy:
     src: ../logs_from_cli/
@@ -71,6 +76,9 @@
     mode: 0700
 - name: install ansible playbooks and suporting files
   include: install_ansible_playbooks.yml
+- name: install beanstalk scripts in production env
+  include: install_beanstalk_scripts.yml
+  when: data_branch == "production"
 - name: remove temporary working directory
   file:
     path: "/home/{{ role_user}}/tmp"
