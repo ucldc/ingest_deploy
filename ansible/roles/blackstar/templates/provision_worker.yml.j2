@@ -5,7 +5,7 @@
   vars:
     role: worker
     dir_role_templates: "roles/{{ role }}/templates"
-    name_suffix: -stage
+    name_suffix: [% name_suffix %]
     name_env: "ingest{{ name_suffix }}"
     num_hosts: "{{ groups['tag_Name_ingest_[% data_branch %]_worker'] | length }}"
   pre_tasks:
