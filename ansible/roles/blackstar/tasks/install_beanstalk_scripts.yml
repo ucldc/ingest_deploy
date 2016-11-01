@@ -1,0 +1,11 @@
+---
+- name: install eb client
+  pip:
+    name: awsebcli
+    state: present
+    virtualenv: "/home/{{ role_user }}/python2"
+- name: put update beanstalk scripts into ~/bin
+  copy:
+    src: ../update_beanstalk_index/
+    dest: ~/bin/
+    mode: 0700
