@@ -9,9 +9,10 @@
 - name: get environment specific
   include_vars: "./group_vars/{{ data_branch }}"
 - name: put profile in place, to unset PYTHON_INSTALL_LAYOUT
-  copy:
+  file:
     src: .bash_profile
     dest: "/home/{{ role_user }}/.bash_profile"
+    mode: 0644
 - name: put harvester environment vars file in place
   template:
     src: ./roles/worker/templates/harvester-env.j2
@@ -35,6 +36,10 @@
   template:
     src: hosts.j2
     dest: "/home/{{ role_user }}/hosts"
+- name: make user ~/bin directory
+  file:
+    path: "/home/{{ role_user }}/bin"
+    state: directory
 - name: install ansible
   pip:
     name: ansible
@@ -59,10 +64,6 @@
 - name: install redis client
   include: install_redis.yml
   when: redis_helper.stat.exists == False
-- name: make user ~/bin directory
-  file:
-    path: "/home/{{ role_user }}/bin"
-    state: directory
 - name: put log helpers in place
   copy:
     src: ../logs_from_cli/

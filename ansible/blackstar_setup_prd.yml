@@ -1,16 +1,15 @@
 ---
 - hosts: localhost
   connection: local
-  gather_facts: true
   vars:
-    role_user: hrv-stg
-    data_branch: stage
-    name_suffix: -stage
+    role_user: hrv-prd
+    data_branch: production
+    name_suffix: -production
     couchdb_item_database: ucldc
     dpla_config_file: None
     ansible_python_interpreter: /usr/bin/python
   roles:
-    - { role: blackstar, become: yes, become_user: hrv-stg, tags: [ blackstar ]}
+    - { role: blackstar, become: yes, become_user: hrv-prd, tags: [ blackstar ]}
 
 # Need to templatize the harvester-env, hosts file
 # Make the commands identical for these
