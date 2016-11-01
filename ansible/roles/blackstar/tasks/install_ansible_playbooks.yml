@@ -3,6 +3,11 @@
   template:
     src: ansible.cfg.j2
     dest: "/home/{{ role_user }}/.ansible.cfg"
+- name: put vault_pass_ingest in place
+  template:
+    src: vault_pass_ingest
+    dest: "/home/{{ role_user }}/.vault_pass_ingest"
+    mode: 0400
 - name: make directories for code
   file:
     path: "/home/{{ role_user }}/code/ansible"
