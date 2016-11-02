@@ -13,10 +13,8 @@
     dir_role_templates: "roles/{{ role }}/templates"
     name_suffix: [% name_suffix %]
     name_env: "ingest{{ name_suffix }}"
-    {% if data_branch == "production" %}
     ondemand: True
-    tags: ondemand
-    {% endif %}
+  tags: ondemand
   roles:
     - create_worker_instance
 #doesn't work, not yet in ec2.py inventory - include: provision_worker.yml

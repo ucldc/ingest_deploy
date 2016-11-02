@@ -34,6 +34,10 @@
   copy:
     src: roles/create_worker_instance
     dest: "/home/{{ role_user }}/code/ansible/roles/"
+- name: copy create spot worker role
+  copy:
+    src: roles/create_worker_spot_instance
+    dest: "/home/{{ role_user }}/code/ansible/roles/"
 - name: copy worker role
   copy:
     src: roles/worker
@@ -52,10 +56,21 @@
   copy:
     src: "group_vars/{{ data_branch }}"
     dest: "/home/{{ role_user }}/code/ansible/group_vars/"
-- name: copy create playbook
+- name: copy create worker playbook spot default for stage
   template:
-    src: create_worker.yml.j2
+    src: create_worker_spot.yml.j2
     dest: "/home/{{ role_user }}/code/ansible/create_worker.yml"
+  when: data_branch == "stage"
+- name: copy create worker playbook ondemand for stage
+  template:
+    src: create_worker_ondemand.yml.j2
+    dest: "/home/{{ role_user }}/code/ansible/create_worker_ondemand.yml"
+  when: data_branch == "stage"
+- name: copy create worker playbook for production
+  template:
+    src: create_worker_ondemand.yml.j2
+    dest: "/home/{{ role_user }}/code/ansible/create_worker.yml"
+  when: data_branch == "production"
 - name: template provision playbook
   template:
     src: provision_worker.yml.j2
