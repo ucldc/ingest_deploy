@@ -1,7 +1,7 @@
 ---
 # tasks file for create_worker_instance
 - debug: var=worker_instance_type
-- name: create a new worker ON-DEMAND instance in the private vpc
+- name: create a new worker SPOT instance in the private vpc
   local_action:
     module: ec2
     count: "{{ count }}"
@@ -24,6 +24,7 @@
       device_type: gp2
       volume_size: 8
       delete_on_termination: yes
+    spot_price: "{{ spot_bid_price }}"
   register: ec2_info
-  tags: ondemand
-- include: check_ssh.yml
+  tags: spot
+- include: ../create_worker_instance/tasks/check_ssh.yml
