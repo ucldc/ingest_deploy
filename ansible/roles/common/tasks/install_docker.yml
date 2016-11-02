@@ -16,7 +16,7 @@
   service: name=docker enabled=yes state=started
 - name: get docker api version
   #shell: docker version | grep "Server API" | cut -d " " -f 4
-  sudo: yes
+  become: yes
   shell: docker version | grep "Server API" | rev | cut -d " " -f 1 | rev
   register: docker_server_api_version
 - debug: msg="DOCKER VERSION INFO - {{ docker_server_api_version.stdout }}"

@@ -19,7 +19,7 @@
   yum: 
     pkg: dbus-glib-devel 
     state: present
-  sudo: yes
+  become: yes
 - name: create run termination check script
   template:
     src: run_handle_termination.sh.j2
@@ -38,22 +38,22 @@
   yum:
     pkg: monit
     state: present
-  sudo: yes
+  become: yes
 - name: install monit.conf
   template:
     src: monit.conf.j2
     dest: /etc/monit.conf
-  sudo: yes
+  become: yes
   notify: reload monit
 - name: install handle-termination monit script
   template:
     src: handle-termination.monit.j2
     dest: /etc/monit.d/handle-termination.monit
-  sudo: yes
+  become: yes
   notify: reload monit
 - name: monit validate
   command: monit validate
-  sudo: yes
+  become: yes
 - name: make virtualenv directory
   file: path={{ dir_venv }} state=directory
 - name: pull ingest harvester code to local box
@@ -83,21 +83,21 @@
 ## configure solr-index-to-s3
 # TODO: queue for worker
 - name: create run_dir_solr run dir
-  sudo: yes
+  become: yes
   file:
     path: "{{ dir_run }}/{{ run_dir_solr }}"
     state: directory
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
 - name: create run_dir_solr log dir
-  sudo: yes
+  become: yes
   file:
     path: "{{ dir_run }}/{{ run_dir_solr }}/log"
     state: directory
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
 - name: put solr-index-to-s3 in dir_bin
-  sudo: yes
+  become: yes
   template:
       src: solr-index-to-s3.sh.j2
       dest: "{{dir_bin}}/solr-index-to-s3.sh"
@@ -105,7 +105,7 @@
       owner: "{{ ansible_user }}"
       group: "{{ ansible_user }}"
 - name: put solr-update in dir_bin
-  sudo: yes
+  become: yes
   template:
       src: solr-update.sh.j2
       dest: "{{dir_bin}}/solr-update.sh"
@@ -125,7 +125,7 @@
   args:
     chdir: "{{ dir_code }}/dpla/ingestion"
 - name: make akara run dir
-  sudo: yes
+  become: yes
   file:
     path: "{{ dir_run_akara }}"
     state: directory
@@ -145,7 +145,7 @@
 #configure rq worker
 ################################################################################
 - name: make rqworker run dir
-  sudo: yes
+  become: yes
   file:
     path: "{{ dir_run_rqworker }}"
     state: directory
@@ -174,7 +174,7 @@
     dest: "{{ dir_run_rqworker}}/.harvester-env"
     mode: "0600"
 - name: put start rqworker file in place
-  sudo: yes
+  become: yes
   template:
     src: start-rqworker.sh.j2
     dest: "{{ dir_bin }}start-rqworker.sh"
@@ -182,7 +182,7 @@
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
 - name: put stop rqworker file in place
-  sudo: yes
+  become: yes
   template:
     src: stop-rqworker.sh.j2
     dest: "{{ dir_bin }}stop-rqworker.sh"
@@ -190,13 +190,13 @@
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
 - name: halt.local to call stop rqworker in place
-  sudo: yes
+  become: yes
   template:
     src: halt.local.j2
     dest: /sbin/halt.local
     mode: "0775"
 - name: start rqworker
-  sudo: no
+  become: no
   shell: "{{ dir_bin }}start-rqworker.sh"
   args:
     creates: "{{ dir_run_rqworker}}/rqworker.pid"

@@ -1,12 +1,12 @@
 ---
 - name: Get UCLDC operator keys to account, no need for master key
-  sudo: no
+  become: no
   get_url:
     url: https://raw.github.com/ucldc/appstrap/master/cdl/ucldc-operator-keys.txt
     dest: ~/.ssh/ucldc_operator_keys
     force: no
 - name: get lines for adding to authorized_keys
-  sudo: no
+  become: no
   shell: tail -n+2 ~/.ssh/ucldc_operator_keys
   register: operator_keys
 - 
@@ -15,7 +15,7 @@
     dest: ~/.ssh/authorized_keys
     block: "{{ operator_keys.stdout }}"
     state: present
-  sudo: false
+  become: no
 - name: "Add M McKinley key"
   lineinfile:
     dest: ~/.ssh/authorized_keys

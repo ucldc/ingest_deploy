@@ -1,6 +1,6 @@
 ---
 - hosts: solr
-  sudo: yes
+  become: yes
   gather_facts: yes
   vars:
     role: solr

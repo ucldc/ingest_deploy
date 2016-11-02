@@ -3,13 +3,13 @@
 - name: include vaulted passwords
   include_vars: ./roles/common/vars/all_secrets.yml
 - name: uninstall centos docker io
-  sudo: yes
+  become: yes
   yum:
     pkg: docker-io
     state: absent
   when: ansible_distribution == "CentOS"
 - name: uninstall amazon linux docker io
-  sudo: yes
+  become: yes
   yum:
     pkg: docker
     state: absent
