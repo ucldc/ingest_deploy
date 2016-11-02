@@ -45,6 +45,10 @@
   file:
     path: "/home/{{ role_user }}/bin"
     state: directory
+- name: make user ~/log directory
+  file:
+    path: "/home/{{ role_user }}/log"
+    state: directory
 - name: install ansible
   pip:
     name: ansible
@@ -62,6 +66,12 @@
 - name: install harvester code
   include: install_harvester.yml
   when: harvester_egg.stat.exists == False
+- name: install solr index to s3 playbook on production env
+  copy:
+    mode: u+rx
+    dest: "/home/{{ role_user }}/bin/solr-index-to-s3.sh"
+    src: solr-index-to-s3.sh
+  when: data_branch == "production"
 - name: check if redis helper installed
   stat:
     path: "/home/{{ role_user}}/bin/redis.sh"
