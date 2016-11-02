@@ -11,5 +11,5 @@
     - debug: var=num_hosts
   roles:
     - { role: mredar.nightly_security_update_yum, tags: security-up }
-    - { role: common, sudo: yes }
+    - { role: common, become: yes }
     - worker

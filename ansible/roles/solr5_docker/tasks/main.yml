@@ -13,10 +13,10 @@
     state: directory
     mode: 0777
 - name: docker build the image
-  sudo: yes
+  become: yes
   docker_image: name={{ docker_image_name }} path={{ dir_code }} state=present
 - name: docker run the image with appropriate flags
-  sudo: yes
+  become: yes
   docker_container: 
     name: solr
     image: "{{ docker_image_name }}"

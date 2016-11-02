@@ -1,6 +1,6 @@
 ---
 - hosts: couchdb
-  sudo: yes
+  become: yes
   gather_facts: yes
   vars:
     role: couchdb

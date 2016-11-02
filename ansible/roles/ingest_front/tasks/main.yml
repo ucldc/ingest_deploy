@@ -7,14 +7,14 @@
 ###  register: ip_solr
 - include_vars: digest_auth_users.yml
 - name: copy access key for private machines
-  sudo: no
+  become: no
   copy:
     src: ~/.ssh/ingest-west-2.pem
     dest: ~/.ssh/ingest-west-2.pem
     force: no
     mode: 0600
 - name: make ingest key default
-  sudo: no
+  become: no
   lineinfile:
     dest: ~/.ssh/config
     line: IdentityFile ~/.ssh/ingest-west-2.pem
@@ -77,7 +77,7 @@
 - name: start stunnel in daemon mode
   command: /etc/init.d/stunnel start
 - name: put bootstrap for majorTom in place
-  sudo: no
+  become: no
   copy:
     src: bootstrap_majorTom.sh
     dest: ~/bootstrap_majorTom.sh
