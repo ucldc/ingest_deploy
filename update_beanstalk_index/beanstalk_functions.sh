@@ -80,7 +80,7 @@ function poll_until_ok()
     until [ "$status" == "\"Ok\"" ]; do
        sleep 60
 	   status=$(aws elasticbeanstalk describe-environment-health --environment-name "${env_name}" --attribute-names HealthStatus | jq '.HealthStatus')
-       echo "REBUILD STATUS:$status"
+       echo "STATUS:$status"
     done
 }
 
@@ -112,12 +112,15 @@ function update_index()
 
     s3_file_exists "${s3_index_path}"
     # the eb version blocks until this is complete
+    # but not working right, so added poll below
     resp_setenv=$(eb setenv -e "${env_name}" S3_INDEX_PATH="${s3_index_path}")
     # if fails, resp starts with ERROR
     if [[ ${resp_setenv} == ERROR* ]]; then
         echo -e "\033[1;31m Failed to setenv : ${resp_setenv}\033[0m"
         exit 9
     fi
+    poll_until_ok "${env_name}"
+
     # non-blocking
     # aws elasticbeanstalk update-environment --application-name ucldc-solr --environment-name ${env_name} --option-settings Namespace=aws:elasticbeanstalk:application:environment,OptionName=S3_INDEX_PATH,Value=$i{ndex_path}
 
