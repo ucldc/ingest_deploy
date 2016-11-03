@@ -51,9 +51,6 @@
     dest: /etc/monit.d/handle-termination.monit
   become: yes
   notify: reload monit
-- name: monit validate
-  command: monit validate
-  become: yes
 - name: make virtualenv directory
   file: path={{ dir_venv }} state=directory
 - name: pull ingest harvester code to local box
@@ -200,3 +197,6 @@
   shell: "{{ dir_bin }}start-rqworker.sh"
   args:
     creates: "{{ dir_run_rqworker}}/rqworker.pid"
+- name: monit validate
+  command: monit validate
+  become: yes
