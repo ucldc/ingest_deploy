@@ -45,6 +45,10 @@
   file:
     path: "/home/{{ role_user }}/bin"
     state: directory
+- name: make user ~/log directory
+  file:
+    path: "/home/{{ role_user }}/log"
+    state: directory
 - name: install ansible
   pip:
     name: ansible
@@ -55,6 +59,14 @@
     state: directory
     mode: 0755
     dest: ~/tmp
+- name: create awscli config dir
+  file:
+    state: directory
+    path: ~/.aws
+- name: put config awscli in place
+  copy:
+    src: aws-config
+    dest: ~/.aws/config
 - name: check if harvester already installed
   stat:
     path: "/home/{{ role_user }}/python2/lib/python2.7/site-packages/UCLDC_Harvester-0.8.1-py2.7.egg"
@@ -62,6 +74,12 @@
 - name: install harvester code
   include: install_harvester.yml
   when: harvester_egg.stat.exists == False
+- name: install solr index to s3 playbook on production env
+  copy:
+    mode: u+rx
+    dest: "/home/{{ role_user }}/bin/solr-index-to-s3.sh"
+    src: solr-index-to-s3.sh
+  when: data_branch == "production"
 - name: check if redis helper installed
   stat:
     path: "/home/{{ role_user}}/bin/redis.sh"
@@ -79,6 +97,7 @@
 - name: install beanstalk scripts in production env
   include: install_beanstalk_scripts.yml
   when: data_branch == "production"
+  tags: eb
 - name: remove temporary working directory
   file:
     path: "/home/{{ role_user}}/tmp"

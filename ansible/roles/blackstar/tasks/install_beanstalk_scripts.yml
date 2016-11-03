@@ -9,3 +9,12 @@
     src: ../update_beanstalk_index/
     dest: ~/bin/
     mode: 0700
+- name: create eb client config dir
+  file:
+    state: directory
+    path: ~/.elasticbeanstalk
+- name: put eb config in place
+  copy:
+    src: eb-config.yml
+    dest: ~/.elasticbeanstalk/config.yml
+    mode: 0600

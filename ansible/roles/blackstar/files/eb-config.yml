@@ -1,0 +1,14 @@
+branch-defaults:
+  default:
+    environment: ucldc-solr-xxxx
+environment-defaults:
+  ucldc-solr-xxxx:
+    branch: null
+    repository: null
+global:
+  application_name: ucldc-solr
+  default_ec2_keyname: ingest
+  default_platform: 64bit Amazon Linux 2016.09 v2.2.0 running Docker 1.11.2
+  default_region: us-west-2
+  profile: null
+  sc: null

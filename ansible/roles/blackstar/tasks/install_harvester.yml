@@ -20,6 +20,15 @@
     - queue_image_harvest.py
     - queue_sync_couchdb_collection.py
     - sync_couch_collection_to_solr.py
+- name: copy index grab to s3 playbook
+  copy:
+    remote_src: yes
+    mode: u+rx
+    dest: "/home/{{ role_user }}/bin/{{ item }}"
+    src: "/home/{{ role_user }}/tmp/harvester/harvester/{{ item }}"
+  with_items:
+    - grab-solr-index-playbook.yml
+  when: data_branch == "produciton"
 - name: install redis delete into stage env
   copy:
     remote_src: yes
