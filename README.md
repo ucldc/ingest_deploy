@@ -1,6 +1,6 @@
 <b>Harvesting infrastructure components</b>
 
-<i>Consult the <a href="https://docs.google.com/drawings/d/18Whi3nZGNgKQ2qh-XnJlV3McItyp-skuGSqH5b_L-X8/edit">harvesting infrastructure diagram</a> for an illustration of the key components.  Ask Mark Redar for access to them; note that you will need to log onto the ingest front machine and then into the majorTom machine to run commands, using these <a href="https://sp.ucop.edu/sites/cdl/apg/OACCalisphere%20docs/dsc_putty_connection_instructions.docx">Putty connection  instructions</a> (on Sharepoint)</i>
+<i>Consult the <a href="https://docs.google.com/drawings/d/18Whi3nZGNgKQ2qh-XnJlV3McItyp-skuGSqH5b_L-X8/edit">harvesting infrastructure diagram</a> for an illustration of the key components.  Ask Mark Redar for access to them; note that you will need to log onto the blackstar machine to run commands, using these <a href="https://sp.ucop.edu/sites/cdl/apg/OACCalisphere%20docs/dsc_putty_connection_instructions.docx">Putty connection  instructions</a> (on Sharepoint)</i>
 
 * <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> 
 * ingest front machine (*stage - harvest-stg.cdlib.org*) and ingest front machine (*production - harvest-prd.cdlib.org*), for access to:
@@ -19,13 +19,13 @@ As of February 2016, the process to publish a collection to production is as fol
 3. Check that there is a worker listening on the queue. If not start one. [Stage Worker](#createstageworker)
 4. Wait until the harvest job finishes, hopefully without error.  Now the collection has been harvested to the **stage CouchDB**.
 5. The first round of QA in CouchDB can be performed there <a href="https://harvest-stg.cdlib.org/couchdb/_utils/database.html?ucldc/_all_docs">CouchDB stage</a>
-6. Push the new CouchDB docs into the stage Solr index. [Updating Solr](#solrupdate)
+6. Push the new CouchDB docs into the stage Solr index. Select "Queue sync solr index for collection(s) on normal-stage" on the registry page for the colleciotn [Updating Solr](#solrupdate)
 7. QA **stage Solr** index in the public interface <a href="https://harvest-stg.cdlib.org/solr/#/dc-collection/query">Solr stage</a>
 8. When ready to publish to production, edit Collection in the registry and check the "Ready for publication" box and save.
 9. Select the "Queue sync to production couchdb for collection" [Syncing CouchDB](#synccouch)
 10. Check that there is a worker in the production environment listening on the normal prod queue, if not start one. [Production Worker](#createprodworker)
 11. Wait until the sync job finishes.  Now the collection has been harvested to the **production CouchDB**.
-12. Sync the new docs to the **production Solr** by running the solr update on the production majorTom. At this point the Collection is in the *<a href="https://harvest-prd.cdlib.org/solr/#/dc-collection/query">new, candidate Calisphere Solr index</a>*
+12. Sync the new docs to the **production Solr** by starting the sync from the registry for the new collections. At this point the Collection is in the *<a href="https://harvest-prd.cdlib.org/solr/#/dc-collection/query">new, candidate Calisphere Solr index</a>*
 13. Once QA is done on the candidate index and ready to push new one to Calisphere, [push the index to S3](#s3index)
 14. Clone the existing Solr API Elastic Beanstalk and point to the packaged index on S3
 15. Swap the URL from the older Solr API Elastic Beanstalk and the new Elastic Beanstalk.
@@ -53,7 +53,7 @@ UCLDC Harvesting operations guide
 * [3.3. Verify that the harvests are complete in CouchDB stage](#harvestcdbcomplete)
 * [4. QA check collection in CouchDB stage](#harvestcdbqa)
 * [5. Update Solr stage](#solrupdate)
-* [5.1. Create a new Solr stage index, based on what's in CouchDB stage](#solrstg)
+* [5.1. Sync couchdb collection to Solr stage index, based on what's in CouchDB stage](#solrstg)
 * [5.2. Delete a collection from Solr stage](#solrdelete)
 * [6. Generate and review QA report for Solr stage index](#solrqa)
 * [7. QA check media.json](#mediajson)
@@ -164,10 +164,10 @@ Before initiating a harvest, you'll first need to confirm if the collection has 
 
 If you do not have results in the "value" parameter, then go to the next step of creating a harvest job.  If you do have results in the "value" parameter, then you'll be conducting a re-harvest. You'll first need to remove the harvested records from CouchDB stage and Solr stage:
 
-* Log into the majorTom stage machine.
+* Log onto blackstar & sudo su - hrv-stg
 * Run this command to remove the collection from CouchDB stage, adding the key for the collection at the end: `~/code/harvester/scripts/delete_couchdb_collection.py 23065`.
 * Then run this command, to update Solr stage: `/usr/local/bin/solr-update.sh`
-* Repeat the process above on the majorTom production machine, to remove the collection from CouchDB production and Solr production.
+* Repeat the process above on the hrv-prd production user account, to remove the collection from CouchDB production and Solr production.
 * Then proceed with the steps below for creating a new harvest job
 
 ### 2. <a name="harvestregistry">Create a harvest job in Registry</a>
@@ -184,15 +184,14 @@ The following sections describe the process for harvesting collections through t
 
 #### 3.1. Create <a name="createstageworker">stage workers</a>
 
-* Log into the majorTom stage machine. (harvest-stg.cdlib.org) 
-* To activate the virtualenv in ~/workers_local/, run: `. ~/workers_local/bin/activate`
-* To create some worker machines (bare ec2 instances), run: `ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ingest_deploy/ansible/hosts ~/code/ingest_deploy/ansible/create_worker-stage.yml --extra-vars="count=3"`
+* Log onto blackstar & sudo to hrv-stg
+* To create some worker machines (bare ec2 instances), run: `ansible-playbook ~/code/ansible/create_worker.yml --extra-vars="count=3"`
 
 The `count=##` parameter will set the number of instances to create. For harvesting one small collection you can set this to `count=1`. To re-harvest all collections, you can set this to `count=20`. For anything in between, use your judgment.
 
 You should see output in the console as the playbook runs through its tasks. At the end, it will give you a status line. Look for `fail=0` to verify that everything ran OK.
 
-The default instance creation will attempt to get instances from the "spot" market so that it is cheaper to run the workers. Sometimes the spot market price can get very high and the spot instances won't work. You can check the pricing by issuing the following command on majorTom:
+The default instance creation will attempt to get instances from the "spot" market so that it is cheaper to run the workers. Sometimes the spot market price can get very high and the spot instances won't work. You can check the pricing by issuing the following command on blackstar, hrv-stg user:
 
 ```sh
 aws ec2 describe-spot-price-history --instance-types m3.large --availability-zone us-west-2c --product-description "Linux/UNIX (Amazon VPC)" --max-items 2
@@ -201,15 +200,15 @@ aws ec2 describe-spot-price-history --instance-types m3.large --availability-zon
 Our spot bid price is set to .133 which is the current (20160803) on demand price. If the history of spot prices is greater than that or if you see large fluctuations in the pricing, you can request an on-demand instance instead by adding "ondemand=true" to the extra-vars, e.g. :
 
 ```sh
-ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ingest_deploy/ansible/hosts ~/code/ingest_deploy/ansible/create_worker-stage.yml --extra-vars="count=3 ondemand=True"
+ansible-playbook ~/code/ansible/create_worker.yml --extra-vars="count=3 ondemand=True"
 ```
 
 #### 3.2. <a name="harvestprovisionstg">Provision stage workers to act on harvesting</a>
 
 Once this is done and the stage worker instances are in a state of "running", you'll need to provision the workers by installing required software, configurations and start running Akara and the worker processes that listen on the queues specified:
 
-* Log into the majorTom stage machine. (harvest-stg.cdlib.org) 
-* To provision the workers, run: `ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ec2.py ~/code/ingest_deploy/ansible/provision_worker-stage.yml --extra-vars='rq_work_queues=["normal-stage","low-stage"]'`
+* Log onto blackstar & sudo su - hrv-stg
+* To provision the workers, run: `ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker.yml`
 * Wait for the provisioning to finish; this can take a while, 5-10 minutes is not
 unusual. If the provisioning process stalls, use `ctrl-C` to end the process then re-do the ansible command.
 * Check the status of the the harvesting process through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>.  You should now see the provisioned workers listed, and acting on the jobs in the queue. You will be able to see the workers running jobs (indicated by a "play" triangle icon) and then finishing (indicated by a "pause" icon).
@@ -218,7 +217,7 @@ unusual. If the provisioning process stalls, use `ctrl-C` to end the process the
 `--limit=<ip range>` eg. --limit=10.60.22.\* or `--limit=<ip>,<ip>` eg. --limit=10.60.29.109,10.60.18.34 to limit the provisioning to the IPs of the newly-provisioned machines (and so you don't reprovision 
 a currently running machine). Otherwise rerunning the provisioning will put the 
 current running workers in a bad state, and you will then have to log on to the 
-worker and restart the worker process or terminate the machine.  Example of full command: `ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ec2.py ~/code/ingest_deploy/ansible/provision_worker-stage.yml --extra-vars='rq_work_queues=["normal-stage","low-stage"]' --limit=10.60.29.*`
+worker and restart the worker process or terminate the machine.  Example of full command: `ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker.yml --limit=10.60.29.*`
 
 AWS assigns unique subnets to the groups of workers you start, so in general,
 different generations of machines will be distinguished by the different C class
@@ -307,23 +306,13 @@ NOTE: To view the original XTF-indexed metadata for content harvested from Calis
 
 ### 5.<a name="solrupdate">Update Solr stage</a>
 
-#### 5.1. <a name="solrstg">Create a new Solr stage index, based on what's in CouchDB stage</a>
+#### 5.1. <a name="solrstg">Sync couchdb collection to Solr stage index, based on what's in CouchDB stage</a>
 
-Currently, Solr updates are run from the majorTom machine. The Solr update looks at the Couchdb changes endpoint. This endpoint has a record for each document that has been created in the database, including deleted documents.
-
-* Log into majorTom stage
-* To do an incremental update, run: `/usr/local/bin/solr-update.sh`. This will run an incremental update, which is what you will most often want to do. This uses the last changes sequence number that is saved in s3 at solr.ucldc/couchdb_since/<DATA_BRANCH> in order to determine what has changed.
-* To reindex all docs run: `/usr/local/bin/solr-update.sh --since=0`
-* You can check to confirm if the Solr index file was generated by looking at `var/local/solr-update/log/`. The directory lists the Solr files by date, with a timestamp.
-
-Note that on occasion, a collection that has been sync'ed from CouchDB stage to Solr stage may not immediately appear in the latter. To force the sycn, run: `python code/harvester/scripts/sync_couch_collection_to_solr.py <collection id>`
+Goto the registry page for the collection and select "Queue sync solr index for collection(s) on normal-stage". There must be a stage worker running
 
 #### 5.2. <a name="solrdelete">Delete a collection from Solr stage</a>
 
-* Log onto majorTom in the environment you want to delete from
-* Run `~/code/harvester/scripts/delete_solr_collection.sh <collection id>`
-* Run `/usr/local/bin/solr-update.sh`
-
+From the collection registry page, select "Queue delete solr documents for collection(s) on normal-stage" and have a worker running
 
 ### 6. <a name="solrqa">QA check collection in Solr stage</a>
 
@@ -356,8 +345,8 @@ In the run.bat configuration file, point UCLDC_SOLR_URL to `https://harvest-stg.
 
 Once you've QA checked the results and have completed the harvest, you'll need to terminate the worker instances.
 
-* Log into majorTom stage
-* Run: `ansible-playbook -i ~/code/ec2.py ~/code/ingest_deploy/ansible/terminate_workers-stage.yml <--limit=10.60.?.?>` . You can use the `limit` parameter to specify a range of IP addresses for deletion.
+* Log into blackstar & sudo su - hrv-stg
+* Run: `ansible-playbook -i ~/code/ec2.py ~/code/ansible/terminate_workers.yml <--limit=10.60.?.?>` . You can use the `limit` parameter to specify a range of IP addresses for deletion.
 * You'll receive a prompt to confirm that you want to spin down the intance; hit Return to confirm.
 
 
@@ -378,9 +367,8 @@ Now select "Queue Sync to production CouchDB for collection" from the action on 
 #### 2.1.Create <a name="createprodworker">production workers</a>
 
 Production workers handle the syncing of the couchdb instances, so usually will not be running.
-* Log into the majorTom production machine. (harvest-prd.cdlib.org) 
-* To activate the virtualenv in ~/workers_local/, run: `. ~/workers_local/bin/activate`
-* To create some worker machines (bare ec2 instances), run: `ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ingest_deploy/ansible/hosts ~/code/ingest_deploy/ansible/create_worker-prod.yml --extra-vars="count=3"`
+* Log onto blackstar and sudo su - hrv-prd
+* To create some worker machines (bare ec2 instances), run: `ansible-playbook ~/code/ansible/create_worker-prod.yml --extra-vars="count=3"`
 
 The `count=##` parameter will set the number of instances to create. For harvesting one small collection you can set this to `count=1`. To re-harvest all collections, you can set this to `count=20`. For anything in between, use your judgment.
 
@@ -390,15 +378,15 @@ You should see output in the console as the playbook runs through its tasks. At 
 
 Once this is done and the production worker instances are in a state of "running", you'll need to provision the workers by installing required software, configurations and start running Akara and the worker processes that listen on the queues specified:
 
-* Log into the majorTom production machine. (harvest-prd.cdlib.org) 
-* To provision the workers, run: `ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ec2.py ~/code/ingest_deploy/ansible/provision_worker-prod.yml --extra-vars='rq_work_queues=["normal-prod","low-prod"]'`
+* Log onto blackstar & sudo su - hrv-prd
+* To provision the workers, run: `ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker.yml`
 * Wait for the provisioning to finish; this can take a while, 5-10 minutes is not unusual.
 
 **NOTE:** if you already have provisioned worker machines running jobs, use the
 --limit=<ip range> eg. --limit=10.60.22.\* to make sure you don't reprovision 
 a currently running machine. Otherwise rerunning the provisioning will put the 
 current running workers in a bad state, and you will then have to log on to the 
-worker and restart the worker process or terminate the machine.  Example of full command: `ansible-playbook --vault-password-file=~/.vault_pass_ingest -i ~/code/ec2.py ~/code/ingest_deploy/ansible/provision_worker-prod.yml --extra-vars='rq_work_queues=["normal-prod","low-prod"]' --limit=10.60.29.*`
+worker and restart the worker process or terminate the machine.  Example of full command: `ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker-prod.yml --limit=10.60.29.*`
 
 AWS assigns unique subnets to the groups of workers you start, so in general,
 different generations of machines will be distinguished by the different C class
@@ -408,7 +396,7 @@ subnet. This makes the --limit parameter quite useful.
 
 #### 3.1. <a name="solrcandidate">Create a new candidate Solr index, based on what's in CouchDB production</a>
 
-* Log into majorTom production
+* Log onto blackstar & sudo su - hrv-prd
 * To do an incremental update, run: `/usr/local/bin/solr-update.sh`. This will run an incremental update, which is what you will most often want to do. This uses the last changes sequence number that is saved in s3 at solr.ucldc/couchdb_since/<DATA_BRANCH> in order to determine what has changed.
 * To reindex all docs run: `/usr/local/bin/solr-update.sh --since=0`
 * You can check to confirm if the Solr index file was generated by looking at `var/local/solr-update/log/`. The directory lists the Solr files by date, with a timestamp.
@@ -417,7 +405,7 @@ Note that on occasion, a collection that has been sync'ed from CouchDB productio
 
 #### 3.2. <a name="solrproddelete">Delete a collection from candidate Solr index</a>
 
-* Log onto majorTom production
+* Log onto blackstar & sudo su - hrv-prd
 * Run `~/code/harvester/scripts/delete_solr_collection.sh <collection id>`
 * Run `/usr/local/bin/solr-update.sh`
 
@@ -435,8 +423,8 @@ In the run.bat configuration file, point UCLDC_SOLR_URL to `https://harvest-prd.
 ### 6. <a name="s3index">Generate candidate Solr indexes for S3</a>
 Once the solr index is updated, and if it is ready for distribution to the Calisphere front-end website, you can generate an index to store on S3:
 
-* Log into majorTom in production - harvest-prd.cdlib.org
-* Run: `/usr/local/bin/solr-index-to-s3.sh`. The DATA_BRANCH is set to `production` in this environment.
+* Log into blackstar and `sudo su - hrv-prd` 
+* Run: `solr-index-to-s3.sh`. The DATA_BRANCH is set to `production` in this environment.
 * This will push the last build Solr index to S3 at the location:
 
     solr.ucldc/indexes/<DATA_BRANCH>/YYYY/MM/solr-index.YYYY-MM-DD-HH_MM_SS.tar.bz2
@@ -447,8 +435,8 @@ Note that stashing a Solr index on S3 does nothing in terms of updating the Cali
 
 Once you've completed syncing, you'll need to terminate the worker instances.
 
-* Log into majorTom production
-* Run: `ansible-playbook -i ~/code/ec2.py ~/code/ingest_deploy/ansible/terminate_workers-prod.yml <--limit=10.60.?.?>` . You can use the `limit` parameter to specify a range of IP addresses for deletion.
+* Log into blackstart and sudo to hrv-prd
+* Run: `ansible-playbook -i ~/code/ec2.py ~/code/ansible/terminate_workers.yml <--limit=10.60.?.?>` . You can use the `limit` parameter to specify a range of IP addresses for deletion.
 * You'll receive a prompt to confirm that you want to spin down the intance; hit Return to confirm.
 
 
@@ -457,7 +445,7 @@ Once you've completed syncing, you'll need to terminate the worker instances.
 
 This section describes how to update an Elastic Beanstalk configuration to point to a new candidate Solr index stored on S3. This will update the specified Calisphere front-end web application so that it points to the data from Solr:
 
-* Log on to the production majorTom and then follow the instructions here:
+* Log onto blackstar & sudo su - hrv-prd and then follow the instructions here:
 [update_beanstalk](update_beanstalk_index)
 * After any new index is moved into publication, run the following commands, so that ARK URLs correctly resolve for any new incoming harvested objects with embedded ARKs: https://gist.github.com/tingletech/475ff92147b6f93f6c3f60cebdf5e507
 * Last, update our Google Doc that lists out new collections that were published. (The entries can be cut-and-pasted from the <a href="https://github.com/mredar/ucldc_api_data_quality/tree/master/reporting">QA reporting spreadsheet</a>): https://docs.google.com/spreadsheets/d/1FI2h6JXrqUdONDjRBETeQjO_vkusIuG5OR5GWUmKp1c/edit#gid=0 . Sherri uses this Google Doc for CDLINFO postings, highlighting newly-published collections.
@@ -483,7 +471,7 @@ TODO: add how to run the QA spreadsheet generating code
 
 #### <a name="removalcollection">Entire collection</a>
 
-* Log into the majorTom stage machine.
+* Log onto blackstar & sudo su - hrv-prd
 * Run this command to remove the collection from CouchDB stage, adding the key for the collection at the end: `~/code/harvester/scripts/delete_couchdb_collection.py 23065`.
 * Then run this command, to update Solr stage: `/usr/local/bin/solr-update.sh`
 * Follow the process of sync'ing the collection through to CouchDB production
@@ -503,6 +491,7 @@ machines as needed.
 The solr index is run in a docker container. To make changes to the schema or
 other configurations, you need to recreate the docker image for the container.
 
+NOTE: THIS NEEDS UPDATING
 To do so in the ingest environment, run `ansible-playbook -i hosts solr_docker_rebuild.yml`.  This will remove the docker container & image, rebuild the image, remove the index files and run a new container based on the latest solr config in https://github.com/ucldc/solr_api/.
 
 You will then have to run `/usr/local/solr-update.sh --since=0` to reindex the
@@ -537,15 +526,15 @@ The /var/local/rqworker & /var/local/akara contain the logs from the worker
 processes & the Akara server on a worker instance.
 The logs are named with the instance id & ip address, e.g. ingest-stage-i-127546c9-10.60.28.224
 
-From the majorTom machine you can access the logs on CloudWatch using the scripts in the logs_from_cli directory.
+From the blackstar machine you can access the logs on CloudWatch using the scripts in the bin directory
 
-First, get the IPs of the worker machines by running `logs_from_cli/get_worker_ips.sh`
+First, get the IPs of the worker machines by running `get_worker_ips.sh`
 
 Then for the worker whose logs you want to examine:
-`logs_from_cli/get_log_events_for_rqworker.sh <worker ip>`
+`get_log_events_for_rqworker.sh <worker ip>`
 
 This is an output of the rqworker log, for the akara log use:
-`logs_from_cli/get_log_events_for_akara.sh <worker ip>`
+`get_log_events_for_akara.sh <worker ip>`
 
 If you need to go back further in the log history, for now ask Mark.
 
@@ -562,7 +551,7 @@ If incorrect images were downloaded, you must manually queue the image harvest t
 
 First you should check that the `isShownBy` field for the documents in question point to valid images. See [Finding CouchDB Doc for item](#cdbdocforitem) to find the document.
 
-* log onto majorTom in the stage environment (harvest-stg.cdlib.org)
+* Log onto blackstar & sudo su - hrv-stg
 * Run `python ~/code/harvester/scripts/redis_delete_harvested_images_script.py <collection_id>`. This will produce a file called `delete_image_cache-<collection_id>` in the current directory.
 * Run `~/redis-3.0.2/src/redis-cli -h $REDIS_HOST < delete_image_cache-<collection_id>`. This will clear the cache of previously harvested URLs.
 * Run `python ~/code/harvester/scripts/queue_image_harvest.py mredar@gmail.com normal-stage https://registry.cdlib.org/api/v1/collection/<collection_id>/ --get_if_object`
