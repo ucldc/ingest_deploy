@@ -77,8 +77,16 @@
   command: "{{ dir_venv }}/bin/python {{ dir_code }}/harvester/setup.py install"
   args:
     chdir: "{{ dir_code }}/harvester"
+- name: pull nuxeo_calisphere code for Nuxeo deep harvesting
+  git:
+    repo: https://github.com/barbarahui/nuxeo-calisphere.git
+    dest: "{{ dir_code }}/nuxeo-calisphere"
+    update: yes
+- name: install deep harvesting code
+  command: "{{ dir_venv }}/bin/python {{ dir_code }}/nuxeo-calisphere/setup.py install"
+  args:
+    chdir: "{{ dir_code }}/nuxeo-calisphere"
 ## configure solr-index-to-s3
-# TODO: queue for worker
 - name: create run_dir_solr run dir
   become: yes
   file:
