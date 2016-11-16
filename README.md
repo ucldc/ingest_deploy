@@ -368,7 +368,7 @@ Now select "Queue Sync to production CouchDB for collection" from the action on 
 
 Production workers handle the syncing of the couchdb instances, so usually will not be running.
 * Log onto blackstar and sudo su - hrv-prd
-* To create some worker machines (bare ec2 instances), run: `ansible-playbook ~/code/ansible/create_worker-prod.yml --extra-vars="count=1"`
+* To create some worker machines (bare ec2 instances), run: `ansible-playbook ~/code/ansible/create_worker.yml --extra-vars="count=1"`
 
 The `count=##` parameter will set the number of instances to create. For harvesting one small collection you can set this to `count=1`. To re-harvest all collections, you can set this to `count=20`. For anything in between, use your judgment.
 
@@ -386,7 +386,7 @@ Once this is done and the production worker instances are in a state of "running
 --limit=<ip range> eg. --limit=10.60.22.\* to make sure you don't reprovision 
 a currently running machine. Otherwise rerunning the provisioning will put the 
 current running workers in a bad state, and you will then have to log on to the 
-worker and restart the worker process or terminate the machine.  Example of full command: `ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker-prod.yml --limit=10.60.29.*`
+worker and restart the worker process or terminate the machine.  Example of full command: `ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker.yml --limit=10.60.29.*`
 
 AWS assigns unique subnets to the groups of workers you start, so in general,
 different generations of machines will be distinguished by the different C class
