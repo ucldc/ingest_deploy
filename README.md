@@ -1,4 +1,4 @@
-<b>Harvesting infrastructure components</b>
+## Harvesting infrastructure components
 
 <i>Consult the <a href="https://docs.google.com/drawings/d/18Whi3nZGNgKQ2qh-XnJlV3McItyp-skuGSqH5b_L-X8/edit">harvesting infrastructure diagram</a> for an illustration of the key components.  Ask Mark Redar for access to them; note that you will need to log onto the blackstar machine to run commands, using these <a href="https://sp.ucop.edu/sites/cdl/apg/OACCalisphere%20docs/dsc_putty_connection_instructions.docx">Putty connection  instructions</a> (on Sharepoint)</i>
 
@@ -282,7 +282,7 @@ NOTE: To view the original XTF-indexed metadata for content harvested from Calis
 * Go to Collection Registry, locate the collection that was harvested from XTF, and skip to the "URL harvest" field -- use that URL to generate a result of the XTF-indexed metadata (view source code to see raw XML)
 * Append the following to the URL, to set the number of results: `docsPerPage=###`
 
-<b>Querying CouchDB stage</b>
+#### Querying CouchDB stage
 * Generate a count of all objects for a given collection in CouchDB:  `https://harvest-stg.cdlib.org/couchdb/ucldc/_design/all_provider_docs/_view/by_provider_name_count?key="26189"`
 * Generate a results set of metadata records for a given collection in CouchDB, using this URL syntax: `https://harvest-stg.cdlib.org/couchdb/ucldc/_design/all_provider_docs/_list/has_field_value/by_provider_name_wdoc?key="10046"&field=originalRecord.subject&limit=100`. Each metadata record in the results set will have a unique ID  (e.g., 26094--00000001). This can be used for viewing the metadata within the CouchDB UI.
 * Parameters: 
@@ -297,7 +297,7 @@ NOTE: To view the original XTF-indexed metadata for content harvested from Calis
 * To view a result of raw CouchDB JSON output:  `https://harvest-stg.cdlib.org/couchdb/ucldc/_design/all_provider_docs/_view/by_provider_name?key="26094"&limit=1&include_docs=true`
 * Consult the <a href="http://wiki.apache.org/couchdb/HTTP_view_API">CouchDB guide</a> for additional query details.
 
-<b>Viewing metadata for an object in CouchDB stage</b>
+#### Viewing metadata for an object in CouchDB stage
 
 * Log into <a href="https://harvest-stg.cdlib.org/couchdb/_utils/database.html?ucldc/_all_docs">CouchDB</a>
  * In the "Jump to" box, enter the unique ID for a given  metadata record (e.g., 26094--00000001)
@@ -320,7 +320,7 @@ Generate and review a QA report for the Solr stage index, following <a href="htt
 
 Note that you can additionally view the raw results in Solr stage; this may be helpful to verify mapping issues or discrepancies in data between CouchDB and Solr stage.  Make sure you update Solr before QA'ing -- see <b>[Update Solr stage](#solrupdate)</b> instructions.
 
-<b>Querying Solr stage</b>
+#### Querying Solr stage
 * Log into <a href="https://harvest-stg.cdlib.org/solr/#/dc-collection/query">Solr</a> to conduct queries 
 * Generate a count of all objects for a given collection in Solr:  `https://harvest-stg.cdlib.org/solr/dc-collection/select?q=collection_url%3A%22https%3A%2F%2Fregistry.cdlib.org%2Fapi%2Fv1%2Fcollection%2F26203%2F%22&wt=json&rows=0&indent=true`
 * Generates counts for all collections: `https://harvest-stg.cdlib.org/solr/dc-collection/select?q=*%3A*&rows=0&wt=json&indent=true&facet=true&facet.query=true&facet.field=collection_url&facet.limit=-1&facet.sort=count`
@@ -562,7 +562,7 @@ working....
 
 ### Dependencies
 
-<b>Tools</b>
+#### Tools
 
 - [Ansible](http://www.ansible.com/home) (Version X.X)
 
