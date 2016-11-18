@@ -282,6 +282,58 @@ NOTE: To view the original XTF-indexed metadata for content harvested from Calis
 * Go to Collection Registry, locate the collection that was harvested from XTF, and skip to the "URL harvest" field -- use that URL to generate a result of the XTF-indexed metadata (view source code to see raw XML)
 * Append the following to the URL, to set the number of results: `docsPerPage=###`
 
+#### Required Data QA Views
+
+The Solr update process checks for a number of fields and will reject records that are missing these required values.
+
+##### Image records without a harvested image
+
+Objects with a sourceResource.type value of 'image' without a stored image (no 'object' field in the record) are not put into the Solr index. This view identifies these objects in couchdb.
+
+```
+https://harvest-stg.cdlib.org/couchdb/ucldc/_design/all_provider_docs/_view/image_type_missing_object
+```
+
+The base view will report total count of image type records without harvested images. To see how many per collection add "?group=true" to the URL.
+
+```
+https://harvest-stg.cdlib.org/couchdb/ucldc/_design/all_provider_docs/_view/image_type_missing_object?group=true
+```
+
+To find the number for a given collection use the "key" parameter:
+
+```
+https://harvest-stg.cdlib.org/couchdb/ucldc/_design/all_provider_docs/_view/image_type_missing_object?key="<collection id>"
+```
+
+NOTE: the double quotes are necessary in the URL.
+
+To see the ids for the records with this issue turn off the reduce fn:
+
+```
+https://harvest-stg.cdlib.org/couchdb/ucldc/_design/all_provider_docs/_view/image_type_missing_object?key="<collection id>"&reduce=false
+```
+
+Use the include_docs parameter to add the records to the view output:
+
+```
+https://harvest-stg.cdlib.org/couchdb/ucldc/_design/all_provider_docs/_view/image_type_missing_object?key="<collection id>"&reduce=false&include_docs=true
+```
+
+##### Records missing isShownAt
+
+```
+https://harvest-stg.cdlib.org/couchdb/ucldc/_design/all_provider_docs/_view/missing_isShownAt
+```
+
+As with the above you can add various parameters to get different information in the result.
+
+##### Records missing title
+
+```
+https://harvest-stg.cdlib.org/couchdb/ucldc/_design/all_provider_docs/_view/missing_title
+```
+
 #### Querying CouchDB stage
 * Generate a count of all objects for a given collection in CouchDB:  `https://harvest-stg.cdlib.org/couchdb/ucldc/_design/all_provider_docs/_view/by_provider_name_count?key="26189"`
 * Generate a results set of metadata records for a given collection in CouchDB, using this URL syntax: `https://harvest-stg.cdlib.org/couchdb/ucldc/_design/all_provider_docs/_list/has_field_value/by_provider_name_wdoc?key="10046"&field=originalRecord.subject&limit=100`. Each metadata record in the results set will have a unique ID  (e.g., 26094--00000001). This can be used for viewing the metadata within the CouchDB UI.
@@ -292,6 +344,8 @@ NOTE: To view the original XTF-indexed metadata for content harvested from Calis
  * <b>originalRecord</b>: Optional.  Limit the display output to a particular metadata field; specify the CouchDB data element (e.g., title, creator) 
  * <b>include_docs="true"</b>: Optional.  Will include complete metadata record within the results set (JSON output) 
  * <b>value</b>:  Optional.  Search for a particular value, within a results set of metadata records from a particular collection.  Note: exact matches only!
+ * <b>group=true</b>: Group the results by key
+ * <b>reduce=false</b>: do not count up the results, display the individual result rows
 * To generate a results set of data values within a particular element (e.g., Rights), for metadata records from all collections: `https://harvest-stg.cdlib.org/couchdb/ucldc/_design/qa_reports/_view/sourceResource.rights_value?limit=100&group_level=2`
 * To check if there are null data values within a particular element (e.g., isShownAt), for metadata records from all collections: `https://harvest-stg.cdlib.org/couchdb/ucldc/_design/qa_reports/_view/isShownAt_value?limit=100&group_level=2&start_key=["__MISSING__"]`
 * To view a result of raw CouchDB JSON output:  `https://harvest-stg.cdlib.org/couchdb/ucldc/_design/all_provider_docs/_view/by_provider_name?key="26094"&limit=1&include_docs=true`
