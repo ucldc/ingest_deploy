@@ -22,6 +22,8 @@
   template:
     src: ./roles/worker/templates/harvester-env.j2
     dest: "/home/{{ role_user }}/.harvester-env"
+  tags:
+    - harvester
 - name: set .ssh dir
   file:
     state: directory
@@ -71,9 +73,13 @@
   stat:
     path: "/home/{{ role_user }}/python2/lib/python2.7/site-packages/UCLDC_Harvester-0.8.1-py2.7.egg"
   register: harvester_egg
+  tags:
+    - harvester
 - name: install harvester code
   include: install_harvester.yml
-  when: harvester_egg.stat.exists == False
+  when: harvester_egg.stat.exists == False or force_install_harvester is defined
+  tags:
+    - harvester
 - name: install solr index to s3 playbook on production env
   copy:
     mode: u+rx
