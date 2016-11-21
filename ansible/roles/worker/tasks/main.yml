@@ -85,7 +85,7 @@
 - name: Install Kakadu library from barbarahui/loris
   get_url:
     url: https://github.com/barbarahui/loris/blob/ucldc/lib/Linux/x86_64/libkdu_v74R.so?raw=true
-    dest: /usr/lib/libkdu_v74R.so
+    dest: /usr/lib64/libkdu_v74R.so
   become: yes
 - name: Install Kakadu expand executable
   get_url:
