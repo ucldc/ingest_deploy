@@ -79,9 +79,20 @@
     chdir: "{{ dir_code }}/harvester"
 - name: pull nuxeo_calisphere code for Nuxeo deep harvesting
   git:
-    repo: https://github.com/barbarahui/nuxeo-calisphere.git
+    repo: https://github.com/mredar/nuxeo-calisphere.git
     dest: "{{ dir_code }}/nuxeo-calisphere"
     update: yes
+- name: Install Kakadu library from barbarahui/loris
+  get_url:
+    url: https://github.com/barbarahui/loris/blob/ucldc/lib/Linux/x86_64/libkdu_v74R.so?raw=true
+    dest: /usr/lib/libkdu_v74R.so
+  become: yes
+- name: Install Kakadu expand executable
+  get_url:
+    url: https://github.com/barbarahui/loris/blob/ucldc/bin/Linux/x86_64/kdu_expand?raw=true
+    dest: /usr/bin/kdu_expand
+    mode: 0755
+  become: yes
 - name: install deep harvesting code
   command: "{{ dir_venv }}/bin/python {{ dir_code }}/nuxeo-calisphere/setup.py install"
   args:
