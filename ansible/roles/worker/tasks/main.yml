@@ -94,15 +94,13 @@
     src: http://kakadusoftware.com/wp-content/uploads/2014/06/KDU78_Demo_Apps_for_Linux-x86-64_160226.zip
     dest: /tmp/kakadu-src
 - name: Install (copy) Kakadu executables
-  shell: cp -p /tmp/kakadu-src/kdu_* /usr/bin/
+  shell: cp -p /tmp/kakadu-src/KDU78_Demo_Apps_for_Linux-x86-64_160226/kdu_* /usr/bin/
   become: yes
 - name: Copy Kakadu library object file to /usr/lib64
   copy:
     remote_src: yes
     dest: /usr/lib64/libkdu_v78R.so
-    src: /usr/bin/libkdu_v78R.so
-- name: Install (copy) Kakadu library object file to /usr/lib64
-  shell: cp -p /tmp/kakadu-src/*.so /usr/lib64/
+    src: /tmp/kakadu-srg/KDU78_Demo_Apps_for_Linux-x86-64_160226/libkdu_v78R.so
   become: yes
 - name: install deep harvesting code
   command: "{{ dir_venv }}/bin/python {{ dir_code }}/nuxeo-calisphere/setup.py install"
