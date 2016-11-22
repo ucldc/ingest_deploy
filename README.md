@@ -376,7 +376,7 @@ Note that you can additionally view the raw results in Solr stage; this may be h
 
 #### Querying Solr stage
 * Log into <a href="https://harvest-stg.cdlib.org/solr/#/dc-collection/query">Solr</a> to conduct queries 
-* Generate a count of all objects for a given collection in Solr:  `https://harvest-stg.cdlib.org/solr/dc-collection/select?q=collection_url%3A%22https%3A%2F%2Fregistry.cdlib.org%2Fapi%2Fv1%2Fcollection%2F26203%2F%22&wt=json&rows=0&indent=true`
+* Generate a count of all objects for a given collection in Solr:  `https://harvest-stg.cdlib.org/solr/dc-collection/query?q=collection_url:%22https://registry.cdlib.org/api/v1/collection/26559/%22`
 * Generates counts for all collections: `https://harvest-stg.cdlib.org/solr/dc-collection/select?q=*%3A*&rows=0&wt=json&indent=true&facet=true&facet.query=true&facet.field=collection_url&facet.limit=-1&facet.sort=count`
 * Consult the <a href="https://wiki.apache.org/solr/SolrQuerySyntax">Solr guide</a> for additional query details.
 
