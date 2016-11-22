@@ -2,12 +2,20 @@
 # tasks file for blackstar
 - name: include vaulted passwords
   include_vars: ./roles/common/vars/all_secrets.yml
+  tags:
+    - harvester
 - name: get correct urls for environment
   include_vars:  "./roles/worker/vars/main{{ name_suffix }}.yml"
+  tags:
+    - harvester
 - name: get vaulted passwords & URLs for environment
   include_vars:  "./roles/worker/vars/vaulted.yml"
+  tags:
+    - harvester
 - name: get environment specific
   include_vars: "./group_vars/{{ data_branch }}"
+  tags:
+    - harvester
 - name: put .bash_profile in place, to unset PYTHON_INSTALL_LAYOUT
   copy:
     src: bash_profile

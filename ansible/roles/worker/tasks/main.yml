@@ -84,6 +84,10 @@
     dest: "{{ dir_code }}/nuxeo-calisphere"
     update: yes
 # should copy to owned github repo as per license
+- name: make workdir
+  file:
+    state: directory
+    path: /tmp/kakadu-src
 - name: unpack Kakadu to /tmp
   unarchive:
     remote_src: yes
@@ -93,6 +97,7 @@
   shell: cp -p /tmp/kakadu-src/kdu_* /usr/bin/
   become: yes
 - name: Copy Kakadu library object file to /usr/lib64
+  copy:
     remote_src: yes
     dest: /usr/lib64/libkdu_v78R.so
     src: /usr/bin/libkdu_v78R.so
