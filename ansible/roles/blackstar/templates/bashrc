@@ -7,6 +7,11 @@ if [ -f ~/.harvester-env ]; then
     . ~/.harvester-env
 fi
 
+# Save a lot history
+export HISTSIZE=10000
+export HISTFILESIZE=100000
+export HISTCONTROL=erasedups
+
 # User specific environment and startup programs
 
 PATH=$PATH:$HOME/.local/bin:$HOME/bin

@@ -9,6 +9,11 @@ if [ -f ~/.harvester-env ]; then
         . ~/.harvester-env
 fi
 
+# Save a lot history
+export HISTSIZE=10000
+export HISTFILESIZE=100000
+export HISTCONTROL=erasedups
+
 export PATH=~/workers_local/bin:$PATH
 
 # User specific aliases and functions
