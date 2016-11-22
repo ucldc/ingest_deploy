@@ -82,16 +82,19 @@
     repo: https://github.com/mredar/nuxeo-calisphere.git
     dest: "{{ dir_code }}/nuxeo-calisphere"
     update: yes
-- name: Install Kakadu library from barbarahui/loris
-  get_url:
-    url: https://github.com/barbarahui/loris/blob/ucldc/lib/Linux/x86_64/libkdu_v74R.so?raw=true
-    dest: /usr/lib64/libkdu_v74R.so
+- name: unpack Kakadu to /tmp
+  unarchive:
+    remote_src: yes
+    src: http://kakadusoftware.com/wp-content/uploads/2014/06/KDU78_Demo_Apps_for_Linux-x86-64_160226.zip
+    dest: /tmp/kakadu-src
+- name: Install Kakadu executables
+  shell: cp -p/tmp/kakadu-src/kdu_* /usr/bin/
+    #url: https://github.com/barbarahui/loris/blob/ucldc/bin/Linux/x86_64/kdu_expand?raw=true
   become: yes
-- name: Install Kakadu expand executable
-  get_url:
-    url: https://github.com/barbarahui/loris/blob/ucldc/bin/Linux/x86_64/kdu_expand?raw=true
-    dest: /usr/bin/kdu_expand
-    mode: 0755
+- name: Copy Kakadu library object file to /usr/lib64
+    remote_src: yes
+    dest: /usr/lib64/libkdu_v78R.so
+    src: /usr/bin/libkdu_v78R.so
   become: yes
 - name: install deep harvesting code
   command: "{{ dir_venv }}/bin/python {{ dir_code }}/nuxeo-calisphere/setup.py install"
