@@ -1,2 +1,8 @@
 ---
 # vars file for blackstar
+# Currently these path vars are not used, but needed for harvester env
+path_tiffcp: /usr/bin/tiffcp
+path_magick_convert: /usr/bin/convert
+path_kdu_compress: /usr/bin/kdu_compress
+path_tiff2rgba: /usr/bin/tiff2rgba
+path_tifficc: /usr/bin/tifficc
