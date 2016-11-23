@@ -88,6 +88,17 @@
   when: harvester_egg.stat.exists == False or force_install_harvester is defined
   tags:
     - harvester
+- name: check if dpla already installed
+  stat:
+    path: "/home/{{ role_user }}/python2/lib/python2.7/site-packages/dplaingestion.egg"
+  register: dpla_egg
+  tags:
+    - dpla
+- name: install dpla code
+  include: install_dpla.yml
+  when: dpla_egg.stat.exists == False or force_install_dpla is defined
+  tags:
+    - dpla
 - name: install solr index to s3 playbook on production env
   copy:
     mode: u+rx
