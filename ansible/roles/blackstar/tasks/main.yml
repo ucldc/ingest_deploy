@@ -90,7 +90,7 @@
     - harvester
 - name: check if dpla already installed
   stat:
-    path: "/home/{{ role_user }}/python2/lib/python2.7/site-packages/dplaingestion.egg"
+    path: "/home/{{ role_user }}/python2/lib/python2.7/site-packages/dplaingestion-33.8.7-py2.7.egg-info"
   register: dpla_egg
   tags:
     - dpla
