@@ -454,7 +454,7 @@ subnet. This makes the --limit parameter quite useful.
 
 #### 3.2. <a name="solrproddelete">Delete a collection from candidate Solr index</a>
 
-From the collection registry page, select "Queue delete solr documents for collection(s) on normal-stage" and have a worker running
+From the collection registry page, select "Queue delete solr documents for collection(s) on normal-production" and have a worker running
 
 ### 4. <a name="solrprodreport">Generate and review QA report for candidate Solr index</a>
 Generate and review a QA report for the candidate Solr index, following [these steps](https://github.com/mredar/ucldc_api_data_quality/tree/master/reporting).  The main QA report in particular summarizes differences in item counts in the candidate Solr index compared with the current production index.
