@@ -70,8 +70,7 @@ UCLDC Harvesting operations guide
 * [3.2. Delete a collection from candidate Solr index](#solrproddelete)
 * [4. Generate and review QA report for candidate Solr index](#solrprodreport)
 * [5. QA check candidate Solr index in Calisphere UI](#solrprodqa)
-* [6. Generate candidate Solr indexes for S3](#s3index)
-* [7. Terminate production worker instances](#terminateprod)
+* [6. Terminate production worker instances](#terminateprod)
 
 [Updating Elastic Beanstalk with candidate Solr index](#beanstalk)
 
@@ -454,7 +453,7 @@ subnet. This makes the --limit parameter quite useful.
 
 #### 3.2. <a name="solrproddelete">Delete a collection from candidate Solr index</a>
 
-From the collection registry page, select "Queue delete solr documents for collection(s) on normal-stage" and have a worker running
+From the collection registry page, select "Queue delete solr documents for collection(s) on normal-production" and have a worker running
 
 ### 4. <a name="solrprodreport">Generate and review QA report for candidate Solr index</a>
 Generate and review a QA report for the candidate Solr index, following [these steps](https://github.com/mredar/ucldc_api_data_quality/tree/master/reporting).  The main QA report in particular summarizes differences in item counts in the candidate Solr index compared with the current production index.
@@ -466,18 +465,7 @@ You can QA the candidate Solr index on your local workstation, following [these 
 In the run.bat configuration file, point UCLDC_SOLR_URL to `https://harvest-prd.cdlib.org/solr_api`.
 
 
-### 6. <a name="s3index">Generate candidate Solr indexes for S3</a>
-Once the solr index is updated, and if it is ready for distribution to the Calisphere front-end website, you can generate an index to store on S3:
-
-* Log into blackstar and `sudo su - hrv-prd` 
-* Run: `solr-index-to-s3.sh`. The DATA_BRANCH is set to `production` in this environment.
-* This will push the last build Solr index to S3 at the location:
-
-    solr.ucldc/indexes/<DATA_BRANCH>/YYYY/MM/solr-index.YYYY-MM-DD-HH_MM_SS.tar.bz2
-    
-Note that stashing a Solr index on S3 does nothing in terms of updating the Calisphere front-end website. In order to update the web application so that it points to the data represented in the new index, you have to update the Elastic Beanstalk instance  configuration (see below).
-
-### 7. <a name="terminateprod">Terminate production worker instances</a>
+### 6. <a name="terminateprod">Terminate production worker instances</a>
 
 Once you've completed syncing, you'll need to terminate the worker instances.
 
