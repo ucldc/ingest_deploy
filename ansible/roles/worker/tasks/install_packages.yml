@@ -12,6 +12,8 @@
     - libxml2-devel
     - libffi-devel
     - openssl-devel
+    - ImageMagick
+    - libtiff
 - name: install amazon specific python libs
   when: ansible_distribution == "Amazon"
   become: yes
