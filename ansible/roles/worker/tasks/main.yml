@@ -79,6 +79,7 @@
     chdir: "{{ dir_code }}/harvester"
 - name: install Nuxeo deep harvesting code
   include: install_deep_harvester.yml
+  when: data_branch == 'stage'
 ## configure solr-index-to-s3
 - name: create run_dir_solr run dir
   become: yes
