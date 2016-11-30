@@ -1,4 +1,27 @@
 ---
+- name: install required packages
+  become: yes
+  yum: "pkg={{ item }} state=latest"
+  with_items:
+    - ImageMagick
+    - libtiff
+- name: get ffmpeg static binaries
+  get_url:
+    url: https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-64bit-static.tar.xz
+    checksum: md5:6b69a1ee8f91be8689f270ef17029608
+    dest: /tmp/ffmpeg
+- name: put ffmpeg in /usr/bin
+  copy:
+    remote_src: True
+    src: /tmp/ffmpeg/ffmpeg-git-20161123-64bit-static/ffmpeg
+    dest: /usr/bin/ffmpeg
+    mode: 0755
+- name: put ffmprobe in /usr/bin
+  copy:
+    remote_src: True
+    src: /tmp/ffmpeg/ffmpeg-git-20161123-64bit-static/ffprobe
+    dest: /usr/bin/ffprobe
+    mode: 0755
 - name: pull ucldc-iiif server code for Nuxeo deep harvesting
   git:
     repo: https://github.com/mredar/ucldc-iiif
