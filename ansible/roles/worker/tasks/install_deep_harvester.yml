@@ -9,15 +9,11 @@
   file:
     state: directory
     path: /tmp/ffmpeg
-- name: get ffmpeg static binaries
-  get_url:
-    url: https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-64bit-static.tar.xz
-    checksum: md5:6b69a1ee8f91be8689f270ef17029608
-    dest: /tmp/ffmpeg/ffmpeg-static.tar.xz
-- name: unpack ffmpeg
+# need to use saved static build file, changes on web server...
+- name: Put ffmpeg release 3.2.1 on worker
   unarchive:
-    remote_src: yes
-    src: /tmp/ffmpeg/ffmpeg-static.tar.xz
+    remote_src: no
+    src: fmpeg-release-3.2.1-64bit-static.tar.xz
     dest: /tmp/ffmpeg/
 - name: put ffmpeg in /usr/bin
   copy:
