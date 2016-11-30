@@ -10,15 +10,20 @@
     url: https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-64bit-static.tar.xz
     checksum: md5:6b69a1ee8f91be8689f270ef17029608
     dest: /tmp/ffmpeg
+- name: unpack ffmpeg
+  unarchive:
+    remote_src: yes
+    src: /tmp/ffmpeg/ffmpeg-git-64bit-static.tar.xz
+    dest: /tmp/ffmpeg/
 - name: put ffmpeg in /usr/bin
   copy:
-    remote_src: True
+    remote_src: yes
     src: /tmp/ffmpeg/ffmpeg-git-20161123-64bit-static/ffmpeg
     dest: /usr/bin/ffmpeg
     mode: 0755
 - name: put ffmprobe in /usr/bin
   copy:
-    remote_src: True
+    remote_src: yes
     src: /tmp/ffmpeg/ffmpeg-git-20161123-64bit-static/ffprobe
     dest: /usr/bin/ffprobe
     mode: 0755
