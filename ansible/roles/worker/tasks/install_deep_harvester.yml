@@ -5,15 +5,19 @@
   with_items:
     - ImageMagick
     - libtiff
+- name: make directory for ffmpeg download
+  file:
+    state: directory
+    path: /tmp/ffmpeg
 - name: get ffmpeg static binaries
   get_url:
     url: https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-64bit-static.tar.xz
     checksum: md5:6b69a1ee8f91be8689f270ef17029608
-    dest: /tmp/ffmpeg
+    dest: /tmp/ffmpeg/ffmpeg-static.tar.xz
 - name: unpack ffmpeg
   unarchive:
     remote_src: yes
-    src: /tmp/ffmpeg/ffmpeg-git-64bit-static.tar.xz
+    src: /tmp/ffmpeg/ffmpeg-static.tar.xz
     dest: /tmp/ffmpeg/
 - name: put ffmpeg in /usr/bin
   copy:
@@ -21,12 +25,14 @@
     src: /tmp/ffmpeg/ffmpeg-git-20161123-64bit-static/ffmpeg
     dest: /usr/bin/ffmpeg
     mode: 0755
+  become: yes
 - name: put ffmprobe in /usr/bin
   copy:
     remote_src: yes
     src: /tmp/ffmpeg/ffmpeg-git-20161123-64bit-static/ffprobe
     dest: /usr/bin/ffprobe
     mode: 0755
+  become: yes
 - name: pull ucldc-iiif server code for Nuxeo deep harvesting
   git:
     repo: https://github.com/mredar/ucldc-iiif
