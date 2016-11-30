@@ -13,19 +13,19 @@
 - name: Put ffmpeg release 3.2.1 on worker
   unarchive:
     remote_src: no
-    src: fmpeg-release-3.2.1-64bit-static.tar.xz
+    src: ffmpeg-release-3.2.1-64bit-static.tar.xz
     dest: /tmp/ffmpeg/
 - name: put ffmpeg in /usr/bin
   copy:
     remote_src: yes
-    src: /tmp/ffmpeg/ffmpeg-git-20161123-64bit-static/ffmpeg
+    src: /tmp/ffmpeg/ffmpeg-3.2.1-64bit-static/ffmpeg
     dest: /usr/bin/ffmpeg
     mode: 0755
   become: yes
 - name: put ffmprobe in /usr/bin
   copy:
     remote_src: yes
-    src: /tmp/ffmpeg/ffmpeg-git-20161123-64bit-static/ffprobe
+    src: /tmp/ffmpeg/ffmpeg-3.2.1-64bit-static/ffprobe
     dest: /usr/bin/ffprobe
     mode: 0755
   become: yes
