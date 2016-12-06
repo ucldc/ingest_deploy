@@ -15,6 +15,14 @@
 - { include: install_packages.yml }
 - name: make user ~/bin directory
   file: path=/home/{{ ansible_user }}/bin state=directory
+- name: make ~/.aws directory
+  file:
+    state: directory
+    path: "/home/{{ ansible_user }}/.aws"
+- name: put default aws config in place
+  copy:
+    src: awsconfig
+    dest: "/home/{{ ansible_user }}/.aws/config"
 - name: install dbus dependencies
   yum: 
     pkg: dbus-glib-devel 
