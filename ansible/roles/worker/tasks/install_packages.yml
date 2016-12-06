@@ -12,6 +12,7 @@
     - libxml2-devel
     - libffi-devel
     - openssl-devel
+    - python27-boto3
 - name: install amazon specific python libs
   when: ansible_distribution == "Amazon"
   become: yes
