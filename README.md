@@ -148,7 +148,12 @@ When establishing the entries, you'll need to determine the harvesting endpoint:
 
 ### 2. <a name="deepharvest">Pre-processing files from Nuxeo</a>
 
-If harvesting from Nuxeo ("deep harvesting"): once you've added the collection(s) to the Collection Registry, you'll need to complete the steps outlined at <a href="https://github.com/barbarahui/nuxeo-calisphere">https://github.com/barbarahui/nuxeo-calisphere</a> to pre-process files in Nuxeo. Once this step is done, harvest the collection following the procedures below.  
+If harvesting from Nuxeo ("deep harvesting"): once you've added the collection(s) to the Collection Registry, you'll need to complete the following steps:
+
+* Log into the <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> and look up the collection
+* Choose `Queue Nuxeo deep harvest` drop-down. 
+
+You can monitor the deep harvesting process through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>. At this stage, you'll see the harvest job listed in the queue.
 
 
 <a name="harvestconducting">Conducting a harvest</a> 
