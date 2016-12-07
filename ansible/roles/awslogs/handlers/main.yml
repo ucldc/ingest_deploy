@@ -5,8 +5,10 @@
     name: awslogs
     state: restarted
     enabled: yes
+  become: yes
 - name: start awslogs
   service:
     name: awslogs
     state: started
     enabled: yes
+  become: yes

@@ -1,0 +1,35 @@
+# .bashrc
+# crazy pip install messup here
+unset PYTHON_INSTALL_LAYOUT
+
+# set the harvester env vars
+if [ -f ~/.harvester-env ]; then
+    . ~/.harvester-env
+fi
+
+# Save a lot history
+export HISTSIZE=10000
+export HISTFILESIZE=100000
+export HISTCONTROL=erasedups
+
+# User specific environment and startup programs
+
+PATH=$PATH:$HOME/.local/bin:$HOME/bin
+
+# Use virtualenv by default
+if [ -f ${HOME}/python2/bin/activate ]; then
+    PATH=$HOME/python2/bin:${PATH}
+fi
+
+export PATH
+
+# set prompt to indicate data_branch
+
+if [[ $- == *i* ]]; then
+    export PS1="{{ data_branch|upper }} \$ "
+    echo "********************************************************************************"
+    echo "********************************************************************************"
+    echo "WORKING ON {{ data_branch|upper }} DATA ENVIRONMENT"
+    echo "********************************************************************************"
+    echo "********************************************************************************"
+fi

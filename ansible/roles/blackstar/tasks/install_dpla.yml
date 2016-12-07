@@ -1,0 +1,19 @@
+---
+- name: install ssh private key for bitbucket
+  template: src=../worker/templates/id_rsa mode=600 dest=~/.ssh/id_rsa 
+- name: install ssh pub key for bitbucket
+  template: src=../worker/files/id_rsa.pub mode=600 dest=~/.ssh/id_rsa.pub 
+### Didn't work
+###- name: install dpla code, needed for deep harvest (even queuing)
+###  pip:
+###    virtualenv: "/home/{{ role_user }}/python2"
+###    name: 'git+ssh://git@bitbucket.org/mredar/dpla-ingestion.git@ucldc#egg=dplaingestion'
+- name: grab dpla code for install
+  git:
+    repo: ssh://git@bitbucket.org/mredar/dpla-ingestion.git
+    dest: "/home/{{ role_user}}/tmp/dpla"
+    version: ucldc
+- name: install dpla code
+  shell: /home/{{ role_user }}/python2/bin/python setup.py install
+  args:
+    chdir: "/home/{{ role_user}}/tmp/dpla"

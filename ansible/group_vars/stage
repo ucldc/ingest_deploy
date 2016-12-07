@@ -9,9 +9,11 @@ sec_grp_ingest_private_id: sg-ba28c5de
 sec_grp_ingest_private:
   group_id: "{{ sec_grp_ingest_private_id }}"
 DATA_BRANCH: stage
-name_suffix: "-{{ DATA_BRANCH }}"
-couchdb_url: http://10.60.27.222:5984
-solr_url: http://10.60.24.83:8983/solr
+couchdb_ip: 10.60.27.222
+couchdb_url: http://{{ couchdb_ip }}:5984
+solr_ip: 10.60.24.83
+solr_url: http://{{ solr_ip }}:8983/solr
 eip_ingest_front: 52.11.194.40
 worker_instance_type: m3.large 
 spot_bid_price: .133
+front_ip: 10.60.1.122

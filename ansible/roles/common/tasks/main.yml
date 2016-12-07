@@ -4,13 +4,13 @@
   - name: set role_home_dir, hostname, whoami
     include: setvars.yml
   - name: update packages
-    sudo: yes
+    become: yes
     yum: pkg=* state=latest
   - name: install htop
-    sudo: yes
+    become: yes
     yum: pkg=htop state=present
   - include: add_operator_keys.yml
     tags:
       - operator-keys
   - include: install_docker.yml
-    sudo: yes
+    become: yes

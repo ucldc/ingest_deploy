@@ -1,0 +1,129 @@
+---
+# tasks file for blackstar
+- name: include vaulted passwords
+  include_vars: ./roles/common/vars/all_secrets.yml
+  tags:
+    - harvester
+- name: get correct urls for environment
+  include_vars:  "./roles/worker/vars/main{{ name_suffix }}.yml"
+  tags:
+    - harvester
+- name: get vaulted passwords & URLs for environment
+  include_vars:  "./roles/worker/vars/vaulted.yml"
+  tags:
+    - harvester
+- name: get environment specific
+  include_vars: "./group_vars/{{ data_branch }}"
+  tags:
+    - harvester
+- name: put .bash_profile in place, to unset PYTHON_INSTALL_LAYOUT
+  copy:
+    src: bash_profile
+    dest: "/home/{{ role_user }}/.bash_profile"
+    mode: 0644
+- name: put .bashrc in place, to use virtualenv & setup env
+  template:
+    src: bashrc
+    dest: "/home/{{ role_user }}/.bashrc"
+    mode: 0644
+- name: put harvester environment vars file in place
+  template:
+    src: ./roles/worker/templates/harvester-env.j2
+    dest: "/home/{{ role_user }}/.harvester-env"
+  tags:
+    - harvester
+- name: set .ssh dir
+  file:
+    state: directory
+    mode: 0700
+    dest: ~/.ssh
+- name: put ingest-private.pem in place
+  template:
+    src: ingest-private.pem.j2
+    dest: "/home/{{ role_user }}/.ssh/ingest-private.pem"
+    mode: 0400
+- name: put ssh config in place
+  template:
+    src: ssh_config
+    dest: "/home/{{ role_user }}/.ssh/config"
+    mode: 0400
+- name: put ansible hosts file in place for data_branch
+  template:
+    src: hosts.j2
+    dest: "/home/{{ role_user }}/hosts"
+- name: make user ~/bin directory
+  file:
+    path: "/home/{{ role_user }}/bin"
+    state: directory
+- name: make user ~/log directory
+  file:
+    path: "/home/{{ role_user }}/log"
+    state: directory
+- name: install ansible
+  pip:
+    name: ansible
+    state: present
+    virtualenv: "/home/{{ role_user }}/python2"
+- name: make ~/tmp for working directory
+  file:
+    state: directory
+    mode: 0755
+    dest: ~/tmp
+- name: create awscli config dir
+  file:
+    state: directory
+    path: ~/.aws
+- name: put config awscli in place
+  copy:
+    src: aws-config
+    dest: ~/.aws/config
+- name: check if harvester already installed
+  stat:
+    path: "/home/{{ role_user }}/python2/lib/python2.7/site-packages/UCLDC_Harvester-0.8.1-py2.7.egg"
+  register: harvester_egg
+  tags:
+    - harvester
+- name: install harvester code
+  include: install_harvester.yml
+  when: harvester_egg.stat.exists == False or force_install_harvester is defined
+  tags:
+    - harvester
+- name: check if dpla already installed
+  stat:
+    path: "/home/{{ role_user }}/python2/lib/python2.7/site-packages/dplaingestion-33.8.7-py2.7.egg-info"
+  register: dpla_egg
+  tags:
+    - dpla
+- name: install dpla code
+  include: install_dpla.yml
+  when: dpla_egg.stat.exists == False or force_install_dpla is defined
+  tags:
+    - dpla
+- name: install solr index to s3 playbook on production env
+  copy:
+    mode: u+rx
+    dest: "/home/{{ role_user }}/bin/solr-index-to-s3.sh"
+    src: solr-index-to-s3.sh
+  when: data_branch == "production"
+- name: check if redis helper installed
+  stat:
+    path: "/home/{{ role_user}}/bin/redis.sh"
+  register: redis_helper
+- name: install redis client
+  include: install_redis.yml
+  when: redis_helper.stat.exists == False and data_branch == "stage"
+- name: put log helpers in place
+  copy:
+    src: ../logs_from_cli/
+    dest: "/home/{{ role_user }}/bin"
+    mode: 0700
+- name: install ansible playbooks and suporting files
+  include: install_ansible_playbooks.yml
+- name: install beanstalk scripts in production env
+  include: install_beanstalk_scripts.yml
+  when: data_branch == "production"
+  tags: eb
+- name: remove temporary working directory
+  file:
+    path: "/home/{{ role_user}}/tmp"
+    state: absent

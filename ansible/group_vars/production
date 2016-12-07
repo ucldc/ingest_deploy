@@ -1,0 +1,19 @@
+---
+redis_host: x.swle7i.ng.0001.usw2.cache.amazonaws.com
+subnet_id_public: subnet-ee63cf99
+subnet_id_private: subnet-1bbe676c
+sec_grp_ingest_front_id: sg-97b298f2
+sec_grp_front:
+  group_id: "{{ sec_grp_ingest_front_id }}"
+sec_grp_ingest_private_id: sg-95b298f0
+sec_grp_ingest_private:
+  group_id: "{{ sec_grp_ingest_private_id }}"
+DATA_BRANCH: production
+couchdb_ip: 10.60.41.14
+couchdb_url: http://{{ couchdb_ip }}:5984
+solr_ip: 10.60.39.243
+solr_url: http://{{ solr_ip }}:8983/solr
+eip_ingest_front: 52.11.194.40
+worker_instance_type: t2.micro
+spot_bid_price: .013
+front_ip: 10.60.2.105

@@ -2,7 +2,7 @@
 # Install packages needed for harvester & Akara code
 # Package names vary from straight CentOS to Amazon, see conditionals below
 - name: install development tools
-  sudo: yes
+  become: yes
   yum: "pkg={{ item }} state=latest"
   with_items:
     - git
@@ -12,29 +12,30 @@
     - libxml2-devel
     - libffi-devel
     - openssl-devel
+    - python27-boto3
 - name: install amazon specific python libs
   when: ansible_distribution == "Amazon"
-  sudo: yes
+  become: yes
   yum: "pkg={{ item }} state=latest"
   with_items:
     - python27-devel
     - python27-pip
 - name: install centos specific python libs
   when: ansible_distribution == "CentOS"
-  sudo: yes
+  become: yes
   yum: "pkg={{ item }} state=latest"
   with_items:
     - python-devel
     - python-pip
 - name: install virtualenv, amazon
-  sudo: yes
+  become: yes
   pip:
     name: virtualenv
     state: present
     executable: pip-2.7
   when: ansible_distribution == "Amazon"
 - name: install virtualenv, centors
-  sudo: yes
+  become: yes
   pip:
     name: virtualenv
     state: present

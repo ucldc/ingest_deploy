@@ -1,0 +1,81 @@
+---
+- name: put .ansible.cfg to point to local hosts file & roles dir
+  template:
+    src: ansible.cfg.j2
+    dest: "/home/{{ role_user }}/.ansible.cfg"
+- name: put vault_pass_ingest in place
+  template:
+    src: vault_pass_ingest
+    dest: "/home/{{ role_user }}/.vault_pass_ingest"
+    mode: 0400
+- name: touch .ssh/known_hosts
+  file:
+    path: "/home/{{ role_user }}/.ssh/known_hosts"
+    state: touch
+- name: make directories for code
+  file:
+    path: "/home/{{ role_user }}/code/ansible"
+    state: directory
+- name: get ec2 inventory script
+  get_url:
+    url: https://raw.githubusercontent.com/ansible/ansible/devel/contrib/inventory/ec2.py
+    dest: "/home/{{ role_user }}/code/ec2.py"
+    mode: 0755
+- name: copy ec2 inventory ini
+  copy:
+    src: ec2.ini
+    dest: "/home/{{ role_user }}/code/ec2.ini"
+    mode: 0644
+- name: copy common role
+  copy:
+    src: roles/common
+    dest: "/home/{{ role_user }}/code/ansible/roles/"
+- name: copy create worker role
+  copy:
+    src: roles/create_worker_instance
+    dest: "/home/{{ role_user }}/code/ansible/roles/"
+- name: copy create spot worker role
+  copy:
+    src: roles/create_worker_spot_instance
+    dest: "/home/{{ role_user }}/code/ansible/roles/"
+- name: copy worker role
+  copy:
+    src: roles/worker
+    dest: "/home/{{ role_user }}/code/ansible/roles/"
+- name: copy awslogs role
+  copy:
+    src: roles/awslogs
+    dest: "/home/{{ role_user }}/code/ansible/roles/"
+- name: install nightly security role
+  shell: "/home/{{ role_user }}/python2/bin/ansible-galaxy install mredar.nightly_security_update_yum"
+- name: copy all group vars
+  copy:
+    src: group_vars/all
+    dest: "/home/{{ role_user }}/code/ansible/group_vars/"
+- name: copy data_branch group vars
+  copy:
+    src: "group_vars/{{ data_branch }}"
+    dest: "/home/{{ role_user }}/code/ansible/group_vars/"
+- name: copy create worker playbook spot default for stage
+  template:
+    src: create_worker_spot.yml.j2
+    dest: "/home/{{ role_user }}/code/ansible/create_worker.yml"
+  when: data_branch == "stage"
+- name: copy create worker playbook ondemand for stage
+  template:
+    src: create_worker_ondemand.yml.j2
+    dest: "/home/{{ role_user }}/code/ansible/create_worker_ondemand.yml"
+  when: data_branch == "stage"
+- name: copy create worker playbook for production
+  template:
+    src: create_worker_ondemand.yml.j2
+    dest: "/home/{{ role_user }}/code/ansible/create_worker.yml"
+  when: data_branch == "production"
+- name: template provision playbook
+  template:
+    src: provision_worker.yml.j2
+    dest: "/home/{{ role_user }}/code/ansible/provision_worker.yml"
+- name: template terminate playbook
+  template:
+    src: terminate_workers.yml.j2
+    dest: "/home/{{ role_user }}/code/ansible/terminate_workers.yml"

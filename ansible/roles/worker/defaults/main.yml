@@ -36,5 +36,5 @@ email_return_address: ucldc@example.edu
 email_sys_admins: x@example.edu,y@example.edu
 dpla_config_file: "{{ dir_code }}dpla/ingestion/akara.ini"
 
-rq_work_queues: [ 'high{{ name_suffix }}', 'normal{{ name_suffix }}',
+rq_work_queues: ['normal{{ name_suffix }}',
                  'low{{ name_suffix }}']

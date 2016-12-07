@@ -1,0 +1,21 @@
+#jinja2:variable_start_string:'[%' , variable_end_string:'%]', trim_blocks: False
+# Create new worker instance for ingest
+# This will launch into the private VPC and use the private addresses
+# for redis, couchdb and solr
+#
+---
+#- hosts: localhost
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  vars:
+    role: worker
+    dir_role_templates: "roles/{{ role }}/templates"
+    name_suffix: [% name_suffix %]
+    name_env: "ingest{{ name_suffix }}"
+    ondemand: True
+  tags: ondemand
+  roles:
+    - create_worker_instance
+#doesn't work, not yet in ec2.py inventory - include: provision_worker.yml
+

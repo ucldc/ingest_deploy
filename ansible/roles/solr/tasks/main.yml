@@ -2,13 +2,13 @@
 # tasks file for provision_solr
 # already have setup solr from geerlinguy, now customize
 - name: pull ingest solr code to local box
-  sudo: no
+  become: no
   local_action:
     module: git
     repo: "https://github.com/ucldc/solr_api.git"
     dest: "{{ dir_code }}/solr_api"
 - name: copy solr.xml
-  sudo: yes
+  become: yes
   sudo_user: tomcat
   copy:
     src: "{{ dir_code }}/solr_api/solr.xml"
@@ -16,7 +16,7 @@
     force: yes
     backup: yes
 - name: copy zoo.cfg
-  sudo: yes
+  become: yes
   sudo_user: tomcat
   copy:
     src: "{{ dir_code }}/solr_api/zoo.cfg"
@@ -24,7 +24,7 @@
     force: yes
     backup: yes
 - name: make dc-collection core dir
-  sudo: yes
+  become: yes
   sudo_user: tomcat
   file:
     state: directory
@@ -34,7 +34,7 @@
      cp -rp {{ solr_path }}/example/example-schemaless/solr/collection1/conf/* {{ solr_path }}/dc-collection/conf/
   #creates: "{{ solr_path }}/dc-collection/conf/stopwords.txt"
 - name: place core.properties in place
-  sudo: yes
+  become: yes
   sudo_user: tomcat
   copy:
     src: "{{ dir_code }}/solr_api/dc-collection/core.properties"
@@ -42,7 +42,7 @@
     force: yes
     backup: yes
 - name: place schema in place
-  sudo: yes
+  become: yes
   sudo_user: tomcat
   copy:
     src: "{{ dir_code }}/solr_api/dc-collection/conf/schema.xml"
@@ -50,7 +50,7 @@
     force: yes
     backup: yes
 - name: place solrconfig in place
-  sudo: yes
+  become: yes
   sudo_user: tomcat
   template:
     src: "{{ dir_code }}/solr_api/dc-collection/conf/solrconfig.xml.j2"
@@ -59,7 +59,7 @@
     backup: yes
   notify: restart tomcat
 - name: create directory for index tarballs, used later during index push
-  sudo: yes
+  become: yes
   file:
     state: directory
     dest: /opt/indexes
