@@ -1,6 +1,6 @@
 ---
 - hosts: front
-  sudo: yes
+  become: yes
   gather_facts: yes
   vars:
     role: ingest_front

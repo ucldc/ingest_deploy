@@ -3,13 +3,13 @@
 # Remove index as well
 # tasks file for solr5_docker_rm
 - name: remove the running container
-  sudo: yes
+  become: yes
   docker: 
     name: solr
     image: "{{ docker_image_name }}"
     state: absent
 - name: remove the docker image
-  sudo: yes
+  become: yes
   docker_image:
     name: "{{ docker_image_name }}"
     state: absent

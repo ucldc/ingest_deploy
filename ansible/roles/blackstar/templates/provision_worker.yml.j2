@@ -1,0 +1,16 @@
+#jinja2:variable_start_string:'[%' , variable_end_string:'%]'
+---
+- hosts: tag_Name_ingest_[% data_branch %]_worker
+  gather_facts: yes
+  vars:
+    role: worker
+    dir_role_templates: "roles/{{ role }}/templates"
+    name_suffix: [% name_suffix %]
+    name_env: "ingest{{ name_suffix }}"
+    num_hosts: "{{ groups['tag_Name_ingest_[% data_branch %]_worker'] | length }}"
+  pre_tasks:
+    - debug: var=num_hosts
+  roles:
+    - { role: mredar.nightly_security_update_yum, tags: security-up }
+    - { role: common, become: yes }
+    - worker

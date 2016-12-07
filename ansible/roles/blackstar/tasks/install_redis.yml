@@ -1,0 +1,35 @@
+---
+- name: grab redis source
+  get_url:
+    url: http://download.redis.io/redis-stable.tar.gz
+    dest: "/home/{{ role_user }}/tmp"
+# unarchive doesn't work remotely until ansible 2.2
+- name: unpack redis source 
+  shell: tar xvf redis-stable.tar.gz
+  args:
+    chdir: "/home/{{ role_user }}/tmp"
+- name: build redis
+  shell: make
+  args:
+    chdir: "/home/{{ role_user }}/tmp/redis-stable"
+    creates: "/home/{{ role_user }}/tmp/redis-stable/src/redis-cli"
+- name: move redis-cli to bin
+  copy:
+    src: "/home/{{ role_user }}/tmp/redis-stable/src/redis-cli"
+    remote_src: yes
+    dest: "/home/{{ role_user }}/bin/redis-cli"
+    mode: 0500
+- name: remove redis source
+  file:
+    state: absent
+    path: "/home/{{ role_user }}/tmp/redis-stable"
+- name: put script with default server port in plac
+  copy:
+    src: redis.sh
+    dest: "/home/{{ role_user }}/bin/redis.sh"
+    mode: 0500
+- name: make redis.sh runnable as just redis
+  file:
+    dest: "/home/{{ role_user }}/bin/redis"
+    state: link
+    src: "/home/{{ role_user }}/bin/redis.sh"

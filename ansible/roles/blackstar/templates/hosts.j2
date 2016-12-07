@@ -1,0 +1,26 @@
+[local]
+localhost
+
+[{{ data_branch }}:children]
+couchdb-{{ data_branch }}
+solr-{{ data_branch }}
+local
+front-{{ data_branch }}
+
+[solr:children]
+solr-{{ data_branch }}
+
+[couchdb:children]
+couchdb-{{ data_branch }}
+
+[front:children]
+front-{{ data_branch }}
+
+[couchdb-{{ data_branch }}]
+couchdb-{{ data_branch }} ansible_host={{ couchdb_ip }} ansible_user=ec2-user ansible_private_key_file=~/.ssh/ingest-west-2.pem
+
+[solr-{{ data_branch }}]
+solr-{{ data_branch }} ansible_host={{ solr_ip }} ansible_user=ec2-user ansible_private_key_file=~/.ssh/ingest-west-2.pem
+
+[front-{{ data_branch }}]
+front-{{ data_branch }} ansible_host={{ front_ip }} ansible_user=ec2-user ansible_private_key_file=~/.ssh/ingest-west-2.pem

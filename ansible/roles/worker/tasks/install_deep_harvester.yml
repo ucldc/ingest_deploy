@@ -1,0 +1,67 @@
+---
+- name: install required packages
+  become: yes
+  yum: "pkg={{ item }} state=latest"
+  with_items:
+    - ImageMagick
+    - libtiff
+- name: make directory for ffmpeg download
+  file:
+    state: directory
+    path: /tmp/ffmpeg
+# need to use saved static build file, changes on web server...
+- name: Put ffmpeg release 3.2.1 on worker
+  unarchive:
+    remote_src: no
+    src: ffmpeg-release-3.2.1-64bit-static.tar.xz
+    dest: /tmp/ffmpeg/
+- name: put ffmpeg in /usr/bin
+  copy:
+    remote_src: yes
+    src: /tmp/ffmpeg/ffmpeg-3.2.1-64bit-static/ffmpeg
+    dest: /usr/bin/ffmpeg
+    mode: 0755
+  become: yes
+- name: put ffmprobe in /usr/bin
+  copy:
+    remote_src: yes
+    src: /tmp/ffmpeg/ffmpeg-3.2.1-64bit-static/ffprobe
+    dest: /usr/bin/ffprobe
+    mode: 0755
+  become: yes
+- name: pull ucldc-iiif server code for Nuxeo deep harvesting
+  git:
+    repo: https://github.com/mredar/ucldc-iiif
+    dest: "{{ dir_code }}/ucldc-iiif"
+- name: install ucldc-iiif
+  command: "{{ dir_venv }}/bin/python {{ dir_code }}/ucldc-iiif/setup.py install"
+  args:
+    chdir: "{{ dir_code }}/ucldc-iiif"
+- name: pull nuxeo_calisphere code for Nuxeo deep harvesting
+  git:
+    repo: https://github.com/mredar/nuxeo-calisphere.git
+    dest: "{{ dir_code }}/nuxeo-calisphere"
+    update: yes
+# should copy to owned github repo as per license
+- name: make workdir
+  file:
+    state: directory
+    path: /tmp/kakadu-src
+- name: unpack Kakadu to /tmp
+  unarchive:
+    remote_src: yes
+    src: http://kakadusoftware.com/wp-content/uploads/2014/06/KDU78_Demo_Apps_for_Linux-x86-64_160226.zip
+    dest: /tmp/kakadu-src
+- name: Install (copy) Kakadu executables
+  shell: cp -p /tmp/kakadu-src/KDU78_Demo_Apps_for_Linux-x86-64_160226/kdu_* /usr/bin/
+  become: yes
+- name: Copy Kakadu library object file to /usr/lib64
+  copy:
+    remote_src: yes
+    dest: /usr/lib64/libkdu_v78R.so
+    src: /tmp/kakadu-src/KDU78_Demo_Apps_for_Linux-x86-64_160226/libkdu_v78R.so
+  become: yes
+- name: install deep harvesting code
+  command: "{{ dir_venv }}/bin/python {{ dir_code }}/nuxeo-calisphere/setup.py install"
+  args:
+    chdir: "{{ dir_code }}/nuxeo-calisphere"
