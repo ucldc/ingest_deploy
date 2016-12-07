@@ -40,7 +40,6 @@
 - name: pull nuxeo_calisphere code for Nuxeo deep harvesting
   git:
     repo: https://github.com/mredar/nuxeo-calisphere.git
-    version: s3-reports
     dest: "{{ dir_code }}/nuxeo-calisphere"
     update: yes
 # should copy to owned github repo as per license
