@@ -18,6 +18,7 @@
     - delete_couchdb_id_list.py
     - delete_solr_collection.sh
     - queue_image_harvest.py
+    - queue_harvest.py
     - queue_sync_couchdb_collection.py
     - sync_couch_collection_to_solr.py
 - name: copy index grab to s3 playbook
