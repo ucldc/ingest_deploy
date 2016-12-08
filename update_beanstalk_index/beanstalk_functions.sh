@@ -1,4 +1,5 @@
 trap "echo ========killed========" SIGINT SIGTERM
+# TODO: make this post to SNS?
 #trap "echo ========exited========" EXIT
 
 function cname_for_env()
@@ -47,7 +48,9 @@ function s3_file_exists()
     exitcode=0
     aws s3 ls "${s3_index_path}" > /dev/null || exitcode=$?
     if [ ${exitcode} -ne 0 ]; then
-        echo -e "\033[1;31m S3 index file does not exist: ${s3_index_path} \033[0m"
+		subject="Update Beanstalk index for ${env_name} failed"
+		message="S3 index file does not exist: ${s3_index_path}"
+		echo -e "\033[1;31m ${message}\033[0m"
         exit 11
     else
 		# aws s3 ls works on partial paths, need to check that result is
@@ -65,7 +68,9 @@ function s3_file_exists()
 		done
 		built_path="${parent_path}/${fname}"
 		if [ ${s3_index_path} != ${built_path} ]; then
-			echo -e "\033[1;31m THIS DOES NOT SEEM VALID: ${s3_index_path} \033[0m"
+			subject="Update Beanstalk index for ${env_name} failed"
+			message="THIS DOES NOT SEEM VALID: ${s3_index_path}"
+			echo -e "\033[1;31m ${message}\033[0m"
 			exit
 		fi
         echo -e "\033[1;36m S3 index file exists, proceeding: ${s3_index_path} \033[0m"
@@ -84,6 +89,20 @@ function poll_until_ok()
     done
 }
 
+function post_sns_message()
+# args: post_sns_message(env_name, env_cname, subject, message)
+#	subject: here doc subject (no double quotes please)
+#	message: here doc message (no double quotes please)
+{
+	set -u
+	subject="$1"
+	message="$2"
+	aws sns publish \
+		--topic-arn "arn:aws:sns:us-west-2:563907706919:ucldc-harvesting" \
+		--subject "${subject}" \
+		--message "${message}"
+}
+
 function update_index()
 {
 # Update the index running on the given environment with the new index S3 sub-path
@@ -92,10 +111,13 @@ function update_index()
     s3_index_path=$2
 
     echo "env_name=${env_name}"
-    #check that this env is NOT pointed at the prodcution index
+    # check that this env is NOT pointed at the production index
     env_cname=$(cname_for_env "${env_name}")
     if [[ ${env_cname} == ERROR* ]]; then
-        echo -e "\033[1;31m CNAME is in use: ${env_cname}\033[0m"
+		subject="Update Beanstalk index for ${env_name} failed"
+		message="CNAME is in use: ${env_cname}"
+		echo -e "\033[1;31m ${message}\033[0m"
+		post_sns_message "${subject}" "${message}"
         exit 9
     fi
     if [ "$env_cname" == "ucldc-solr.us-west-2.elasticbeanstalk.com" ]; then
@@ -107,6 +129,10 @@ function update_index()
         echo -e "\033[1;31m !!!!!!!!!! EXITING !!!!!! \033[0m"
         echo -e "\033[1;31m!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\033[0m"
         echo
+		subject="Update Beanstalk index for ${env_name} failed"
+		message="THIS ENVIRONMENT \"${env_name}\" is production server.
+THE CNAME ucldc-solr.us-west-2.elasticbeanstalk.com is the URL for the Calisphere index and updating this environment will cause an outage on Calisphere"
+		post_sns_message "${subject}" "${message}"
         exit 111
     fi
 
@@ -116,7 +142,9 @@ function update_index()
     resp_setenv=$(eb setenv -e "${env_name}" S3_INDEX_PATH="${s3_index_path}")
     # if fails, resp starts with ERROR
     if [[ ${resp_setenv} == ERROR* ]]; then
-        echo -e "\033[1;31m Failed to setenv : ${resp_setenv}\033[0m"
+		subject="Update Beanstalk index for ${env_name} failed"
+		message="Failed to setenv : ${resp_setenv}"
+		echo -e "\033[1;31m ${message}\033[0m"
         exit 9
     fi
     poll_until_ok "${env_name}"
@@ -128,4 +156,7 @@ function update_index()
     aws elasticbeanstalk rebuild-environment --environment-name "${env_name}"
     
     poll_until_ok "${env_name}"
+	subject="Updated index : ${env_name}"
+	message="Solr index for ${env_name} at ${env_cname} updated."
+	post_sns_message "${subject}" "${message}"
 }
