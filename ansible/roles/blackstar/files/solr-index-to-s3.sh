@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# RUN with snsatnow
+
 if [[ -n "$DEBUG" ]]; then 
   set -x
 fi
@@ -36,7 +38,4 @@ dt=`date '+%Y%m%d_%H%M%S'`
 
 stdbuf -i0 -o0 -e0 ansible-playbook \
     ~/bin/grab-solr-index-playbook.yml \
-    --extra-vars="server_role=production" --limit="solr-production" \
-    2>&1 | tee ~/log/solr-index-to-s3-${dt}.out &
-
-disown
+    --extra-vars="server_role=production" --limit="solr-production"
