@@ -2,6 +2,9 @@ trap "echo ========killed========" SIGINT SIGTERM
 # TODO: make this post to SNS?
 #trap "echo ========exited========" EXIT
 
+my_dir="$(dirname "$0")"
+source "${my_dir}/post_sns_message.sh"
+
 function cname_for_env()
 {
     set -u
@@ -87,20 +90,6 @@ function poll_until_ok()
 	   status=$(aws elasticbeanstalk describe-environment-health --environment-name "${env_name}" --attribute-names HealthStatus | jq '.HealthStatus')
        echo "STATUS:$status"
     done
-}
-
-function post_sns_message()
-# args: post_sns_message(env_name, env_cname, subject, message)
-#	subject: here doc subject (no double quotes please)
-#	message: here doc message (no double quotes please)
-{
-	set -u
-	subject="$1"
-	message="$2"
-	aws sns publish \
-		--topic-arn "arn:aws:sns:us-west-2:563907706919:ucldc-harvesting" \
-		--subject "${subject}" \
-		--message "${message}"
 }
 
 function update_index()
