@@ -68,6 +68,10 @@ ERROR OUTPUT: tail $ERR"
 		fi
 	else
 		msg="Completed $@"
+		msg+=$'\n'
+		msg+="STANDARD OUTPUT: tail $OUT"
+		msg+=$'\n'
+		msg+=`tail "$OUT"`
 		subject="Completed $@"
 fi
 
