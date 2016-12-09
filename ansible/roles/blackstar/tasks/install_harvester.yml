@@ -29,7 +29,7 @@
     src: "/home/{{ role_user }}/tmp/harvester/harvester/{{ item }}"
   with_items:
     - grab-solr-index-playbook.yml
-  when: data_branch == "produciton"
+  when: data_branch == "production"
 - name: install redis delete into stage env
   copy:
     remote_src: yes
