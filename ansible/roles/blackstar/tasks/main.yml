@@ -123,6 +123,21 @@
   include: install_beanstalk_scripts.yml
   when: data_branch == "production"
   tags: eb
+- name: install post_sns_message.sh source
+  copy:
+    src: ../update_beanstalk_index/post_sns_message.sh
+    dest: ~/bin/
+    mode: 0700
+- name: install sns_wrapper.sh run script
+  copy:
+    src: ../update_beanstalk_index/sns_wrapper.sh
+    dest: ~/bin/
+    mode: 0700
+- name: install snsatnow backgrounding script
+  copy:
+    src: ../update_beanstalk_index/snsatnow
+    dest: ~/bin/
+    mode: 0700
 - name: remove temporary working directory
   file:
     path: "/home/{{ role_user}}/tmp"
