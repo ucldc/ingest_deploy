@@ -5,6 +5,8 @@ trap "echo ========killed========" SIGINT SIGTERM
 my_dir="$(dirname "$0")"
 source "${my_dir}/post_sns_message.sh"
 
+function errecho(){ >&2 echo "$@"; }
+
 function cname_for_env()
 {
     set -u
@@ -53,7 +55,7 @@ function s3_file_exists()
     if [ ${exitcode} -ne 0 ]; then
 		subject="Update Beanstalk index for ${env_name} failed"
 		message="S3 index file does not exist: ${s3_index_path}"
-		echo -e "\033[1;31m ${message}\033[0m"
+		(errecho -e "\033[1;31m ${message}\033[0m")
         exit 11
     else
 		# aws s3 ls works on partial paths, need to check that result is
@@ -73,8 +75,8 @@ function s3_file_exists()
 		if [ ${s3_index_path} != ${built_path} ]; then
 			subject="Update Beanstalk index for ${env_name} failed"
 			message="THIS DOES NOT SEEM VALID: ${s3_index_path}"
-			echo -e "\033[1;31m ${message}\033[0m"
-			exit
+			(errecho -e "\033[1;31m ${message}\033[0m")
+			exit 13
 		fi
         echo -e "\033[1;36m S3 index file exists, proceeding: ${s3_index_path} \033[0m"
     fi
@@ -105,19 +107,19 @@ function update_index()
     if [[ ${env_cname} == ERROR* ]]; then
 		subject="Update Beanstalk index for ${env_name} failed"
 		message="CNAME is in use: ${env_cname}"
-		echo -e "\033[1;31m ${message}\033[0m"
+		(errecho -e "\033[1;31m ${message}\033[0m")
 		post_sns_message "${subject}" "${message}"
         exit 9
     fi
     if [ "$env_cname" == "ucldc-solr.us-west-2.elasticbeanstalk.com" ]; then
-        echo
-        echo -e "\033[38;5;216m!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\033[0m"
-        echo -e "\033[1;31m !!!!!!!!!! MASTER ENV ${env_name} !!!!!! \033[0m"
-        echo -e "\033[1;31m !!!!!!!!!! URL ENV ${env_cname} !!!!!! \033[0m"
-        echo -e "\033[1;31m !!!!!!!!!! BRINGING THIS DOWN WILL BREAK CALISPHERE !!!!!! \033[0m"
-        echo -e "\033[1;31m !!!!!!!!!! EXITING !!!!!! \033[0m"
+        (errecho)
+        (errecho -e "\033[38;5;216m!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\033[0m")
+        (errecho -e "\033[1;31m !!!!!!!!!! MASTER ENV ${env_name} !!!!!!  \033[0m")
+        (errecho -e "\033[1;31m !!!!!!!!!! URL ENV ${env_cname} !!!!!!  \033[0m")
+        (errecho -e "\033[1;31m !!!!!!!!!! BRINGING THIS DOWN WILL BREAK CALISPHERE !!!!!! \033[0m")
+        (errecho -e "\033[1;31m !!!!!!!!!! EXITING !!!!!! \033[0m")
         echo -e "\033[1;31m!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\033[0m"
-        echo
+        (errecho)
 		subject="Update Beanstalk index for ${env_name} failed"
 		message="THIS ENVIRONMENT \"${env_name}\" is production server.
 THE CNAME ucldc-solr.us-west-2.elasticbeanstalk.com is the URL for the Calisphere index and updating this environment will cause an outage on Calisphere"
@@ -133,7 +135,7 @@ THE CNAME ucldc-solr.us-west-2.elasticbeanstalk.com is the URL for the Calispher
     if [[ ${resp_setenv} == ERROR* ]]; then
 		subject="Update Beanstalk index for ${env_name} failed"
 		message="Failed to setenv : ${resp_setenv}"
-		echo -e "\033[1;31m ${message}\033[0m"
+		(errecho -e "\033[1;31m ${message}\033[0m")
         exit 9
     fi
     poll_until_ok "${env_name}"
