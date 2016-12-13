@@ -4,6 +4,7 @@
 # Copyright 2007 Chuck Houpt
 # Public Domain CC0: http://creativecommons.org/publicdomain/zero/1.0/
 # modified by BCT 2008 to use voro logging scheme, tweaked in 2013 for appstrap
+# modified by MER 2016 to report via Amazon SNS Topic
 
 if [[ -n "$DEBUG" ]]; then 
   set -x
