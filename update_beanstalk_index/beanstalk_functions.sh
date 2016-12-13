@@ -26,7 +26,7 @@ function check_api_url()
     # check the search url, should be working
     set +o errexit
     echo -e "CHECK API URL: \e[36m ${url_api} \e[0m"
-    curl --insecure --fail --header "X-Authentication-Token: ${SOLR_API_KEY}" "${url_api}" > /dev/null
+    curl --silent --insecure --fail --header "X-Authentication-Token: ${SOLR_API_KEY}" "${url_api}" > /dev/null
     last_exit=$?
     if [ $last_exit -ne 0 ]; then
         echo
@@ -37,7 +37,7 @@ function check_api_url()
         echo -e "\033[1;31m Check ${url_api} before swapping \033[0m"
         echo -e "\033[1;31m wget --no-check-certificate --header \"X-Authentication-Token: <api_key>\"  ${url_api} before swapping \033[0m"
     else
-		numFound=$(curl --insecure --fail --header "X-Authentication-Token: ${SOLR_API_KEY}" "${url_api}" | jq '.response.numFound')
+		numFound=$(curl --silent --insecure --fail --header "X-Authentication-Token: ${SOLR_API_KEY}" "${url_api}" | jq '.response.numFound')
         echo -e "\033[94m OK - ${env_name} API - \033[35m${numFound} items\033[0m"
     fi
 }
