@@ -16,11 +16,13 @@ set -o errexit   ## set -e : exit the script if any statement returns a non-true
 logname=`basename $1`
 TIMESTAMP=`date +%Y%m%d_%H%M%S`
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" # http://stackoverflow.com/questions/59895
-LOGDIR=$DIR/log
+LOGDIR=$HOME/log
 mkdir -p $LOGDIR
 OUT=$LOGDIR/${logname}.$TIMESTAMP.out
 ERR=$LOGDIR/${logname}.$TIMESTAMP.err
 TRACE=$LOGDIR/${logname}.$TIMESTAMP.trc
+
+
 
 source "${DIR}/post_sns_message.sh"
 
@@ -31,6 +33,9 @@ renice -n 10 $$ > /dev/null
 set +e
 "$@" >$OUT 2>$TRACE
 RESULT=$?
+
+wait
+
 set -e
 
 if [ -e /usr/xpg4/bin/grep ]; then # solaris
@@ -75,7 +80,7 @@ ERROR OUTPUT: tail $ERR"
 		subject="Completed $@"
 fi
 
-post_sns_message "${subject}" "${msg}"
+post_sns_message "${subject:0:99}" "${msg}"
 
 # remove empty log files
 # : is a null command
