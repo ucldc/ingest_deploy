@@ -21,12 +21,6 @@
     - queue_harvest.py
     - queue_sync_couchdb_collection.py
     - sync_couch_collection_to_solr.py
-- name: copy solr_updater.py to bin
-  copy:
-    remote_src: yes
-    mode: u+rx
-    dest: "/home/{{ role_user }}/bin/solr_updater.py"
-    src: "/home/{{ role_user }}/tmp/harvester/harvester/solr_updater.py"
 - name: copy index grab to s3 playbook
   copy:
     remote_src: yes
