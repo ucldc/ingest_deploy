@@ -81,7 +81,7 @@ ERROR OUTPUT: tail $ERR"
 		subject="Completed $@"
 fi
 
-post_sns_message "${subject:0:99}" "${msg}"
+post_sns_message "${subject:0:64}" "${msg}"
 
 # remove empty log files
 # : is a null command
