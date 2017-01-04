@@ -75,6 +75,7 @@ UCLDC Harvesting operations guide
 [Updating Elastic Beanstalk with candidate Solr index](#beanstalk)
 
 [Additional resources](#addtl)
+* [Running long processes](#longprocess)
 * [Removing collections/items](#removals)
 * [Picking up new harvester or ingest code](#newcode)
 * [Recreating the Solr Index from scratch](#solrscratch)
@@ -189,11 +190,11 @@ The following sections describe the process for harvesting collections through t
 #### 3.1. Create <a name="createstageworker">stage workers</a>
 
 * Log onto blackstar & sudo to hrv-stg
-* To create some worker machines (bare ec2 instances), run: `ansible-playbook ~/code/ansible/create_worker.yml --extra-vars="count=3"`
+* To create some worker machines (bare ec2 instances), run: `snsatnow ansible-playbook ~/code/ansible/create_worker.yml --extra-vars="count=3"`
 
 The `count=##` parameter will set the number of instances to create. For harvesting one small collection you can set this to `count=1`. To re-harvest all collections, you can set this to `count=20`. For anything in between, use your judgment.
 
-You should see output in the console as the playbook runs through its tasks. At the end, it will give you a status line. Look for `fail=0` to verify that everything ran OK.
+With the `snsatnow` wrapper, the results will be messaged to the dsc_harvesting_report Slack channel when the instances are created.
 
 The default instance creation will attempt to get instances from the "spot" market so that it is cheaper to run the workers. Sometimes the spot market price can get very high and the spot instances won't work. You can check the pricing by issuing the following command on blackstar, hrv-stg user:
 
@@ -204,7 +205,7 @@ aws ec2 describe-spot-price-history --instance-types m3.large --availability-zon
 Our spot bid price is set to .133 which is the current (20160803) on demand price. If the history of spot prices is greater than that or if you see large fluctuations in the pricing, you can request an on-demand instance instead by adding "ondemand=true" to the extra-vars, e.g. :
 
 ```sh
-ansible-playbook ~/code/ansible/create_worker.yml --extra-vars="count=3 ondemand=True"
+snsatnow ansible-playbook ~/code/ansible/create_worker.yml --extra-vars="count=3 ondemand=True"
 ```
 
 #### 3.2. <a name="harvestprovisionstg">Provision stage workers to act on harvesting</a>
@@ -212,7 +213,7 @@ ansible-playbook ~/code/ansible/create_worker.yml --extra-vars="count=3 ondemand
 Once this is done and the stage worker instances are in a state of "running", you'll need to provision the workers by installing required software, configurations and start running Akara and the worker processes that listen on the queues specified:
 
 * Log onto blackstar & sudo su - hrv-stg
-* To provision the workers, run: `ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker.yml`
+* To provision the workers, run: `snsatnow ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker.yml`
 * Wait for the provisioning to finish; this can take a while, 5-10 minutes is not
 unusual. If the provisioning process stalls, use `ctrl-C` to end the process then re-do the ansible command.
 * Check the status of the the harvesting process through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>.  You should now see the provisioned workers listed, and acting on the jobs in the queue. You will be able to see the workers running jobs (indicated by a "play" triangle icon) and then finishing (indicated by a "pause" icon).
@@ -221,7 +222,7 @@ unusual. If the provisioning process stalls, use `ctrl-C` to end the process the
 `--limit=<ip range>` eg. --limit=10.60.22.\* or `--limit=<ip>,<ip>` eg. --limit=10.60.29.109,10.60.18.34 to limit the provisioning to the IPs of the newly-provisioned machines (and so you don't reprovision 
 a currently running machine). Otherwise rerunning the provisioning will put the 
 current running workers in a bad state, and you will then have to log on to the 
-worker and restart the worker process or terminate the machine.  Example of full command: `ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker.yml --limit=10.60.29.*`
+worker and restart the worker process or terminate the machine.  Example of full command: `snsatnow ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker.yml --limit=10.60.29.*`
 
 AWS assigns unique subnets to the groups of workers you start, so in general,
 different generations of machines will be distinguished by the different C class
@@ -426,19 +427,19 @@ Now select "Queue Sync to production CouchDB for collection" from the action on 
 
 Production workers handle the syncing of the couchdb instances, so usually will not be running.
 * Log onto blackstar and sudo su - hrv-prd
-* To create some worker machines (bare ec2 instances), run: `ansible-playbook ~/code/ansible/create_worker.yml --extra-vars="count=1"`
+* To create some worker machines (bare ec2 instances), run: `snsatnow ansible-playbook ~/code/ansible/create_worker.yml --extra-vars="count=1"`
 
 The `count=##` parameter will set the number of instances to create. For harvesting one small collection you can set this to `count=1`. To re-harvest all collections, you can set this to `count=20`. For anything in between, use your judgment.
 
-You should see output in the console as the playbook runs through its tasks. At the end, it will give you a status line. Look for `fail=0` to verify that everything ran OK.
+Again, with the `snsatnow` command, the result of this will be messaged to dsc_harvesting_report on Slack.
 
 #### 2.2. <a name="provisionprd">Provision production workers to act on sync</a>
 
 Once this is done and the production worker instances are in a state of "running", you'll need to provision the workers by installing required software, configurations and start running Akara and the worker processes that listen on the queues specified:
 
 * Log onto blackstar & sudo su - hrv-prd
-* To provision the workers, run: `ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker.yml`
-* Wait for the provisioning to finish; this can take a while, 5-10 minutes is not unusual.
+* To provision the workers, run: `snsatnow ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker.yml`
+* Wait for the provisioning to finish; this can take a while, 15-20 minutes is not unusual.
 
 **NOTE:** if you already have provisioned worker machines running jobs, use the
 --limit=<ip range> eg. --limit=10.60.22.\* to make sure you don't reprovision 
@@ -494,6 +495,14 @@ TODO: add how to run the QA spreadsheet generating code
 
 <a name="addtl">Additional resources</a> 
 --------------------------
+
+###<a name="longprocess">Running long processes</a>
+
+The `snsatnow` wrapper script may be used to run *any* long running process. It will background and detach the process so you can log out. When the process finishes or fails, a message will be sent to the dsc_harvesting_repot Slack channel.
+To use the script, just add it to your script invocation
+```shell
+snsatnow <cmd> --<options> <arg1> <arg2>....
+```
 
 ###<a name="removals">Removing collections/items from publication</a>
 
