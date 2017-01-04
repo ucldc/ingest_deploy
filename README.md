@@ -75,6 +75,7 @@ UCLDC Harvesting operations guide
 [Updating Elastic Beanstalk with candidate Solr index](#beanstalk)
 
 [Additional resources](#addtl)
+* [Running long processes](#longprocess)
 * [Removing collections/items](#removals)
 * [Picking up new harvester or ingest code](#newcode)
 * [Recreating the Solr Index from scratch](#solrscratch)
@@ -494,6 +495,14 @@ TODO: add how to run the QA spreadsheet generating code
 
 <a name="addtl">Additional resources</a> 
 --------------------------
+
+###<a name="longprocess">Running long processes</a>
+
+The `snsatnow` wrapper script may be used to run *any* long running process. It will background and detach the process so you can log out. When the process finishes or fails, a message will be sent to the dsc_harvesting_repot Slack channel.
+To use the script, just add it to your script invocation
+```shell
+snsatnow <cmd> --<options> <arg1> <arg2>....
+```
 
 ###<a name="removals">Removing collections/items from publication</a>
 

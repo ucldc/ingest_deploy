@@ -31,11 +31,11 @@ https://harvest-prd.cdlib.org/solr/#/~cores/dc-collection
 To push a new index to S3: 
 
 * Log into blackstar and sudo su - hrv-prd
-* Run `solr-index-to-s3.sh`. The DATA_BRANCH is set to production in this environment.  This will push the last build Solr index to S3 at the location. *This process will take a while*. (It takes some time for the new index to be packaged and zipped on S3).
+* Run `snsatnow solr-index-to-s3.sh`. The DATA_BRANCH is set to production in this environment.  This will push the last build Solr index to S3 at the location. *This process will take a while, but with the snsatnow wrapper it will send a message to dsc_harvesting_report Slack channel when finished*. (It takes some time for the new index to be packaged and zipped on S3).
 
     solr.ucldc/indexes//YYYY/MM/solr-index.YYYY-MM-DD-HH_MM_SS.tar.bz2
 
-* Look at the log at `/var/local/solr-update/log/solr-index-to-s3-YYYYMMDD_HHMMSS.out` (e.g., `ls -lrth /var/local/solr-update/log/` to list all logs). Find the `s3_file_path` reports it will be something like: `"s3_file_path": "s3://solr.ucldc/indexes/production/2016/06/solr-index.2016-06-21-19_53_40.tar.bz2"`. 
+* Look at the message sent to dsc_harvesting_report Slack channel. Find the `s3_file_path` reports it will be something like: `"s3_file_path": "s3://solr.ucldc/indexes/production/2016/06/solr-index.2016-06-21-19_53_40.tar.bz2"`. 
 * This is the value to pass into the update environment command
 
 ## Steps 3-5
@@ -48,9 +48,10 @@ eb list
 
 * Now run the following, where the `<new index path>` is the value from Step #1 (e.g., s3://solr.ucldc/indexes/production/2016/06/solr-index.2016-06-21-19_53_40.tar.bz2). *This process will take a while*.  Again, by convention, we name the existing environment (`<old env name>`) `ucldc-solr`.  By convention, we have been naming the new environment (`<new env name>`) `ucldc-solr-clone`.   
 ```shell
-clone-with-new-s3-index.sh <old env name> <new env name> <new index path>
+snsatnow clone-with-new-s3-index.sh <old env name> <new env name> <new index path>
 ```
 
+* It will send a message to dsc_harvesting_report when finished
 * When it finishes, you should be able to run the following, and see that INDEX_PATH is updated to the value passed to the script.
 ```shell
 eb printenv <new env name>
