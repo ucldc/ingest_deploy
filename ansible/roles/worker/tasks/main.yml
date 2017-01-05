@@ -81,13 +81,13 @@
 - name: put .boto in place for strict cert checking fix
 # https://github.com/boto/boto/issues/2836
   copy: src=dot_boto dest=~/.boto mode=600
+- name: install Nuxeo deep harvesting code
+  include: install_deep_harvester.yml
+  when: DATA_BRANCH == 'stage'
 - name: install harvester code
   command: "{{ dir_venv }}/bin/python {{ dir_code }}/harvester/setup.py install"
   args:
     chdir: "{{ dir_code }}/harvester"
-- name: install Nuxeo deep harvesting code
-  include: install_deep_harvester.yml
-  when: DATA_BRANCH == 'stage'
 ## configure solr-index-to-s3
 - name: create run_dir_solr run dir
   become: yes
@@ -138,7 +138,6 @@
     state: directory
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
 - name: setup akara run dir
   command: "{{ dir_venv}}/bin/akara -f {{ dir_code }}/dpla/ingestion/akara.conf setup"
   args:
@@ -157,7 +156,6 @@
     path: "{{ dir_run_rqworker }}"
     state: directory
     owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
 - name: make profiles dir
   file:
