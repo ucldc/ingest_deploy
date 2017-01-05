@@ -57,7 +57,7 @@ fi
 
 if [ $RESULT -ne 0 -o -s "$ERR" ]
 then
-	subject="Failed: $@"
+	subject="${DATA_BRANCH}: Failed: $@"
 	msg="Problem with command run of command \"$@\"
 RESULT CODE: $RESULT
 ERROR OUTPUT: tail $ERR"
@@ -78,7 +78,7 @@ ERROR OUTPUT: tail $ERR"
 		msg+="STANDARD OUTPUT: tail $OUT"
 		msg+=$'\n'
 		msg+=`tail "$OUT"`
-		subject="Completed $@"
+		subject="${DATA_BRANCH}: Completed $@"
 fi
 
 post_sns_message "${subject:0:64}" "${msg}"
