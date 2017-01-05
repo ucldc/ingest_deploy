@@ -138,7 +138,6 @@
     state: directory
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
 - name: setup akara run dir
   command: "{{ dir_venv}}/bin/akara -f {{ dir_code }}/dpla/ingestion/akara.conf setup"
   args:
@@ -157,7 +156,6 @@
     path: "{{ dir_run_rqworker }}"
     state: directory
     owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
 - name: make profiles dir
   file:
