@@ -190,7 +190,7 @@ The following sections describe the process for harvesting collections through t
 #### 3.1. Create <a name="createstageworker">stage workers</a>
 
 * Log onto blackstar & sudo to hrv-stg
-* To create some worker machines (bare ec2 instances), run: `snsatnow ansible-playbook ~/code/ansible/create_worker.yml --extra-vars="count=3"`
+* To create some worker machines (bare ec2 instances), run: `snsatnow ansible-playbook ~/code/ansible/create_worker.yml --extra-vars=\"count=3\"`
 
 The `count=##` parameter will set the number of instances to create. For harvesting one small collection you can set this to `count=1`. To re-harvest all collections, you can set this to `count=20`. For anything in between, use your judgment.
 
@@ -202,10 +202,10 @@ The default instance creation will attempt to get instances from the "spot" mark
 aws ec2 describe-spot-price-history --instance-types m3.large --availability-zone us-west-2c --product-description "Linux/UNIX (Amazon VPC)" --max-items 2
 ```
 
-Our spot bid price is set to .133 which is the current (20160803) on demand price. If the history of spot prices is greater than that or if you see large fluctuations in the pricing, you can request an on-demand instance instead by adding "ondemand=true" to the extra-vars, e.g. :
+Our spot bid price is set to .133 which is the current (20160803) on demand price. If the history of spot prices is greater than that or if you see large fluctuations in the pricing, you can request an on-demand instance instead by adding "ondemand=true" to the extra-vars, e.g. : (NOTE: the backslash \ is required)
 
 ```sh
-snsatnow ansible-playbook ~/code/ansible/create_worker.yml --extra-vars="count=3 ondemand=True"
+snsatnow ansible-playbook ~/code/ansible/create_worker.yml --extra-vars=\"count=3 ondemand=True\"
 ```
 
 #### 3.2. <a name="harvestprovisionstg">Provision stage workers to act on harvesting</a>
@@ -499,10 +499,12 @@ TODO: add how to run the QA spreadsheet generating code
 ###<a name="longprocess">Running long processes</a>
 
 The `snsatnow` wrapper script may be used to run *any* long running process. It will background and detach the process so you can log out. When the process finishes or fails, a message will be sent to the dsc_harvesting_repot Slack channel.
+
 To use the script, just add it to your script invocation
 ```shell
 snsatnow <cmd> --<options> <arg1> <arg2>....
 ```
+NOTE: if your command has arguments that are surrounded by quotes (") you'll need to escape those by putting a backslash (\) in front of them.
 
 ###<a name="removals">Removing collections/items from publication</a>
 
