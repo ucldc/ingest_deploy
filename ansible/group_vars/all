@@ -1,5 +1,5 @@
 ---
-image_hvm: ami-c229c0a2
+image_hvm: ami-1e299d7e
 tag_project: "{{ project | default('ucldc') }}"
 tag_subproject: "{{ subproject | default('ingest') }}"
 project_name: "{{ tag_project }}-{{ tag_subproject }}"
@@ -7,4 +7,4 @@ name_env_suffix: "{{ name_suffix | default('') }}"
 name_env: "{{ tag_subproject }}{{ name_env_suffix }}"
 prod_env: "{{ production | default(False) | bool }}"
 log_datetime_format: "%Y%m%d %H:%M:%S"
-worker_instance_type: m3.large 
+worker_instance_type: m4.large 
