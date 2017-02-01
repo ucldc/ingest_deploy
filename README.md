@@ -48,7 +48,7 @@ UCLDC Harvesting operations guide
 * [1. New harvest or re-harvest?](#harvestnew)
 * [2. Create a harvest job in Registry](#harvestregistry)
 * [3. Harvest the collection through to CouchDB stage](#harvestcdbstg)
-* [3.1. Create stage workers](#createstageworker)
+* [3.1. Start or Create stage workers](#createstageworker)
 * [3.2. Provision stage workers to act on harvesting](#harvestprovisionstg)
 * [3.3. Verify that the harvests are complete in CouchDB stage](#harvestcdbcomplete)
 * [4. QA check collection in CouchDB stage](#harvestcdbqa)
@@ -58,7 +58,7 @@ UCLDC Harvesting operations guide
 * [6. Generate and review QA report for Solr stage index](#solrqa)
 * [7. QA check media.json](#mediajson)
 * [8. QA check in Calisphere stage UI](#calisphereqa)
-* [9. Terminate stage worker instances](#terminatestg)
+* [9. Stop or Terminate stage worker instances](#terminatestg)
 
 [Moving a harvest to production](#harvestprod)
 * [1. Create a sync job in the Registry](#syncregistry)
@@ -187,9 +187,10 @@ You can now begin to monitor the harvesting process through the <a href="https:/
 
 The following sections describe the process for harvesting collections through to CouchDB stage. This is done via the use of "transient" <a href="http://python-rq.org/">Redis Queue</a>-managed (RQ) worker instances, which are created as needed and then deleted after use. Once the workers have been created and provisioned, they will automatically look for jobs in the queue and run the full harvester code for those jobs. The end result is that CouchDB is updated.
 
-#### 3.1. Create <a name="createstageworker">stage workers</a>
+#### 3.1. Start or Create <a name="createstageworker">stage workers</a>
 
 * Log onto blackstar & sudo to hrv-stg
+* See if any "stopped" worker instances are present. Run `get_worker_info.sh` If you see an instance with state "stopped" it can be started much more easily than creating new ones: `snsatnow ansible-playbook -i ~/code/ec2.py ~/code/ansible/start_workers.yml` *If this works, you do not need to create workers unless you have a lot of jobs to run*
 * To create some worker machines (bare ec2 instances), run: `snsatnow ansible-playbook ~/code/ansible/create_worker.yml --extra-vars=\"count=3\"`
 
 The `count=##` parameter will set the number of instances to create. For harvesting one small collection you can set this to `count=1`. To re-harvest all collections, you can set this to `count=20`. For anything in between, use your judgment.
@@ -202,13 +203,15 @@ The default instance creation will attempt to get instances from the "spot" mark
 aws ec2 describe-spot-price-history --instance-types m3.large --availability-zone us-west-2c --product-description "Linux/UNIX (Amazon VPC)" --max-items 2
 ```
 
-Our spot bid price is set to .133 which is the current (20160803) on demand price. If the history of spot prices is greater than that or if you see large fluctuations in the pricing, you can request an on-demand instance instead by adding "ondemand=true" to the extra-vars, e.g. : (NOTE: the backslash \ is required)
+Our spot bid price is set to .133 which is the current (20160803) on demand price. If the history of spot prices is greater than that or if you see large fluctuations in the pricing, you can request an on-demand instance instead by running the ondemand playbook : (NOTE: the backslash \ is required)
 
 ```sh
-snsatnow ansible-playbook ~/code/ansible/create_worker.yml --extra-vars=\"count=3 ondemand=True\"
+snsatnow ansible-playbook ~/code/ansible/create_worker_ondemand.yml --extra-vars=\"count=3\"
 ```
 
 #### 3.2. <a name="harvestprovisionstg">Provision stage workers to act on harvesting</a>
+
+*If you restarted a stopped instance, you don't need to do the steps below*
 
 Once this is done and the stage worker instances are in a state of "running", you'll need to provision the workers by installing required software, configurations and start running Akara and the worker processes that listen on the queues specified:
 
@@ -246,6 +249,13 @@ To see the current IPs for the workers:
 ```sh
 get_worker_ips.sh
 ```
+To see the current info for the workers:
+
+```sh
+get_worker_info.sh
+```
+
+This will report the running or not state, the IPs & the size of workers.
 
 You can then see the state of the instance by using jq to filter on the IP:
 
@@ -400,14 +410,22 @@ To immediately view results, you can QA the Solr stage index on your local works
 In the run.bat configuration file, point UCLDC_SOLR_URL to `https://harvest-stg.cdlib.org/solr_api`.
 
 
-### 9. <a name="terminatestg">Terminate stage worker instances</a>
+### 9. <a name="terminatestg">Stop or Terminate stage worker instances</a>
 
 Once you've QA checked the results and have completed the harvest, you'll need to terminate the worker instances.
 
 * Log into blackstar & sudo su - hrv-stg
+* To just stop instances, run `ansible-playbook
 * Run: `ansible-playbook -i ~/code/ec2.py ~/code/ansible/terminate_workers.yml <--limit=10.60.?.?>` . You can use the `limit` parameter to specify a range of IP addresses for deletion.
 * You'll receive a prompt to confirm that you want to spin down the intance; hit Return to confirm.
 
+We should now leave *one* instance in a "stopped" state. Terminate all but one of the instances then run:
+
+```sh
+ansible-playbook -i ~/code/ec2.py ~/code/ansible/stop_workers.yml
+```
+
+This will stop the instance so it can be brought up easily. `get_worker_info.sh` should report the instance as "stopping" or "stopped".
 
 <a name="harvestprod">Moving a harvest to production</a>
 --------------------------
@@ -423,10 +441,11 @@ Now select "Queue Sync to production CouchDB for collection" from the action on 
 
 ### 2. <a name="synccdb">Sync the collection through to CouchDB production</a>
 
-#### 2.1.Create <a name="createprodworker">production workers</a>
+#### 2.1.Start or Create <a name="createprodworker">production workers</a>
 
 Production workers handle the syncing of the couchdb instances, so usually will not be running.
 * Log onto blackstar and sudo su - hrv-prd
+* See if any "stopped" worker instances are present. Run `get_worker_info.sh` If you see an instance with state "stopped" it can be started much more easily than creating new ones: `snsatnow ansible-playbook -i ~/code/ec2.py ~/code/ansible/start_workers.yml` *If this works, you do not need to create workers unless you have a lot of jobs to run*
 * To create some worker machines (bare ec2 instances), run: `snsatnow ansible-playbook ~/code/ansible/create_worker.yml --extra-vars="count=1"`
 
 The `count=##` parameter will set the number of instances to create. For harvesting one small collection you can set this to `count=1`. To re-harvest all collections, you can set this to `count=20`. For anything in between, use your judgment.
@@ -434,6 +453,8 @@ The `count=##` parameter will set the number of instances to create. For harvest
 Again, with the `snsatnow` command, the result of this will be messaged to dsc_harvesting_report on Slack.
 
 #### 2.2. <a name="provisionprd">Provision production workers to act on sync</a>
+
+*If you restarted a stopped instance, you don't need to do the steps below*
 
 Once this is done and the production worker instances are in a state of "running", you'll need to provision the workers by installing required software, configurations and start running Akara and the worker processes that listen on the queues specified:
 
@@ -471,13 +492,21 @@ You can QA the candidate Solr index on your local workstation, following [these 
 In the run.bat configuration file, point UCLDC_SOLR_URL to `https://harvest-prd.cdlib.org/solr_api`.
 
 
-### 6. <a name="terminateprod">Terminate production worker instances</a>
+### 6. <a name="terminateprod">Stop or Terminate production worker instances</a>
 
 Once you've completed syncing, you'll need to terminate the worker instances.
 
 * Log into blackstart and sudo to hrv-prd
 * Run: `ansible-playbook -i ~/code/ec2.py ~/code/ansible/terminate_workers.yml <--limit=10.60.?.?>` . You can use the `limit` parameter to specify a range of IP addresses for deletion.
 * You'll receive a prompt to confirm that you want to spin down the intance; hit Return to confirm.
+
+We should now leave *one* instance in a "stopped" state. Terminate all but one of the instances then run:
+
+```sh
+ansible-playbook -i ~/code/ec2.py ~/code/ansible/stop_workers.yml
+```
+
+This will stop the instance so it can be brought up easily. `get_worker_info.sh` should report the instance as "stopping" or "stopped".
 
 
 <a name="beanstalk">Updating Elastic Beanstalk with candidate Solr index</a>
