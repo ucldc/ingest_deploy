@@ -74,6 +74,8 @@ UCLDC Harvesting operations guide
 
 [Updating Elastic Beanstalk with candidate Solr index](#beanstalk)
 
+[Removing items (takedown requests)](#removals)
+
 [Additional resources](#addtl)
 * [Running long processes](#longprocess)
 * [Removing collections/items](#removals)
@@ -520,6 +522,14 @@ This section describes how to update an Elastic Beanstalk configuration to point
 * Last, update our Google Doc that lists out new collections that were published. (The entries can be cut-and-pasted from the <a href="https://github.com/mredar/ucldc_api_data_quality/tree/master/reporting">QA reporting spreadsheet</a>): https://docs.google.com/spreadsheets/d/1FI2h6JXrqUdONDjRBETeQjO_vkusIuG5OR5GWUmKp1c/edit#gid=0 . Sherri uses this Google Doc for CDLINFO postings, highlighting newly-published collections.
 
 TODO: add how to run the QA spreadsheet generating code
+
+
+<a name="removals">Removing items (takedown requests)</a> 
+--------------------------
+
+* Through the Collection Registry, delete the collection from CouchDB/Solr stage and production environments
+* Update the Collection Registry entry, setting "Ready to publish" to "None" -- and change the harvesting endpoint to "None"
+* Update Elastic Beanstalk with the updated Solr index
 
 
 <a name="addtl">Additional resources</a> 
