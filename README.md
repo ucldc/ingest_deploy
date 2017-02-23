@@ -246,18 +246,13 @@ First, refresh the cache for the dynamic inventory:
 ~/code/ec2.py --refresh-cache
 ```
 
-To see the current IPs for the workers:
-
-```sh
-get_worker_ips.sh
-```
 To see the current info for the workers:
 
 ```sh
 get_worker_info.sh
 ```
 
-This will report the running or not state, the IPs & the size of workers.
+This will report the running or not state, the IPs, ec2 IDs & the size of workers.
 
 You can then see the state of the instance by using jq to filter on the IP:
 
@@ -617,7 +612,7 @@ The logs are named with the instance id & ip address, e.g. ingest-stage-i-127546
 
 From the blackstar machine you can access the logs on CloudWatch using the scripts in the bin directory
 
-First, get the IPs of the worker machines by running `get_worker_ips.sh`
+First, get the IPs of the worker machines by running `get_worker_info.sh`
 
 Then for the worker whose logs you want to examine:
 `get_log_events_for_rqworker.sh <worker ip>`
