@@ -8,3 +8,10 @@ name_env: "{{ tag_subproject }}{{ name_env_suffix }}"
 prod_env: "{{ production | default(False) | bool }}"
 log_datetime_format: "%Y%m%d %H:%M:%S"
 worker_instance_type: m4.large 
+
+repo_harvester: https://github.com/ucldc/harvester
+repo_solr: https://github.com/ucldc/solr_api.git
+repo_ucldc_iif: ://github.com/mredar/ucldc-iiif
+repo_nuxeo_calisphere: https://github.com/mredar/nuxeo-calisphere.git
+repo_harvester: https://github.com/ucldc/harvester.git
+repo_mapping: git@bitbucket.org:mredar/dpla-ingestion.git
