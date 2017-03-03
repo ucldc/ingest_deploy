@@ -31,7 +31,7 @@
   become: yes
 - name: pull ucldc-iiif server code for Nuxeo deep harvesting
   git:
-    repo: https://github.com/mredar/ucldc-iiif
+    repo: "{{ repo_ucldc_iiif }}"
     dest: "{{ dir_code }}/ucldc-iiif"
 - name: install ucldc-iiif
   command: "{{ dir_venv }}/bin/python {{ dir_code }}/ucldc-iiif/setup.py install"
@@ -39,7 +39,7 @@
     chdir: "{{ dir_code }}/ucldc-iiif"
 - name: pull nuxeo_calisphere code for Nuxeo deep harvesting
   git:
-    repo: https://github.com/mredar/nuxeo-calisphere.git
+    repo: "{{ repo_nuxeo_calisphere }}"
     dest: "{{ dir_code }}/nuxeo-calisphere"
     update: yes
 # should copy to owned github repo as per license

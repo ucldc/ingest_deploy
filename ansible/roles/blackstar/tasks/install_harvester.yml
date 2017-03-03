@@ -1,7 +1,7 @@
 ---
 - name: grab harvester code for install
   git:
-    repo: https://github.com/ucldc/harvester
+    repo: "{{ repo_harvester }}"
     dest: "/home/{{ role_user}}/tmp/harvester"
 - name: install harvester code
   shell: /home/{{ role_user }}/python2/bin/python setup.py install

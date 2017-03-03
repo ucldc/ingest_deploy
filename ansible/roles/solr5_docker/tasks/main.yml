@@ -4,7 +4,7 @@
   yum: pkg=git state=present
 - name: get the solr_api code
   git:
-    repo: https://github.com/ucldc/solr_api.git
+    repo: "{{ repo_solr }}"
     dest: "{{ dir_code }}"
     update: yes
 - name: create data shared directory and set permissions
