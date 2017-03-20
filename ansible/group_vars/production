@@ -14,6 +14,6 @@ couchdb_url: http://{{ couchdb_ip }}:5984
 solr_ip: 10.60.39.243
 solr_url: http://{{ solr_ip }}:8983/solr
 eip_ingest_front: 52.11.194.40
-worker_instance_type: t2.micro
-spot_bid_price: .013
+worker_instance_type: t2.small
+spot_bid_price: .023
 front_ip: 10.60.2.105

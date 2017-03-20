@@ -1,0 +1,50 @@
+#jinja2:variable_start_string:'[%' , variable_end_string:'%]'
+---
+- hosts: tag_Name_ingest_[% data_branch %]_worker
+  gather_facts: no
+  vars:
+    region: us-west-2
+    ansible_user: ec2-user
+  tasks:
+  - debug: msg="{{ ec2_id }}"
+  - pause: prompt="ctrl-C TO NOT START INSTANCES"
+    tags:
+      - start-instances
+  - name: start workers
+    local_action:
+      module: ec2
+      state: running
+      region: "{{ region }}"
+      instance_ids: "{{ ec2_id }}"
+      wait: true
+      wait_timeout: 600
+    register: ec2_info
+    tags:
+      - start-instances
+  - include_vars: roles/worker/defaults/main.yml
+  # http://codepoets.co.uk/2014/ansible-random-things/
+  - name: clear previous instance ips if they match
+    local_action: command ssh-keygen -f "~/.ssh/known_hosts" -R {{ ansible_ssh_host }}
+  - pause:
+      minutes: 5
+  - name: Wait for SSH to come up
+    wait_for:
+      host: "{{ ansible_ssh_host }}"
+      port: 22
+      connect_timeout: 300
+      timeout: 620
+      state: started
+  - name: run akara
+    command: "{{ dir_venv}}/bin/akara -f {{ dir_code }}/dpla/ingestion/akara.conf start"
+    args:
+      chdir:  "{{ dir_run_akara }}"
+      creates: "{{ dir_run_akara }}/logs/akara.pid"
+    tags:
+      - start-instances
+  - name: start rqworker
+    become: no
+    shell: "{{ dir_bin }}start-rqworker.sh"
+    args:
+      creates: "{{ dir_run_rqworker}}/rqworker.pid"
+    tags:
+      - start-instances

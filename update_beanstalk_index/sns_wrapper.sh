@@ -10,6 +10,23 @@ if [[ -n "$DEBUG" ]]; then
   set -x
 fi
 
+# can set the first opt argument to --ignore-stderr
+# so that any output from stderr is not treated as a failure
+
+IGNORE_STDERR=false
+
+for i in "$@"
+do
+	case $i in
+		--ignore-stderr)
+		IGNORE_STDERR=true
+		shift
+		;;
+		*)
+		;;
+	esac
+done
+
 set -o pipefail  # trace ERR through pipes
 set -o errtrace  # trace ERR through 'time command' and other functions
 set -o nounset   ## set -u : exit the script if you try to use an uninitialised variable
@@ -55,9 +72,9 @@ else
     ERR=$TRACE
 fi
 
-if [ $RESULT -ne 0 -o -s "$ERR" ]
+if [ $RESULT -ne 0 -o -s "$ERR" -a "$IGNORE_STDERR" == "false" ]
 then
-	subject="Failed: $@"
+	subject="${DATA_BRANCH}: Failed: $@"
 	msg="Problem with command run of command \"$@\"
 RESULT CODE: $RESULT
 ERROR OUTPUT: tail $ERR"
@@ -78,7 +95,7 @@ ERROR OUTPUT: tail $ERR"
 		msg+="STANDARD OUTPUT: tail $OUT"
 		msg+=$'\n'
 		msg+=`tail "$OUT"`
-		subject="Completed $@"
+		subject="${DATA_BRANCH}: Completed $@"
 fi
 
 post_sns_message "${subject:0:64}" "${msg}"

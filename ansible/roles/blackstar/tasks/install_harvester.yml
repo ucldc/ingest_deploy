@@ -1,7 +1,7 @@
 ---
 - name: grab harvester code for install
   git:
-    repo: https://github.com/ucldc/harvester
+    repo: "{{ repo_harvester }}"
     dest: "/home/{{ role_user}}/tmp/harvester"
 - name: install harvester code
   shell: /home/{{ role_user }}/python2/bin/python setup.py install
@@ -19,8 +19,10 @@
     - delete_solr_collection.sh
     - queue_image_harvest.py
     - queue_harvest.py
+    - queue_deep_harvest.py
     - queue_sync_couchdb_collection.py
     - sync_couch_collection_to_solr.py
+    - sync_solr_documents.py
 - name: copy index grab to s3 playbook
   copy:
     remote_src: yes

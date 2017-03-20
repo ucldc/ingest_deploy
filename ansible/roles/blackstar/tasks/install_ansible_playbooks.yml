@@ -79,3 +79,15 @@
   template:
     src: terminate_workers.yml.j2
     dest: "/home/{{ role_user }}/code/ansible/terminate_workers.yml"
+- name: template stop playbook
+  template:
+    src: stop_workers.yml.j2
+    dest: "/home/{{ role_user }}/code/ansible/stop_workers.yml"
+- name: template start playbook
+  template:
+    src: start_workers.yml.j2
+    dest: "/home/{{ role_user }}/code/ansible/start_workers.yml"
+- name: put check_ssh in place
+  copy:
+    src: ../roles/create_worker_instance/tasks/check_ssh.yml
+    dest: "/home/{{ role_user }}/code/ansible/check_ssh.yml"

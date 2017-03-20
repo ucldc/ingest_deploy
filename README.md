@@ -48,7 +48,7 @@ UCLDC Harvesting operations guide
 * [1. New harvest or re-harvest?](#harvestnew)
 * [2. Create a harvest job in Registry](#harvestregistry)
 * [3. Harvest the collection through to CouchDB stage](#harvestcdbstg)
-* [3.1. Create stage workers](#createstageworker)
+* [3.1. Start or Create stage workers](#createstageworker)
 * [3.2. Provision stage workers to act on harvesting](#harvestprovisionstg)
 * [3.3. Verify that the harvests are complete in CouchDB stage](#harvestcdbcomplete)
 * [4. QA check collection in CouchDB stage](#harvestcdbqa)
@@ -58,7 +58,7 @@ UCLDC Harvesting operations guide
 * [6. Generate and review QA report for Solr stage index](#solrqa)
 * [7. QA check media.json](#mediajson)
 * [8. QA check in Calisphere stage UI](#calisphereqa)
-* [9. Terminate stage worker instances](#terminatestg)
+* [9. Stop or Terminate stage worker instances](#terminatestg)
 
 [Moving a harvest to production](#harvestprod)
 * [1. Create a sync job in the Registry](#syncregistry)
@@ -74,7 +74,10 @@ UCLDC Harvesting operations guide
 
 [Updating Elastic Beanstalk with candidate Solr index](#beanstalk)
 
+[Removing items (takedown requests)](#removals)
+
 [Additional resources](#addtl)
+* [Running long processes](#longprocess)
 * [Removing collections/items](#removals)
 * [Picking up new harvester or ingest code](#newcode)
 * [Recreating the Solr Index from scratch](#solrscratch)
@@ -186,14 +189,15 @@ You can now begin to monitor the harvesting process through the <a href="https:/
 
 The following sections describe the process for harvesting collections through to CouchDB stage. This is done via the use of "transient" <a href="http://python-rq.org/">Redis Queue</a>-managed (RQ) worker instances, which are created as needed and then deleted after use. Once the workers have been created and provisioned, they will automatically look for jobs in the queue and run the full harvester code for those jobs. The end result is that CouchDB is updated.
 
-#### 3.1. Create <a name="createstageworker">stage workers</a>
+#### 3.1. Start or Create <a name="createstageworker">stage workers</a>
 
 * Log onto blackstar & sudo to hrv-stg
-* To create some worker machines (bare ec2 instances), run: `ansible-playbook ~/code/ansible/create_worker.yml --extra-vars="count=3"`
+* See if any "stopped" worker instances are present. Run `get_worker_info.sh` If you see an instance with state "stopped" it can be started much more easily than creating new ones: `snsatnow --ignore-stderr ansible-playbook -i ~/code/ec2.py ~/code/ansible/start_workers.yml` *If this works, you do not need to create workers unless you have a lot of jobs to run*
+* To create some worker machines (bare ec2 instances), run: `snsatnow ansible-playbook ~/code/ansible/create_worker.yml --extra-vars=\"count=3\"`
 
 The `count=##` parameter will set the number of instances to create. For harvesting one small collection you can set this to `count=1`. To re-harvest all collections, you can set this to `count=20`. For anything in between, use your judgment.
 
-You should see output in the console as the playbook runs through its tasks. At the end, it will give you a status line. Look for `fail=0` to verify that everything ran OK.
+With the `snsatnow` wrapper, the results will be messaged to the dsc_harvesting_report Slack channel when the instances are created.
 
 The default instance creation will attempt to get instances from the "spot" market so that it is cheaper to run the workers. Sometimes the spot market price can get very high and the spot instances won't work. You can check the pricing by issuing the following command on blackstar, hrv-stg user:
 
@@ -201,18 +205,20 @@ The default instance creation will attempt to get instances from the "spot" mark
 aws ec2 describe-spot-price-history --instance-types m3.large --availability-zone us-west-2c --product-description "Linux/UNIX (Amazon VPC)" --max-items 2
 ```
 
-Our spot bid price is set to .133 which is the current (20160803) on demand price. If the history of spot prices is greater than that or if you see large fluctuations in the pricing, you can request an on-demand instance instead by adding "ondemand=true" to the extra-vars, e.g. :
+Our spot bid price is set to .133 which is the current (20160803) on demand price. If the history of spot prices is greater than that or if you see large fluctuations in the pricing, you can request an on-demand instance instead by running the ondemand playbook : (NOTE: the backslash \ is required)
 
 ```sh
-ansible-playbook ~/code/ansible/create_worker.yml --extra-vars="count=3 ondemand=True"
+snsatnow ansible-playbook ~/code/ansible/create_worker_ondemand.yml --extra-vars=\"count=3\"
 ```
 
 #### 3.2. <a name="harvestprovisionstg">Provision stage workers to act on harvesting</a>
 
+*If you restarted a stopped instance, you don't need to do the steps below*
+
 Once this is done and the stage worker instances are in a state of "running", you'll need to provision the workers by installing required software, configurations and start running Akara and the worker processes that listen on the queues specified:
 
 * Log onto blackstar & sudo su - hrv-stg
-* To provision the workers, run: `ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker.yml`
+* To provision the workers, run: `snsatnow ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker.yml`
 * Wait for the provisioning to finish; this can take a while, 5-10 minutes is not
 unusual. If the provisioning process stalls, use `ctrl-C` to end the process then re-do the ansible command.
 * Check the status of the the harvesting process through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>.  You should now see the provisioned workers listed, and acting on the jobs in the queue. You will be able to see the workers running jobs (indicated by a "play" triangle icon) and then finishing (indicated by a "pause" icon).
@@ -221,7 +227,7 @@ unusual. If the provisioning process stalls, use `ctrl-C` to end the process the
 `--limit=<ip range>` eg. --limit=10.60.22.\* or `--limit=<ip>,<ip>` eg. --limit=10.60.29.109,10.60.18.34 to limit the provisioning to the IPs of the newly-provisioned machines (and so you don't reprovision 
 a currently running machine). Otherwise rerunning the provisioning will put the 
 current running workers in a bad state, and you will then have to log on to the 
-worker and restart the worker process or terminate the machine.  Example of full command: `ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker.yml --limit=10.60.29.*`
+worker and restart the worker process or terminate the machine.  Example of full command: `snsatnow ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker.yml --limit=10.60.29.*`
 
 AWS assigns unique subnets to the groups of workers you start, so in general,
 different generations of machines will be distinguished by the different C class
@@ -240,11 +246,13 @@ First, refresh the cache for the dynamic inventory:
 ~/code/ec2.py --refresh-cache
 ```
 
-To see the current IPs for the workers:
+To see the current info for the workers:
 
 ```sh
-get_worker_ips.sh
+get_worker_info.sh
 ```
+
+This will report the running or not state, the IPs, ec2 IDs & the size of workers.
 
 You can then see the state of the instance by using jq to filter on the IP:
 
@@ -399,14 +407,22 @@ To immediately view results, you can QA the Solr stage index on your local works
 In the run.bat configuration file, point UCLDC_SOLR_URL to `https://harvest-stg.cdlib.org/solr_api`.
 
 
-### 9. <a name="terminatestg">Terminate stage worker instances</a>
+### 9. <a name="terminatestg">Stop or Terminate stage worker instances</a>
 
 Once you've QA checked the results and have completed the harvest, you'll need to terminate the worker instances.
 
 * Log into blackstar & sudo su - hrv-stg
+* To just stop instances, run `ansible-playbook
 * Run: `ansible-playbook -i ~/code/ec2.py ~/code/ansible/terminate_workers.yml <--limit=10.60.?.?>` . You can use the `limit` parameter to specify a range of IP addresses for deletion.
 * You'll receive a prompt to confirm that you want to spin down the intance; hit Return to confirm.
 
+We should now leave *one* instance in a "stopped" state. Terminate all but one of the instances then run:
+
+```sh
+ansible-playbook -i ~/code/ec2.py ~/code/ansible/stop_workers.yml
+```
+
+This will stop the instance so it can be brought up easily. `get_worker_info.sh` should report the instance as "stopping" or "stopped".
 
 <a name="harvestprod">Moving a harvest to production</a>
 --------------------------
@@ -422,23 +438,26 @@ Now select "Queue Sync to production CouchDB for collection" from the action on 
 
 ### 2. <a name="synccdb">Sync the collection through to CouchDB production</a>
 
-#### 2.1.Create <a name="createprodworker">production workers</a>
+#### 2.1.Start or Create <a name="createprodworker">production workers</a>
 
 Production workers handle the syncing of the couchdb instances, so usually will not be running.
 * Log onto blackstar and sudo su - hrv-prd
-* To create some worker machines (bare ec2 instances), run: `ansible-playbook ~/code/ansible/create_worker.yml --extra-vars="count=1"`
+* See if any "stopped" worker instances are present. Run `get_worker_info.sh` If you see an instance with state "stopped" it can be started much more easily than creating new ones: `snsatnow --ignore-stderr ansible-playbook -i ~/code/ec2.py ~/code/ansible/start_workers.yml` *If this works, you do not need to create workers unless you have a lot of jobs to run*
+* To create some worker machines (bare ec2 instances), run: `snsatnow ansible-playbook ~/code/ansible/create_worker.yml --extra-vars="count=1"`
 
 The `count=##` parameter will set the number of instances to create. For harvesting one small collection you can set this to `count=1`. To re-harvest all collections, you can set this to `count=20`. For anything in between, use your judgment.
 
-You should see output in the console as the playbook runs through its tasks. At the end, it will give you a status line. Look for `fail=0` to verify that everything ran OK.
+Again, with the `snsatnow` command, the result of this will be messaged to dsc_harvesting_report on Slack.
 
 #### 2.2. <a name="provisionprd">Provision production workers to act on sync</a>
+
+*If you restarted a stopped instance, you don't need to do the steps below*
 
 Once this is done and the production worker instances are in a state of "running", you'll need to provision the workers by installing required software, configurations and start running Akara and the worker processes that listen on the queues specified:
 
 * Log onto blackstar & sudo su - hrv-prd
-* To provision the workers, run: `ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker.yml`
-* Wait for the provisioning to finish; this can take a while, 5-10 minutes is not unusual.
+* To provision the workers, run: `snsatnow ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker.yml`
+* Wait for the provisioning to finish; this can take a while, 15-20 minutes is not unusual.
 
 **NOTE:** if you already have provisioned worker machines running jobs, use the
 --limit=<ip range> eg. --limit=10.60.22.\* to make sure you don't reprovision 
@@ -470,13 +489,21 @@ You can QA the candidate Solr index on your local workstation, following [these 
 In the run.bat configuration file, point UCLDC_SOLR_URL to `https://harvest-prd.cdlib.org/solr_api`.
 
 
-### 6. <a name="terminateprod">Terminate production worker instances</a>
+### 6. <a name="terminateprod">Stop or Terminate production worker instances</a>
 
 Once you've completed syncing, you'll need to terminate the worker instances.
 
 * Log into blackstart and sudo to hrv-prd
 * Run: `ansible-playbook -i ~/code/ec2.py ~/code/ansible/terminate_workers.yml <--limit=10.60.?.?>` . You can use the `limit` parameter to specify a range of IP addresses for deletion.
 * You'll receive a prompt to confirm that you want to spin down the intance; hit Return to confirm.
+
+We should now leave *one* instance in a "stopped" state. Terminate all but one of the instances then run:
+
+```sh
+ansible-playbook -i ~/code/ec2.py ~/code/ansible/stop_workers.yml
+```
+
+This will stop the instance so it can be brought up easily. `get_worker_info.sh` should report the instance as "stopping" or "stopped".
 
 
 <a name="beanstalk">Updating Elastic Beanstalk with candidate Solr index</a>
@@ -492,8 +519,26 @@ This section describes how to update an Elastic Beanstalk configuration to point
 TODO: add how to run the QA spreadsheet generating code
 
 
+<a name="removals">Removing items (takedown requests)</a> 
+--------------------------
+
+* Through the Collection Registry, delete the collection from CouchDB/Solr stage and production environments
+* Update the Collection Registry entry, setting "Ready to publish" to "None" -- and change the harvesting endpoint to "None"
+* Update Elastic Beanstalk with the updated Solr index
+
+
 <a name="addtl">Additional resources</a> 
 --------------------------
+
+###<a name="longprocess">Running long processes</a>
+
+The `snsatnow` wrapper script may be used to run *any* long running process. It will background and detach the process so you can log out. When the process finishes or fails, a message will be sent to the dsc_harvesting_repot Slack channel.
+
+To use the script, just add it to your script invocation
+```shell
+snsatnow <cmd> --<options> <arg1> <arg2>....
+```
+NOTE: if your command has arguments that are surrounded by quotes (") you'll need to escape those by putting a backslash (\) in front of them.
 
 ###<a name="removals">Removing collections/items from publication</a>
 
@@ -567,7 +612,7 @@ The logs are named with the instance id & ip address, e.g. ingest-stage-i-127546
 
 From the blackstar machine you can access the logs on CloudWatch using the scripts in the bin directory
 
-First, get the IPs of the worker machines by running `get_worker_ips.sh`
+First, get the IPs of the worker machines by running `get_worker_info.sh`
 
 Then for the worker whose logs you want to examine:
 `get_log_events_for_rqworker.sh <worker ip>`

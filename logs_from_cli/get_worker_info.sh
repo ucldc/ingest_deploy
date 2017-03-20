@@ -12,7 +12,4 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" # http://stackoverflow.c
 
 source ${DIR}/info_functions.sh
 
-worker_ips
-
- #1013  ~/code/ec2.py | jq '._meta.hostvars["10.60.16.8"]'
- #1014  ~/code/ec2.py | jq '._meta.hostvars["10.60.16.8"].ec2_id'
+worker_info
