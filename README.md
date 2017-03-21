@@ -636,9 +636,9 @@ If incorrect images were downloaded, you must manually queue the image harvest t
 First you should check that the `isShownBy` field for the documents in question point to valid images. See [Finding CouchDB Doc for item](#cdbdocforitem) to find the document.
 
 * Log onto blackstar & sudo su - hrv-stg
-* Run `python ~/code/harvester/scripts/redis_delete_harvested_images_script.py <collection_id>`. This will produce a file called `delete_image_cache-<collection_id>` in the current directory.
-* Run `~/redis-3.0.2/src/redis-cli -h $REDIS_HOST < delete_image_cache-<collection_id>`. This will clear the cache of previously harvested URLs.
-* Run `python ~/code/harvester/scripts/queue_image_harvest.py mredar@gmail.com normal-stage https://registry.cdlib.org/api/v1/collection/<collection_id>/ --get_if_object`
+* Run `python ~/bin/redis_delete_harvested_images_script.py <collection_id>`. This will produce a file called `delete_image_cache-<collection_id>` in the current directory.
+* Run `~/bin/redis-cli -h $REDIS_HOST < delete_image_cache-<collection_id>`. This will clear the cache of previously harvested URLs.
+* Run `python ~/bin/queue_image_harvest.py mredar@gmail.com normal-stage https://registry.cdlib.org/api/v1/collection/<collection_id>/ --get_if_object`
 * Keep your fingers crossed
 
 Development
