@@ -79,6 +79,7 @@ UCLDC Harvesting operations guide
 [Additional resources](#addtl)
 * [Running long processes](#longprocess)
 * [Removing collections/items](#removals)
+* [Restoring collections from production](#restores)
 * [Picking up new harvester or ingest code](#newcode)
 * [Recreating the Solr Index from scratch](#solrscratch)
 * [How to find a CouchDB source document for an item in Calisphere](#cdbsearch)
@@ -525,6 +526,21 @@ TODO: add how to run the QA spreadsheet generating code
 * Through the Collection Registry, delete the collection from CouchDB/Solr stage and production environments
 * Update the Collection Registry entry, setting "Ready to publish" to "None" -- and change the harvesting endpoint to "None"
 * Update Elastic Beanstalk with the updated Solr index
+
+
+<a name="restores">Restoring collections from production</a>
+--------------------------
+
+We've had a couple of cases where the pre-prodution index has had a
+collection deleted for re-harvesting but the re-harvest has not been
+successful and we want to publish a new image.
+This script will take the documents from one solr index and push them to
+another solr index.
+This script can be run from the hrv-stg or hrv-prd account. For each, the source documents come from solr.calisphere.org which drives Calisphere. Depending on which role account you are in, it will either update the "stage" or the pre-production solr.
+
+* Log onto the appropriate role account.
+* run `sync_solr_documents.py <collection id>`
+
 
 
 <a name="addtl">Additional resources</a> 
