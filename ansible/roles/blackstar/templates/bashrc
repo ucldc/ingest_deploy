@@ -23,6 +23,9 @@ fi
 
 export PATH
 
+alias lt='ls -lrth' # I use this everywhere
+alias h=history # I use this everywhere
+
 # set prompt to indicate data_branch
 
 if [[ $- == *i* ]]; then
