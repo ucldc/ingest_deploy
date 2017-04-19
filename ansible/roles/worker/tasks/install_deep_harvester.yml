@@ -20,6 +20,8 @@
 - name: install mscorefonts from http://mscorefonts2.sourceforge.net/
   become: yes
   command: rpm -i https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
+  args:
+    creates: /usr/share/fonts/msttcore
 - name: make directory for ffmpeg download
   file:
     state: directory
