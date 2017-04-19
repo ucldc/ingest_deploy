@@ -1,10 +1,25 @@
 ---
+# to install mscorefonts from http://mscorefonts2.sourceforge.net/
+- name: enable the extended epel packages
+  become: yes
+  lineinfile:
+    dest: /etc/yum.repos.d/epel.repo
+    regexp: 'enabled=0'
+    line: 'enabled=1'
 - name: install required packages
   become: yes
   yum: "pkg={{ item }} state=latest"
   with_items:
     - ImageMagick
     - libtiff
+    - cjkuni-fonts-ghostscript
+    - curl
+    - cabextract
+    - fontconfig
+    - xorg-x11-font-utils
+- name: install mscorefonts from http://mscorefonts2.sourceforge.net/
+  become: yes
+  command: rpm -i https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
 - name: make directory for ffmpeg download
   file:
     state: directory
