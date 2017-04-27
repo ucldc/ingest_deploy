@@ -7,6 +7,14 @@
     repo: "{{ repo_solr }}"
     dest: "{{ dir_code }}"
     update: yes
+    force: yes
+- debug: var=java_heap_max
+- name: Set variable in docker to scale java heap size
+  lineinfile:
+    dest: "{{ dir_code }}/Dockerfile"
+    state: present
+    regexp: '^ENV SOLR_HEAP="3g"'
+    line: 'ENV SOLR_HEAP="{{ java_heap_max }}m"'
 - name: create data shared directory and set permissions
   file:
     path: /opt/solr/data
