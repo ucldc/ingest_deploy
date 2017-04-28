@@ -2,10 +2,10 @@
 # to install mscorefonts from http://mscorefonts2.sourceforge.net/
 - name: enable the extended epel packages
   become: yes
-  lineinfile:
+  replace:
     dest: /etc/yum.repos.d/epel.repo
     regexp: 'enabled=0'
-    line: 'enabled=1'
+    replace: 'enabled=1'
 - name: install required packages
   become: yes
   yum: "pkg={{ item }} state=latest"
