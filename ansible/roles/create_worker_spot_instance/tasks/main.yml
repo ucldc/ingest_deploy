@@ -8,7 +8,7 @@
     state: present
     region: "{{ region }}"
     key_name: "{{ key_name }}"
-    image: "{{ image_hvm }}"
+    image: "{{ image_hvm }}"100
     instance_type: "{{ worker_instance_type }}"
     instance_profile_name: ingest-worker
     group_id: [ "{{ sec_grp_ingest_private_id }}" ]
@@ -19,6 +19,9 @@
         project: "{{ tag_project }}"
         subproject: "{{ tag_subproject }}"
         Name: "{{ name_env}}-worker"
+        Program: dsc
+        Environment: stg
+        Service: calisphere
     volumes:
     - device_name: /dev/xvda
       device_type: gp2

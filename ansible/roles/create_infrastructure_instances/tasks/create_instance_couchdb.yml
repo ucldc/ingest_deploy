@@ -16,6 +16,9 @@
         project: "{{ tag_project }}"
         subproject: "{{ tag_subproject }}"
         Name: "{{ name_env }}-couchdb"
+        Program: dsc
+        Environment: prd
+        Service: calisphere
     volumes:
     - device_name: /dev/xvda
       device_type: gp2
