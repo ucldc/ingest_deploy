@@ -645,7 +645,12 @@ watch the logs real time if you like. tail -f /var/local/rqworker/worker.log or
 ### <a name="imagefix">Image problems</a>
 
 The image harvesting part of the process often has at least partial failures.
-First, just try to run the image harvest for the collection again from the registry. Hopefully that fixes.
+
+To verify if images were harvested successfully (i.e., images are stashed in S3 and referenced by resolveable URLs in `isShownBy`, `object` (file in S3), and `preview` (thumbnail)), use the following script in the `ucldc_api_data_quality/reporting directory` (following the steps at https://github.com/mredar/ucldc_api_data_quality/tree/master/reporting):
+
+`python get_couchdata_for_calisphere_id.py <ID>`
+
+If images are missing, first just try to run the image harvest for the collection again from the registry. Hopefully that fixes.
 
 If incorrect images were downloaded, you must manually queue the image harvest to force it to re-fetch images that were found. First, you need to clear the "CouchDB ID -> image url" cache and then set the image harvest to run with the flag --get_if_object (so get the image even if the "object" field exists in the CouchDB document)
 
