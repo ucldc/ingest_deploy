@@ -8,7 +8,7 @@
     state: present
     region: "{{ region }}"
     key_name: "{{ key_name }}"
-    image: "{{ image_hvm }}"100
+    image: "{{ image_hvm }}"
     instance_type: "{{ worker_instance_type }}"
     instance_profile_name: ingest-worker
     group_id: [ "{{ sec_grp_ingest_private_id }}" ]
