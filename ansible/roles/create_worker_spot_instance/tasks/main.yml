@@ -31,3 +31,4 @@
   register: ec2_info
   tags: spot
 - include: ../create_worker_instance/tasks/check_ssh.yml
+- include: ../create_worker_instance/tasks/tag_volumes.yml

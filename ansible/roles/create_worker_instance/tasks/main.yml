@@ -30,3 +30,4 @@
   register: ec2_info
   tags: ondemand
 - include: check_ssh.yml
+- include: tag_volumes.yml
