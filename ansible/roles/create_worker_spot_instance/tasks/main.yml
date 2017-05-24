@@ -19,9 +19,9 @@
         project: "{{ tag_project }}"
         subproject: "{{ tag_subproject }}"
         Name: "{{ name_env}}-worker"
-        Program: dsc
-        Environment: stg
-        Service: calisphere
+        Program: "{{ tag_cdl_program }}"
+        Environment: "{{ tag_cdl_env }}"
+        Service: "{{ tag_cdl_service }}"
     volumes:
     - device_name: /dev/xvda
       device_type: gp2
@@ -30,5 +30,5 @@
     spot_price: "{{ spot_bid_price }}"
   register: ec2_info
   tags: spot
-- include: ../create_worker_instance/tasks/check_ssh.yml
 - include: ../create_worker_instance/tasks/tag_volumes.yml
+- include: ../create_worker_instance/tasks/check_ssh.yml
