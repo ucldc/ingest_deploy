@@ -547,11 +547,11 @@ This script can be run from the hrv-stg or hrv-prd account. For each, the source
 <a name="addtl">Additional resources</a> 
 --------------------------
 
-###<a name="checkworker">Checking worker processing status</a>
+### <a name="checkworker">Checking worker processing status</a>
 
 To check the processing status for a given worker, log into Blackstar and SSH to the stage or prod machine.  Then run `tail -f worker.log` to view the logs.
 
-###<a name="longprocess">Running long processes</a>
+### <a name="longprocess">Running long processes</a>
 
 The `snsatnow` wrapper script may be used to run *any* long running process. It will background and detach the process so you can log out. When the process finishes or fails, a message will be sent to the dsc_harvesting_repot Slack channel.
 
@@ -561,7 +561,7 @@ snsatnow <cmd> --<options> <arg1> <arg2>....
 ```
 NOTE: if your command has arguments that are surrounded by quotes (") you'll need to escape those by putting a backslash (\) in front of them.
 
-###<a name="removals">Removing collections/items from publication</a>
+### <a name="removals">Removing collections/items from publication</a>
 
 #### <a name="removalitem">Individual items</a>
 
