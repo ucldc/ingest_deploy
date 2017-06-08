@@ -549,7 +549,10 @@ This script can be run from the hrv-stg or hrv-prd account. For each, the source
 
 ### <a name="checkworker">Checking worker processing status</a>
 
-To check the processing status for a given worker, log into Blackstar and SSH to the stage or prod machine.  Then run `tail -f worker.log` to view the logs.
+To check the processing status for a given worker, log into Blackstar and SSH to the particular stage or prod machine.  
+
+* cd to `/var/local/rqworker` and locate the worker.log file.
+* Run `tail -f worker.log` to view the logs.
 
 ### <a name="longprocess">Running long processes</a>
 
