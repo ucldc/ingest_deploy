@@ -77,6 +77,7 @@ UCLDC Harvesting operations guide
 [Removing items (takedown requests)](#removals)
 
 [Additional resources](#addtl)
+* [Checking worker processing status](#checkworker)
 * [Running long processes](#longprocess)
 * [Removing collections/items](#removals)
 * [Restoring collections from production](#restores)
@@ -545,6 +546,10 @@ This script can be run from the hrv-stg or hrv-prd account. For each, the source
 
 <a name="addtl">Additional resources</a> 
 --------------------------
+
+###<a name="checkworker">Checking worker processing status</a>
+
+To check the processing status for a given worker, log into Blackstar and SSH to the stage or prod machine.  Then run `tail -f worker.log` to view the logs.
 
 ###<a name="longprocess">Running long processes</a>
 
