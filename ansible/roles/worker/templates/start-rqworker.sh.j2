@@ -23,4 +23,7 @@ fi
 
 cd {{ dir_run_rqworker }}
 
-nohup {{ dir_venv }}/bin/rq worker -w 'harvester.rq_worker_sns_msgs.SNSWorker' -c rqw-settings --pid {{ dir_run_rqworker }}/rqworker.pid &> {{ dir_run_rqworker }}/worker.log &
+nohup {{ dir_venv }}/bin/rq worker -w 'harvester.rq_worker_sns_msgs.SNSWorker' \
+--exception-handler 'harvester.rq_worker_sns_msgs.exception_to_sns' \
+--exception-handler 'rq.handlers.move_to_failed_queue' -c rqw-settings \
+--pid {{ dir_run_rqworker }}/rqworker.pid &> {{ dir_run_rqworker }}/worker.log &
