@@ -23,4 +23,4 @@ fi
 
 cd {{ dir_run_rqworker }}
 
-nohup {{ dir_venv }}/bin/rqworker -c rqw-settings --pid {{ dir_run_rqworker }}/rqworker.pid &> {{ dir_run_rqworker }}/worker.log &
+nohup {{ dir_venv }}/bin/rq worker -w 'harvester.rq_worker_sns_msgs.SNSWorker' -c rqw-settings --pid {{ dir_run_rqworker }}/rqworker.pid &> {{ dir_run_rqworker }}/worker.log &
