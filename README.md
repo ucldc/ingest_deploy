@@ -195,7 +195,9 @@ The following sections describe the process for harvesting collections through t
 
 * Log onto blackstar & sudo to hrv-stg
 * See if any "stopped" worker instances are present. Run `get_worker_info.sh` If you see an instance with state "stopped" it can be started much more easily than creating new ones: `snsatnow --ignore-stderr ansible-playbook -i ~/code/ec2.py ~/code/ansible/start_workers.yml` *If this works, you do not need to create workers unless you have a lot of jobs to run*
-* To create some worker machines (bare ec2 instances), run: `snsatnow ansible-playbook ~/code/ansible/create_worker.yml --extra-vars=\"count=3\"`
+* To create some worker machines (bare ec2 spot instances), run: `snsatnow ansible-playbook ~/code/ansible/create_worker.yml --extra-vars=\"count=1\"`
+
+For on-demand instances, run: `snsatnow ansible-playbook ~/code/ansible/create_worker_ondemand.yml --extra-vars=\"count=1\"`
 
 The `count=##` parameter will set the number of instances to create. For harvesting one small collection you can set this to `count=1`. To re-harvest all collections, you can set this to `count=20`. For anything in between, use your judgment.
 
@@ -445,7 +447,9 @@ Now select "Queue Sync to production CouchDB for collection" from the action on 
 Production workers handle the syncing of the couchdb instances, so usually will not be running.
 * Log onto blackstar and sudo su - hrv-prd
 * See if any "stopped" worker instances are present. Run `get_worker_info.sh` If you see an instance with state "stopped" it can be started much more easily than creating new ones: `snsatnow --ignore-stderr ansible-playbook -i ~/code/ec2.py ~/code/ansible/start_workers.yml` *If this works, you do not need to create workers unless you have a lot of jobs to run*
-* To create some worker machines (bare ec2 instances), run: `snsatnow ansible-playbook ~/code/ansible/create_worker.yml --extra-vars="count=1"`
+* To create some worker machines (bare ec2 spot instances), run: `snsatnow ansible-playbook ~/code/ansible/create_worker.yml --extra-vars=\"count=1\"`
+
+For on-demand instances, run: `snsatnow ansible-playbook ~/code/ansible/create_worker_ondemand.yml --extra-vars=\"count=1\"`
 
 The `count=##` parameter will set the number of instances to create. For harvesting one small collection you can set this to `count=1`. To re-harvest all collections, you can set this to `count=20`. For anything in between, use your judgment.
 
