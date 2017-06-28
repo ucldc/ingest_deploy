@@ -35,5 +35,5 @@ set -o nounset
 dt=`date '+%Y%m%d_%H%M%S'`
 
 stdbuf -i0 -o0 -e0 ansible-playbook \
-    ~/bin/grab-solr-index-playbook.yml \
+    ~/bin/backup_couchdb.yml \
     --extra-vars="server_role=$DATA_BRANCH" --limit="solr-$DATA_BRANCH"
