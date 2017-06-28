@@ -32,6 +32,15 @@
   with_items:
     - grab-solr-index-playbook.yml
   when: data_branch == "production"
+- name: copy couchdb backup
+  copy:
+    remote_src: yes
+    mode: u+rx
+    dest: "/home/{{ role_user }}/bin/{{ item }}"
+    src: "/home/{{ role_user }}/tmp/harvester/harvester/{{ item }}"
+  with_items:
+    - backup_couchdb.yml
+  when: data_branch == "production"
 - name: install redis delete into stage env
   copy:
     remote_src: yes

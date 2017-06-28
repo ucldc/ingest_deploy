@@ -105,6 +105,11 @@
     dest: "/home/{{ role_user }}/bin/solr-index-to-s3.sh"
     src: solr-index-to-s3.sh
   when: data_branch == "production"
+- name: install backup couchdb script
+  copy:
+    mode: u+rx
+    dest: "/home/{{ role_user }}/bin/couchdb-backup-to-s3.sh"
+    src: couchdb-backup-to-s3.sh
 - name: check if redis helper installed
   stat:
     path: "/home/{{ role_user}}/bin/redis.sh"
