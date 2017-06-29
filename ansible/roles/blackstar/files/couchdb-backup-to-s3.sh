@@ -36,4 +36,4 @@ dt=`date '+%Y%m%d_%H%M%S'`
 
 stdbuf -i0 -o0 -e0 ansible-playbook \
     ~/bin/backup_couchdb.yml \
-    --extra-vars="server_role=$DATA_BRANCH" --limit="solr-$DATA_BRANCH"
+    --extra-vars="server_role=$DATA_BRANCH" --limit="couchdb-$DATA_BRANCH"
