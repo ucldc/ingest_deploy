@@ -418,6 +418,7 @@ Once you've QA checked the results and have completed the harvest, you'll need t
 * Log into blackstar & sudo su - hrv-stg
 * To just stop instances, run `ansible-playbook
 * Run: `ansible-playbook -i ~/code/ec2.py ~/code/ansible/terminate_workers.yml <--limit=10.60.?.?>` . You can use the `limit` parameter to specify a range of IP addresses for deletion.
+* To force terminate an instance, append `--tags=terminate-instances`
 * You'll receive a prompt to confirm that you want to spin down the intance; hit Return to confirm.
 
 We should now leave *one* instance in a "stopped" state. Terminate all but one of the instances then run:
@@ -504,6 +505,7 @@ Once you've completed syncing, you'll need to terminate the worker instances.
 
 * Log into blackstart and sudo to hrv-prd
 * Run: `ansible-playbook -i ~/code/ec2.py ~/code/ansible/terminate_workers.yml <--limit=10.60.?.?>` . You can use the `limit` parameter to specify a range of IP addresses for deletion.
+* To force terminate an instance, append `--tags=terminate-instances`
 * You'll receive a prompt to confirm that you want to spin down the intance; hit Return to confirm.
 
 We should now leave *one* instance in a "stopped" state. Terminate all but one of the instances then run:
