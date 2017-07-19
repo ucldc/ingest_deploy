@@ -160,6 +160,17 @@ If harvesting from Nuxeo ("deep harvesting"): once you've added the collection(s
 
 You can monitor the deep harvesting process through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>. At this stage, you'll see the harvest job listed in the queue.
 
+If there are problems with individual items, you can do a deep harvest for just one object by it's Nuxeo path. You need to log onto dsc-blackstar and sudo to the hrv-stg role account. Then:
+
+```shell
+queue_deep_harvest_single_object.py "<path to assest wrapped with quotes>"
+```
+e.g. 
+```shell
+queue_deep_harvest_single_object.py "/asset-library/UCR/Manuscript Collections/Godoi/box_01/curivsc_003_001_005.pdf"
+```
+
+This will run 4 jobs, one for grabbing files, one for creating jp2000 for access & IIIF, one to create thumbs and finally a job to produce the media_json file.
 
 <a name="harvestconducting">Conducting a harvest</a> 
 --------------------------
