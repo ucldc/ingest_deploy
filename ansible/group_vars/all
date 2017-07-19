@@ -15,5 +15,5 @@ worker_instance_type: m4.large
 repo_harvester: https://github.com/ucldc/harvester.git
 repo_solr: https://github.com/ucldc/solr_api.git
 repo_ucldc_iiif: https://github.com/barbarahui/ucldc-iiif.git
-repo_nuxeo_calisphere: https://github.com/barbarahui/nuxeo-calisphere.git
+repo_nuxeo_calisphere: https://github.com/mredar/nuxeo-calisphere.git
 repo_mapping: git@bitbucket.org:mredar/dpla-ingestion.git
