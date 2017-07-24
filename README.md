@@ -625,7 +625,7 @@ To do so in the ingest environment, run `ansible-playbook -i hosts solr_docker_r
 You will then have to run `/usr/local/solr-update.sh --since=0` to reindex the
 whole couchdb database.
 
-###<a name="cdbsearch">How to find a CouchDB source document for an item in Calisphere</a>
+### <a name="cdbsearch">How to find a CouchDB source document for an item in Calisphere</a>
 
 #### See the new tool for automating this here: https://github.com/mredar/ucldc_api_data_quality/blob/master/reporting/README.md
 
