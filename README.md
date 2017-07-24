@@ -696,7 +696,7 @@ The URL in `isShownBy` points to what was pulled from Nuxeo and stashed in S3, a
 The URL in `preview` points to what was pulled from Nuxeo, and used as a thumbnail image for Calisphere search/browse results (as well as the thumbnail image in the related items carousel)
 
 
-Note that you can also verify `isShownBy` by [looking up the object in CouchDB](#cdbdocforitem).
+Note that you can also verify `isShownBy` by [looking up the object in CouchDB](#cdbsearch).
 
 #### 2. Double-check the URL `isShownBy` and `preview` fields
 
