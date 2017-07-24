@@ -672,23 +672,51 @@ watch the logs real time if you like. tail -f /var/local/rqworker/worker.log or
 
 ### <a name="imagefix">Image problems</a>
 
-The image harvesting part of the process often has at least partial failures.
-
-To verify if images were harvested successfully (i.e., images are stashed in S3 and referenced by resolveable URLs in `isShownBy`, `object` (file in S3), and `preview` (thumbnail)), use the following script in the `ucldc_api_data_quality/reporting directory` (following the steps at https://github.com/mredar/ucldc_api_data_quality/tree/master/reporting):
+1. The first step to troubleshooting any image issue is to verify if and what files were harvested, for a given object. Use the following script in the `ucldc_api_data_quality/reporting directory` (following the steps at https://github.com/mredar/ucldc_api_data_quality/tree/master/reporting) to generate a report for the object. The <ID> value is the *id* for the object, as reflected in Solr or CouchDB (e.g., 6d445613-63d3-4144-a530-718900676db9):
 
 `python get_couchdata_for_calisphere_id.py <ID>`
 
-If images are missing, first just try to run the image harvest for the collection again from the registry. Hopefully that fixes.
+Example report result:
 
-If incorrect images were downloaded, you must manually queue the image harvest to force it to re-fetch images that were found. First, you need to clear the "CouchDB ID -> image url" cache and then set the image harvest to run with the flag --get_if_object (so get the image even if the "object" field exists in the CouchDB document)
+```
+===========================================================================
+Calisphere/Solr ID: 6d445613-63d3-4144-a530-718900676db9
+CouchDB ID: 26883--6d445613-63d3-4144-a530-718900676db9
+isShownAt: https://calisphere.org/item/6d445613-63d3-4144-a530-718900676db9
+isShownBy: https://nuxeo.cdlib.org/Nuxeo/nxpicsfile/default/6d445613-63d3-4144-a530-718900676db9/Medium:content/
+object: ce843950f622d303b83256add5b19d34
+preview: https://calisphere.org/clip/500x500/ce843950f622d303b83256add5b19d34
+===========================================================================
+```
 
-First you should check that the `isShownBy` field for the documents in question point to valid images. See [Finding CouchDB Doc for item](#cdbdocforitem) to find the document.
+The URL in `isShownBy` points to what was pulled from Nuxeo and stashed in S3, and used to create fuller-sized display images in Calisphere. 
+
+The URL in `preview` points to what was pulled from Nuxeo, and used as a thumbnail image for Calisphere search/browse results (as well as the thumbnail image in the related items carousel)
+
+
+Note that you can also verify `isShownBy` by [looking up the object in CouchDB](#cdbdocforitem).
+
+2. Double-check the URL `isShownBy` and `preview` fields. If there's no functional URL (value is "None"), then an image was not successfully harvested. If the URL retrieves an incorrect image, you'll need to re-fecth the images from Nuxeo.
+
+
+###. No URL for `isShownBy`
+
+Run a [deep harvest for the single object](#deepharvest) to pick up the file, and check the results again.
+
+
+####. No URL for `preview`
+
+Run the image harvest for the collection from the Collection Registry ("Queue image harvest to CouchDB stage" action), and check the results again.
+
+
+####. URLs resolve to incorrect version of files in either `isShownAt` or `preview`
+
+If incorrect images were downloaded, you must manually queue the image harvest to force it to re-fetch images from Nuxeo. First, you need to clear the "CouchDB ID -> image url" cache and then set the image harvest to run with the flag --get_if_object (so get the image even if the "object" field exists in the CouchDB document)
 
 * Log onto blackstar & sudo su - hrv-stg
 * Run `python ~/bin/redis_delete_harvested_images_script.py <collection_id>`. This will produce a file called `delete_image_cache-<collection_id>` in the current directory.
 * Run `redis.sh < delete_image_cache-<collection_id>`. This will clear the cache of previously harvested URLs.
 * Run `python ~/bin/queue_image_harvest.py mredar@gmail.com normal-stage https://registry.cdlib.org/api/v1/collection/<collection_id>/ --get_if_object`
-* Keep your fingers crossed
 
 Development
 -----------
