@@ -699,17 +699,17 @@ Note that you can also verify `isShownBy` by [looking up the object in CouchDB](
 2. Double-check the URL `isShownBy` and `preview` fields. If there's no functional URL (value is "None"), then an image was not successfully harvested. If the URL retrieves an incorrect image, you'll need to re-fecth the images from Nuxeo.
 
 
-###. No URL for `isShownBy`
+### No URL for `isShownBy`
 
 Run a [deep harvest for the single object](#deepharvest) to pick up the file, and check the results again.
 
 
-####. No URL for `preview`
+#### No URL for `preview`
 
 Run the image harvest for the collection from the Collection Registry ("Queue image harvest to CouchDB stage" action), and check the results again.
 
 
-####. URLs resolve to incorrect version of files in either `isShownAt` or `preview`
+#### URLs resolve to incorrect version of files in either `isShownAt` or `preview`
 
 If incorrect images were downloaded, you must manually queue the image harvest to force it to re-fetch images from Nuxeo. First, you need to clear the "CouchDB ID -> image url" cache and then set the image harvest to run with the flag --get_if_object (so get the image even if the "object" field exists in the CouchDB document)
 
