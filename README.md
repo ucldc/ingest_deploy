@@ -42,7 +42,7 @@ UCLDC Harvesting operations guide
 
 [Preliminary setup](#prelim)
 * [1. Add collection to the Registry and define harvesting endpoint](#registrycollection)
-* [2. Pre-processing files from Nuxeo](#deepharvest)
+* [2. Pre-processing files from Nuxeo ("deep harvesting")](#deepharvest)
 
 [Conducting a harvest](#harvestconducting)
 * [1. New harvest or re-harvest?](#harvestnew)
