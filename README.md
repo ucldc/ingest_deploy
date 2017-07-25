@@ -151,9 +151,22 @@ The first step in the harvesting process is to add the collection(s) for harvest
 When establishing the entries, you'll need to determine the harvesting endpoint: Nuxeo, OAC, or an external source.
 
 
-### 2. <a name="deepharvest">Pre-processing files from Nuxeo</a>
+### 2. <a name="deepharvest">Pre-processing files from Nuxeo ("deep harvesting")</a>
 
-If harvesting from Nuxeo ("deep harvesting"): once you've added the collection(s) to the Collection Registry, you'll need to complete the following steps:
+If harvesting from Nuxeo: once you've added the collection(s) to the Collection Registry, you'll need to complete the following "deep harvesting" steps. The process processes files from the "Main Content File" section in Nuxeo, to prepare the resulting formats for display in Calisphere. Here's what the process does:
+
+1. It stashes a high quality copy of any associated media or text files on S3:
+* If image, creates a zoomable jp2000 version and stash it on S3 for use with our IIIF-compatible Loris server. Tools used to convert the image include ImageMagick and Kakadu
+* If audio, stashes mp3 on s3.
+* If file (i.e. PDF), stashes on s3
+
+2. Creates thumbnail and stash on S3:
+* If video, creates a thumbnail and stash on S3. Thumbnail is created by capturing the middle frame of the video using the ffmpeg tool.
+* If PDF, creates a thumbnail and stash on S3. Thumbnail is created by creating an image of the first page of the PDF, using ImageMagick.
+
+In addition, the process compiles full metadata and structural information (such as component order) for all complex objects, in the form of a `media.json` file. 
+
+To run the "deep harvest" process:
 
 * Log into the <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> and look up the collection
 * Choose `Queue Nuxeo deep harvest` drop-down. 
