@@ -13,7 +13,7 @@
     dest: /bin/
     copy: no
 - name: get couchdb docker image
-  shell: docker pull mredar/couchdb
+  shell: docker pull couchdb
 - name: run couchdb docker
   docker:
     state: running
