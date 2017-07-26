@@ -721,6 +721,11 @@ Double-check the URL in the `preview` field.
 
 If there's no functional URL in `preview` (value indicates "None"), then a file was not successfully harvested. To fix, try re-running the [process to harvest preview and thumbnail images](#harvestpreview) image.
 
+For Nuxeo-based objects, the following logic is baked into the process for harvesting preview and thumbnail images:
+1. If object has an image at the parent level, use that. Otherwise, if component(s) have images, use the first one we can find
+2. If an object has a PDF or video at parent level, use the image stashed on S3
+3. Otherwise, return "None"
+
 
 #### No access files, preview image (for PDF or video objects), or complex object component thumbnails? (Nuxeo only)
 
