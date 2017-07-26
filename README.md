@@ -40,8 +40,7 @@ UCLDC Harvesting operations guide
 * [Adding a monitoring user (one time set up)](#usermonitor)
 * [Adding an admin user  (one time set up)](#useradmin)
 
-[Preliminary setup](#prelim)
-* [Add collection to the Registry and define harvesting endpoint](#registrycollection)
+[Preliminary steps: add collection to the Registry and define harvesting endpoint](#registrycollection)
 
 [Conducting a harvest to stage](#harvestconducting)
 * [1. Managing workers to process harvesting jobs](#workeroverview)
@@ -142,9 +141,8 @@ This will add your public key to the ~/.ssh/authorized_keys for the ec2-user on
 the ingest front machine.
 
 
-<a name="prelim">Preliminary setup</a> 
+<a name="registrycollection">Preliminary steps: add collection to the Registry and define harvesting endpoint</a>
 --------------------------
-### <a name="registrycollection">Add collection to the Registry and define harvesting endpoint</a>
 
 The first step in the harvesting process is to add the collection(s) for harvesting into the <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a>.  This process is described further in Section 8 of our <a href="https://sp.ucop.edu/sites/cdl/apg/_layouts/15/WopiFrame.aspx?sourcedoc=/sites/cdl/apg/OACCalisphere%20docs/dsc_maintenance_procedures.doc&action=default&DefaultItemOpen=1">OAC/Calisphere Operations and Maintenance Procedures</a>. 
 
