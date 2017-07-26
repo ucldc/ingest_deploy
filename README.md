@@ -185,43 +185,19 @@ queue_deep_harvest_single_object.py "/asset-library/UCR/Manuscript Collections/G
 
 This will run 4 jobs, one for grabbing files, one for creating jp2000 for access & IIIF, one to create thumbs and finally a job to produce the media_json file.
 
-<a name="harvestconducting">Conducting a harvest</a> 
---------------------------
 
-### 1. <a name="harvestnew">New harvest or re-harvest?</a>
+<a name="harvestconducting">Conducting a harvest to stage</a> 
+-------------------------
 
-Before initiating a harvest, you'll first need to confirm if the collection has previously been harvested -- or if it's a new collection:
+### 1. <a name="workeroverview">Managing workers to process harvesting jobs</a>
 
-* Log into the <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> and look up the collection, to determine the key.  For example, for <a href="https://registry.cdlib.org/admin/library_collection/collection/26189/">"Radiologic Imaging Lab collection"</a>, the key is "26189"
-* Query CouchDB stage using this URL syntax.  Replace the key parameter with the key for the collection: `https://harvest-stg.cdlib.org/couchdb/ucldc/_design/all_provider_docs/_view/by_provider_name_count?key="26189"`
+We use "transient" <a href="http://python-rq.org/">Redis Queue</a>-managed (RQ) worker instances to process harvesting jobs in either a staging or production environment. They can be created as needed and then deleted after use. Once the workers have been created and provisioned, they will automatically look for jobs in the queue and run the full harvester code for those jobs.
 
-If you do not have results in the "value" parameter, then go to the next step of creating a harvest job.  If you do have results in the "value" parameter, then you'll be conducting a re-harvest. You'll first need to remove the harvested records from CouchDB stage and Solr stage:
+#### 1.1. <a name="createstageworker">Start or create stage workers</a>
 
-* Log onto blackstar & sudo su - hrv-stg
-* Run this command to remove the collection from CouchDB stage, adding the key for the collection at the end: `delete_couchdb_collection.py 23065`.
-* Then from the registry "Queue delete solr documents for collection(s) on normal-stage"
-* Repeat the process above on the hrv-prd production user account, to remove the collection from CouchDB production and Solr production.
-* Then proceed with the steps below for creating a new harvest job
-
-### 2. <a name="harvestregistry">Create a harvest job in Registry</a>
-
-* Log into the <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> and look up the collection
-* Choose `Start harvest normal stage` from the `Action` drop-down. Note: "normal stage" is the current default. When you provision workers (see below), you can specify which queue(s) they will poll for jobs via the `rq_work_queues` parameter. The example given below sets the workers up to listen for jobs on `normal-stage` and `low-stage`, but you can change this if need be. 
-* You should then get feedback message verifying that the collections have been queued.
-
-You can now begin to monitor the harvesting process through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>. At this stage, you'll see the harvest job listed in the queue.
-
-### 3. <a name="harvestcdbstg">Harvest the collection through to CouchDB stage</a>
-
-The following sections describe the process for harvesting collections through to CouchDB stage. This is done via the use of "transient" <a href="http://python-rq.org/">Redis Queue</a>-managed (RQ) worker instances, which are created as needed and then deleted after use. Once the workers have been created and provisioned, they will automatically look for jobs in the queue and run the full harvester code for those jobs. The end result is that CouchDB is updated.
-
-#### 3.1. Start or Create <a name="createstageworker">stage workers</a>
-
-* Log onto blackstar & sudo to hrv-stg
-* See if any "stopped" worker instances are present. Run `get_worker_info.sh` If you see an instance with state "stopped" it can be started much more easily than creating new ones: `snsatnow --ignore-stderr ansible-playbook -i ~/code/ec2.py ~/code/ansible/start_workers.yml` *If this works, you do not need to create workers unless you have a lot of jobs to run*
-* To create some worker machines (bare ec2 spot instances), run: `snsatnow ansible-playbook ~/code/ansible/create_worker.yml --extra-vars=\"count=1\"`
-
-For on-demand instances, run: `snsatnow ansible-playbook ~/code/ansible/create_worker_ondemand.yml --extra-vars=\"count=1\"`
+* Log onto blackstar and run `sudo su - hrv-stg`
+* See if any "stopped" worker instances are present: run `get_worker_info.sh` If you see an instance with state "stopped" it can be started much more easily than creating new ones: `snsatnow --ignore-stderr ansible-playbook -i ~/code/ec2.py ~/code/ansible/start_workers.yml` *If this works, you do not need to create workers unless you have a lot of jobs to run*
+* To create some worker machines (bare ec2 spot instances), run: `snsatnow ansible-playbook ~/code/ansible/create_worker.yml --extra-vars=\"count=1\"` . For on-demand instances, run: `snsatnow ansible-playbook ~/code/ansible/create_worker_ondemand.yml --extra-vars=\"count=1\"`
 
 The `count=##` parameter will set the number of instances to create. For harvesting one small collection you can set this to `count=1`. To re-harvest all collections, you can set this to `count=20`. For anything in between, use your judgment.
 
@@ -239,13 +215,13 @@ Our spot bid price is set to .133 which is the current (20160803) on demand pric
 snsatnow ansible-playbook ~/code/ansible/create_worker_ondemand.yml --extra-vars=\"count=3\"
 ```
 
-#### 3.2. <a name="harvestprovisionstg">Provision stage workers to act on harvesting</a>
+#### 1.2. <a name="harvestprovisionstg">Provision stage workers to act on harvesting jobs</a>
 
 *If you restarted a stopped instance, you don't need to do the steps below*
 
 Once this is done and the stage worker instances are in a state of "running", you'll need to provision the workers by installing required software, configurations and start running Akara and the worker processes that listen on the queues specified:
 
-* Log onto blackstar & sudo su - hrv-stg
+* Log onto blackstar and run `sudo su - hrv-stg`
 * To provision the workers, run: `snsatnow ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker.yml`
 * Wait for the provisioning to finish; this can take a while, 5-10 minutes is not
 unusual. If the provisioning process stalls, use `ctrl-C` to end the process then re-do the ansible command.
@@ -261,7 +237,7 @@ AWS assigns unique subnets to the groups of workers you start, so in general,
 different generations of machines will be distinguished by the different C class
 subnet. This makes the --limit parameter quite useful.
 
-#### 3.2.a <a name="workerstatus">Worker instance status
+#### 1.3 <a name="workerstatus">Checking the status of a worker</a>
 
 Sometimes the status of the worker instances is unclear.
 
@@ -293,18 +269,156 @@ This will tell you if it is running or not.
 To get more information about the instance, just do less filtering:
 ```sh
 ~/code/ec2.py | jq -C '._meta.hostvars["<ip address for instance>"]' | less -R
+
+
+
+* Log into blackstar and run `sudo su - hrv-stg`
+* To just stop instances, run `ansible-playbook
+* Run: `ansible-playbook -i ~/code/ec2.py ~/code/ansible/terminate_workers.yml <--limit=10.60.?.?>` . You can use the `limit` parameter to specify a range of IP addresses for deletion.
+* To force terminate an instance, append `--tags=terminate-instances`
+* You'll receive a prompt to confirm that you want to spin down the intance; hit Return to confirm.
+
+We should now leave *one* instance in a "stopped" state. Terminate all but one of the instances then run:
+
+```sh
+ansible-playbook -i ~/code/ec2.py ~/code/ansible/stop_workers.yml
 ```
 
-#### 3.3. <a name="harvestcdbcomplete">Verify that the harvests are complete in CouchDB stage</a>
+This will stop the instance so it can be brought up easily. `get_worker_info.sh` should report the instance as "stopping" or "stopped".
 
-The jobs will disappear from queue when they've all been slurped up by the workers. You should then be able to QA check the harvested collection:
+
+#### 1.4 <a name="terminatestg">Stop or terminate stage worker instances</a>
+
+Once harvesting jobs are completed (see steps below), terminate the worker instances.
+
+* Log into blackstar and run `sudo su - hrv-stg`
+* To just stop instances, run `ansible-playbook
+* Run: `ansible-playbook -i ~/code/ec2.py ~/code/ansible/terminate_workers.yml <--limit=10.60.?.?>` . You can use the `limit` parameter to specify a range of IP addresses for deletion.
+* To force terminate an instance, append `--tags=terminate-instances`
+* You'll receive a prompt to confirm that you want to spin down the intance; hit Return to confirm.
+
+We should now leave *one* instance in a "stopped" state. Terminate all but one of the instances then run:
+
+```sh
+ansible-playbook -i ~/code/ec2.py ~/code/ansible/stop_workers.yml
+```
+
+This will stop the instance so it can be brought up easily. `get_worker_info.sh` should report the instance as "stopping" or "stopped".
+
+
+
+### 2. <a name="harvestregistry">Run harvest jobs from Registry: non-Nuxeo sources</a>
+
+
+#### 2.1. <a name="harvestnew">New harvest or re-harvest?</a>
+
+Before initiating a harvest, confirm if the collection has previously been harvested -- or if it's a new collection.  
+
+If the collection has previously been harvested and is viewable in the Calisphere stage UI (http://calisphere-data.cdlib.org/), then delete the collection from CouchDB stage and Solr stage:
+
+* Log into the <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> and look up the collection
+* Run `Queue deletion of documents from CouchDB stage`. 
+* Then run `Queue deletion of documents from Solr stage`.
+* You can track the progress through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>; once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
+
+
+#### 2.2. <a name="harvestcdbstg">Harvest metadata to CouchDB stage</a>
+
+This process will harvest metadata from the target system into a resulting CouchDB record.
+
+* From the Collection Registry, select `Queue harvest to CouchDB stage` 
+* You should then get feedback message verifying that the collections have been queued
+* You can track the progress through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>; once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
+
+
+####. 2.3. <a name="harvestpreview">Harvest preview and thumbnail images</a>
+
+This process will hit the URL referenced in `isShownAt` in the CouchDB record to derive a small preview image (used for the object landing page); that preview image is also used for thumbnails in search/browse and related item results.
+
+* From the Collection Registry, select `Queue image harvest` 
+* You should then get feedback message verifying that the collections have been queued
+* You can track the progress through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>; once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
+
+
+
+### 3. <a name="harvestnuxeostg">Run harvest jobs from Registry: Nuxeo</a>
+
+#### 3.1. <a name="harvestnew1">New harvest or re-harvest?</a>
+
+Before initiating a harvest, confirm if the collection has previously been harvested -- or if it's a new collection.  
+
+If the collection has previously been harvested and is viewable in the Calisphere stage UI (http://calisphere-data.cdlib.org/), then delete the collection from CouchDB stage and Solr stage:
+
+* Log into the <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> and look up the collection
+* Run `Queue deletion of documents from CouchDB stage`. 
+* Then run `Queue deletion of documents from Solr stage`.
+* You can track the progress through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>; once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
+
+
+#### 3.2. <a name="deepharvest">Harvest and process access files from Nuxeo ("deep harvesting")</a>
+
+The process pulls files from the "Main Content File" section in Nuxeo, and formats them into access files for display in Calisphere. Here's what the process does:
+
+1. It stashes a high quality copy of any associated media or text files on S3.  These files appear on the object landing page, for interactive viewing:
+* If image, creates a zoomable jp2000 version and stash it on S3 for use with our IIIF-compatible Loris server. Tools used to convert the image include ImageMagick and Kakadu
+* If audio, stashes mp3 on s3.
+* If file (i.e. PDF), stashes on s3
+
+2. Creates a small preview image (used for the object landing page) and complex object component thumbnails and stashes on S3. For these particular formats, it does the following:
+* If video, creates a thumbnail and stash on S3. Thumbnail is created by capturing the middle frame of the video using the ffmpeg tool.
+* If PDF, creates a thumbnail and stash on S3. Thumbnail is created by creating an image of the first page of the PDF, using ImageMagick.
+
+3. Compiles full metadata and structural information (such as component order) for all complex objects, in the form of a `media.json` file.  To view the media.json for a given object, use this URL syntax (where <UID> is the Nuxeo unique identifier, e.g., 70d7f57a-db0b-4a1a-b089-cce1cc289c9e): `https://s3.amazonaws.com/static.ucldc.cdlib.org/media_json/<UID>-media.json`
+
+To run the "deep harvest" process:
+
+* Log into the <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> and look up the collection
+* Run `Queue Nuxeo deep harvest` drop-down. 
+* You can track the progress through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>; once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
+
+If there are problems with individual items, you can do a deep harvest for just one object by it's Nuxeo path. You need to log onto dsc-blackstar and sudo to the hrv-stg role account. Then:
+
+```shell
+queue_deep_harvest_single_object.py "<path to assest wrapped with quotes>"
+```
+e.g. 
+```shell
+queue_deep_harvest_single_object.py "/asset-library/UCR/Manuscript Collections/Godoi/box_01/curivsc_003_001_005.pdf"
+```
+
+This will run 4 jobs, one for grabbing files, one for creating jp2000 for access & IIIF, one to create thumbs and finally a job to produce the media_json file.
+
+
+#### 3.3. <a name="harvestnuxmdstg">Harvest metadata to CouchDB stage</a>
+
+This process will harvest metadata from Nuxeo into a resulting CouchDB record.
+
+* From the Collection Registry, select `Queue harvest to CouchDB stage` 
+* You should then get feedback message verifying that the collections have been queued
+* You can track the progress through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>; once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
+
+
+#### 3.4. <a name="harvestnuxpreview">Harvest preview image, also used for thumbnails</a>
+
+This process will hit the URL referenced in `isShownAt` in the CouchDB record to derive a small preview image (used for the object landing page); that preview image is also used for thumbnails in search/browse and related item results.
+
+* From the Collection Registry, select `Queue image harvest` 
+* You should then get feedback message verifying that the collections have been queued
+* You can track the progress through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>; once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
+
+
+### 4. <a name="harvestcdbqa">QA check collection in CouchDB stage</a>
+
+
+#### 4.1. <a name="harvestcdbcomplete">Check the number of records in CouchDB</a>
 
 * Query CouchDB stage using this URL syntax.  Replace the key parameter with the key for the collection: `https://harvest-stg.cdlib.org/couchdb/ucldc/_design/all_provider_docs/_view/by_provider_name_count?key="26189"`
 * Results in the "value" parameter indicate the total number of metadata records harvested; this should align with the expected results. 
 * If you have results, continue with QA checking the collection in CouchDB stage and Solr stage.
 * If there are no results, you will need to troubleshoot and re-harvest.  See <b>What to do when harvests fail</b> section for details.
 
-### 4. <a name="harvestcdbqa">QA check collection in CouchDB stage</a>
+
+#### 4.2. <a name="couchdbaddqa">Additional QA checking</a>
 
 The objective of this part of the QA process is to ensure that source metadata (from a harvesting target) is correctly mapped through to CouchDB
 Suggested method is to review the 1) source metadata (e.g., original MARC21  record, original XTF-indexed metadata*) vis-a-vis the 2) a random sample of CouchDB results and 3) <a href="https://docs.google.com/spreadsheets/d/1u2RE9PD0N9GkLQTFNJy3HiH9N5IbKDG52HjJ6JomC9I/edit#gid=265758929">metadata crosswalk</a>. Things to check:
@@ -368,6 +482,7 @@ https://harvest-stg.cdlib.org/couchdb/ucldc/_design/all_provider_docs/_view/miss
 
 As with the above you can add various parameters to get different information in the result.
 
+
 ##### Records missing title
 
 ```
@@ -398,15 +513,14 @@ https://harvest-stg.cdlib.org/couchdb/ucldc/_design/all_provider_docs/_view/miss
  * You can now view the metadata in either its source format or mapped to CouchDB fields
  
 
-### 5.<a name="solrupdate">Update Solr stage</a>
+### 5.<a name="solrupdate">Sync CouchDB stage to Solr stage</a>
 
-#### 5.1. <a name="solrstg">Sync couchdb collection to Solr stage index, based on what's in CouchDB stage</a>
+This process will update the Solr stage index with records from CouchDB stage:
 
-Goto the registry page for the collection and select "Queue sync solr index for collection(s) on normal-stage". There must be a stage worker running
+* From the Collection Registry, select `Queue sync from CouchDB stage to Solr stage` 
+* You should then get feedback message verifying that the collections have been queued
+* You can track the progress through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>; once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
 
-#### 5.2. <a name="solrdelete">Delete a collection from Solr stage</a>
-
-From the collection registry page, select "Queue delete solr documents for collection(s) on normal-stage" and have a worker running
 
 ### 6. <a name="solrqa">QA check collection in Solr stage</a>
 
@@ -421,12 +535,8 @@ Note that you can additionally view the raw results in Solr stage; this may be h
 * Consult the <a href="https://wiki.apache.org/solr/SolrQuerySyntax">Solr guide</a> for additional query details.
 
 
-### 7. <a name="mediajson">QA check media.json</a>
 
-To QA check media.json output results, use this URL syntax: `https://s3.amazonaws.com/static.ucldc.cdlib.org/media_json/70d7f57a-db0b-4a1a-b089-cce1cc289c9e-media.json`
-
-
-### 8. <a name="calisphereqa">QA check in Calisphere stage UI</a>
+### 7. <a name="calisphereqa">QA check in Calisphere stage UI</a>
 
 You can preview the Solr stage index in the Calisphere UI at <a href="http://calisphere-data.cdlib.org/">http://calisphere-data.cdlib.org/</a>. 
 
@@ -434,24 +544,6 @@ To immediately view results, you can QA the Solr stage index on your local works
 
 In the run.bat configuration file, point UCLDC_SOLR_URL to `https://harvest-stg.cdlib.org/solr_api`.
 
-
-### 9. <a name="terminatestg">Stop or Terminate stage worker instances</a>
-
-Once you've QA checked the results and have completed the harvest, you'll need to terminate the worker instances.
-
-* Log into blackstar & sudo su - hrv-stg
-* To just stop instances, run `ansible-playbook
-* Run: `ansible-playbook -i ~/code/ec2.py ~/code/ansible/terminate_workers.yml <--limit=10.60.?.?>` . You can use the `limit` parameter to specify a range of IP addresses for deletion.
-* To force terminate an instance, append `--tags=terminate-instances`
-* You'll receive a prompt to confirm that you want to spin down the intance; hit Return to confirm.
-
-We should now leave *one* instance in a "stopped" state. Terminate all but one of the instances then run:
-
-```sh
-ansible-playbook -i ~/code/ec2.py ~/code/ansible/stop_workers.yml
-```
-
-This will stop the instance so it can be brought up easily. `get_worker_info.sh` should report the instance as "stopping" or "stopped".
 
 <a name="harvestprod">Moving a harvest to production</a>
 --------------------------
