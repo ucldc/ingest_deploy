@@ -234,22 +234,6 @@ To get more information about the instance, just do less filtering:
 ~/code/ec2.py | jq -C '._meta.hostvars["<ip address for instance>"]' | less -R
 ```
 
-
-* Log into blackstar and run `sudo su - hrv-stg`
-* To just stop instances, run `ansible-playbook
-* Run: `ansible-playbook -i ~/code/ec2.py ~/code/ansible/terminate_workers.yml <--limit=10.60.?.?>` . You can use the `limit` parameter to specify a range of IP addresses for deletion.
-* To force terminate an instance, append `--tags=terminate-instances`
-* You'll receive a prompt to confirm that you want to spin down the intance; hit Return to confirm.
-
-We should now leave *one* instance in a "stopped" state. Terminate all but one of the instances then run:
-
-```sh
-ansible-playbook -i ~/code/ec2.py ~/code/ansible/stop_workers.yml
-```
-
-This will stop the instance so it can be brought up easily. `get_worker_info.sh` should report the instance as "stopping" or "stopped".
-
-
 #### 1.4. <a name="terminatestg">Stop or terminate stage worker instances</a>
 
 Once harvesting jobs are completed (see steps below), terminate the worker instances.
