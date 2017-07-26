@@ -476,7 +476,7 @@ https://harvest-stg.cdlib.org/couchdb/ucldc/_design/all_provider_docs/_view/miss
  * You can now view the metadata in either its source format or mapped to CouchDB fields
  
 
-### 5.<a name="solrupdate">Sync CouchDB stage to Solr stage</a>
+### 5. <a name="solrupdate">Sync CouchDB stage to Solr stage</a>
 
 This process will update the Solr stage index with records from CouchDB stage:
 
