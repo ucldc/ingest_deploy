@@ -513,7 +513,7 @@ In the run.bat configuration file, point UCLDC_SOLR_URL to `https://harvest-stg.
 
 ### 8. <a name="createprodworker">Manage workers to process harvesting jobs</a>
 
-Follow the steps outlined above for [creating and managing worker instances[(#workeroverview) -- but once logged into blackstar, use `sudo su - hrv-prd` to create workers in the production environment.
+Follow the steps outlined above for [creating and managing worker instances](#workeroverview) -- but once logged into blackstar, use `sudo su - hrv-prd` to create workers in the production environment.
 
 
 ### 9. <a name="synccouch">Sync the collection from CouchDB stage to CouchDB production</a>
