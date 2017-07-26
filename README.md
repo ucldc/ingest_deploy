@@ -471,11 +471,8 @@ This process will update the Solr stage index with records from CouchDB stage:
 
 ### 6. <a name="solrqa">QA check collection in Solr stage</a>
 
-Generate and review a QA report for the Solr stage index, following <a href="https://github.com/mredar/ucldc_api_data_quality/tree/master/reporting">these steps</a>. The "Duplicates and missing QA spreadsheet" in particular indicates cases where harvested records lack required metadata.
+You can view the raw results in Solr stage; this may be helpful to verify mapping issues or discrepancies in data between CouchDB and Solr stage.  
 
-Note that you can additionally view the raw results in Solr stage; this may be helpful to verify mapping issues or discrepancies in data between CouchDB and Solr stage.  Make sure you update Solr before QA'ing -- see <b>[Update Solr stage](#solrupdate)</b> instructions.
-
-#### Querying Solr stage
 * Log into <a href="https://harvest-stg.cdlib.org/solr/#/dc-collection/query">Solr</a> to conduct queries 
 * Generate a count of all objects for a given collection in Solr:  `https://harvest-stg.cdlib.org/solr/dc-collection/query?q=collection_url:%22https://registry.cdlib.org/api/v1/collection/26559/%22`
 * Generates counts for all collections: `https://harvest-stg.cdlib.org/solr/dc-collection/select?q=*%3A*&rows=0&wt=json&indent=true&facet=true&facet.query=true&facet.field=collection_url&facet.limit=-1&facet.sort=count`
@@ -487,9 +484,7 @@ Note that you can additionally view the raw results in Solr stage; this may be h
 
 You can preview the Solr stage index in the Calisphere UI at <a href="http://calisphere-data.cdlib.org/">http://calisphere-data.cdlib.org/</a>. 
 
-To immediately view results, you can QA the Solr stage index on your local workstation, following <a href="https://github.com/ucldc/public_interface">these steps</a> ("Windows install"). 
-
-In the run.bat configuration file, point UCLDC_SOLR_URL to `https://harvest-stg.cdlib.org/solr_api`.
+To immediately view results, you can QA the Solr stage index on your local workstation, following <a href="https://github.com/ucldc/public_interface">these steps</a> ("Windows install"). In the run.bat configuration file, point UCLDC_SOLR_URL to `https://harvest-stg.cdlib.org/solr_api`.
 
 
 <a name="harvestprod">Moving a harvest to production</a>
