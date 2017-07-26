@@ -200,7 +200,7 @@ AWS assigns unique subnets to the groups of workers you start, so in general,
 different generations of machines will be distinguished by the different C class
 subnet. This makes the --limit parameter quite useful.
 
-#### 1.3 <a name="workerstatus">Checking the status of a worker</a>
+#### 1.3. <a name="workerstatus">Checking the status of a worker</a>
 
 Sometimes the status of the worker instances is unclear.
 
@@ -250,7 +250,7 @@ ansible-playbook -i ~/code/ec2.py ~/code/ansible/stop_workers.yml
 This will stop the instance so it can be brought up easily. `get_worker_info.sh` should report the instance as "stopping" or "stopped".
 
 
-#### 1.4 <a name="terminatestg">Stop or terminate stage worker instances</a>
+#### 1.4. <a name="terminatestg">Stop or terminate stage worker instances</a>
 
 Once harvesting jobs are completed (see steps below), terminate the worker instances.
 
@@ -722,14 +722,14 @@ Double-check the URL in the `preview` field.
 If there's no functional URL in `preview` (value indicates "None"), then an image was not successfully harvested. To fix, try re-running the [process to derive the preview](#harvestpreview) image.
 
 
-##### No access files, preview image (for PDF or video objects), or complex object component thumbnails? (Nuxeo only)
+#### No access files, preview image (for PDF or video objects), or complex object component thumbnails? (Nuxeo only)
 
 The media.json output created through the ["deep harvest"](#deepharvest) process references URL links back to the source files in Nuxeo.  If those links are missing, then the files could not be successfully harvested.
 
 To fix, try re-running the [deep harvest for a single object](#deepharvest) to regenerate the media.json and files.
 
 
-##### Persistent older versions of access files, preview image (for PDF or video objects), or complex object component thumbnails? (Nuxeo only)
+#### Persistent older versions of access files, preview image (for PDF or video objects), or complex object component thumbnails? (Nuxeo only)
 
 If older versions of the files don't clear out after re-running a deep harvest, you can manually queue the image harvest to force it to re-fetch images from Nuxeo. First, you need to clear the "CouchDB ID -> image url" cache and then set the image harvest to run with the flag --get_if_object (so get the image even if the "object" field exists in the CouchDB document)
 
