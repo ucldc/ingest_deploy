@@ -232,7 +232,7 @@ This will tell you if it is running or not.
 To get more information about the instance, just do less filtering:
 ```sh
 ~/code/ec2.py | jq -C '._meta.hostvars["<ip address for instance>"]' | less -R
-
+```
 
 
 * Log into blackstar and run `sudo su - hrv-stg`
@@ -339,7 +339,7 @@ To run the "deep harvest" process:
 * Run `Queue Nuxeo deep harvest` drop-down. 
 * You can track the progress through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>; once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
 
-If there are problems with individual items, you can do a deep harvest for just one object by it's Nuxeo path. You need to log onto dsc-blackstar and sudo to the hrv-stg role account. Then:
+If there are problems with individual items, you can do a deep harvest for just one object by its Nuxeo path. You need to log onto dsc-blackstar and sudo to the hrv-stg role account. Then:
 
 ```shell
 queue_deep_harvest_single_object.py "<path to assest wrapped with quotes>"
