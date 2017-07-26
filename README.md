@@ -294,7 +294,7 @@ This process will harvest metadata from the target system into a resulting Couch
 * You can track the progress through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>; once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
 
 
-####. 2.3. <a name="harvestpreview">Harvest preview and thumbnail images</a>
+#### 2.3. <a name="harvestpreview">Harvest preview and thumbnail images</a>
 
 This process will hit the URL referenced in `isShownAt` in the CouchDB record to derive a small preview image (used for the object landing page); that preview image is also used for thumbnails in search/browse and related item results.
 
@@ -719,7 +719,7 @@ The URL in `preview` points to the resulting preview image.
 
 Double-check the URL in the `preview` field.
 
-If there's no functional URL in `preview` (value indicates "None"), then an image was not successfully harvested. To fix, try re-running the [process to derive the preview](#harvestpreview) image.
+If there's no functional URL in `preview` (value indicates "None"), then a file was not successfully harvested. To fix, try re-running the [process to harvest preview and thumbnail images](#harvestpreview) image.
 
 
 #### No access files, preview image (for PDF or video objects), or complex object component thumbnails? (Nuxeo only)
