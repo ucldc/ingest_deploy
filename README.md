@@ -310,6 +310,7 @@ The process pulls files from the "Main Content File" section in Nuxeo, and forma
 * If image, creates a zoomable jp2000 version and stash it on S3 for use with our IIIF-compatible Loris server. Tools used to convert the image include ImageMagick and Kakadu
 * If audio, stashes mp3 on s3.
 * If file (i.e. PDF), stashes on s3
+* If video, stashes mp4 on s3
 
 2. Creates a small preview image (used for the object landing page) and complex object component thumbnails and stashes on S3. For these particular formats, it does the following:
 * If video, creates a thumbnail and stash on S3. Thumbnail is created by capturing the middle frame of the video using the ffmpeg tool.
@@ -347,7 +348,7 @@ This process will harvest metadata from Nuxeo into a resulting CouchDB record.
 
 #### 3.4. <a name="harvestnuxpreview">Harvest preview image, also used for thumbnails</a>
 
-This process will hit the URL referenced in `isShownAt` in the CouchDB record to derive a small preview image (used for the object landing page); that preview image is also used for thumbnails in search/browse and related item results.
+This process will hit the URL referenced in `isShownBy` in the CouchDB record to derive a small preview image (used for the object landing page); that preview image is also used for thumbnails in search/browse and related item results.
 
 * From the Collection Registry, select `Queue image harvest` 
 * You should then get feedback message verifying that the collections have been queued
