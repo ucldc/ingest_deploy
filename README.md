@@ -68,8 +68,8 @@ UCLDC Harvesting operations guide
 * [8. Manage workers to process harvesting jobs](#createprodworker)
 * [9. Sync the collection from CouchDB stage to CouchDB production](#synccouch)
 * [10. Sync the collection from CouchDB production to Solr production](#synccdb)
-* [11. Generate and review QA report for candidate Solr index](#solrprodreport)
-* [12. QA check candidate Solr index in Calisphere UI](#solrprodqa)
+* [11. QA check candidate Solr index in Calisphere UI](#solrprodqa)
+* [12. Generate and review QA report for candidate Solr index](#solrprodreport)
 
 [Updating Elastic Beanstalk with candidate Solr index](#beanstalk)
 
@@ -512,20 +512,16 @@ This process will update the Solr production index ("candidate Solr index") with
 * You can track the progress through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>; once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
 
 
-
-### 11. <a name="solrprodreport">Generate and review QA report for candidate Solr index</a>
-
-Generate and review a QA report for the candidate Solr index, following [these steps](https://github.com/mredar/ucldc_api_data_quality/tree/master/reporting).  The main QA report in particular summarizes differences in item counts in the candidate Solr index compared with the current production index.
-
-
-### 12. <a name="solrprodqa">QA check candidate Solr index in Calisphere UI</a>
+### 11. <a name="solrprodqa">QA check candidate Solr index in Calisphere UI</a>
 
 You can preview the candidate Solr index in the Calisphere UI at <a href="http://calisphere-test.cdlib.org/">http://calisphere-test.cdlib.org/</a>. 
 
-To immediately view results, you can QA the Solr stage index on your local workstation, following <a href="https://github.com/ucldc/public_interface">these steps</a> ("Windows install"). 
+To immediately view results, you can QA the Solr stage index on your local workstation, following <a href="https://github.com/ucldc/public_interface">these steps</a> ("Windows install"). In the run.bat configuration file, point UCLDC_SOLR_URL to `https://harvest-prd.cdlib.org/solr_api`.
 
-In the run.bat configuration file, point UCLDC_SOLR_URL to `https://harvest-prd.cdlib.org/solr_api`.
 
+### 12. <a name="solrprodreport">Generate and review QA report for candidate Solr index</a>
+
+Generate and review a QA report for the candidate Solr index, following [these steps](https://github.com/mredar/ucldc_api_data_quality/tree/master/reporting).  The main QA report in particular summarizes differences in item counts in the candidate Solr index compared with the current production index.
 
 
 
