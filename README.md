@@ -548,65 +548,35 @@ In the run.bat configuration file, point UCLDC_SOLR_URL to `https://harvest-stg.
 <a name="harvestprod">Moving a harvest to production</a>
 --------------------------
 
-### 1. <a name="synccouch">Create a sync job in the Registry</a>
+### 8. <a name="createprodworker">Manage workers to process harvesting jobs</a>
 
-Once the stage CouchDB & Solr look good and the collection looks ready to publish to Calisphere, start by syncing the stage CouchDB to the production CouchDB. The collection will then be able to be updated to production Solr.
-
-In the Registry, edit the collection and check the box "Ready for publication" and save the collection.
-
-Now select "Queue Sync to production CouchDB for collection" from the action on the Collection page.
+Follow the steps outlined in section 1 -- but once logged into blackstar, use `sudo su - hrv-prd` to create workers in the production environment.
 
 
-### 2. <a name="synccdb">Sync the collection through to CouchDB production</a>
+### 9. <a name="synccouch">Sync the collection from CouchDB stage to CouchDB production</a>
 
-#### 2.1.Start or Create <a name="createprodworker">production workers</a>
+Once the CouchDB and Solr stage data looks good and the collection looks ready to publish to Calisphere, start by syncing CouchDB stage to the CouchDB production:
 
-Production workers handle the syncing of the couchdb instances, so usually will not be running.
-* Log onto blackstar and sudo su - hrv-prd
-* See if any "stopped" worker instances are present. Run `get_worker_info.sh` If you see an instance with state "stopped" it can be started much more easily than creating new ones: `snsatnow --ignore-stderr ansible-playbook -i ~/code/ec2.py ~/code/ansible/start_workers.yml` *If this works, you do not need to create workers unless you have a lot of jobs to run*
-* To create some worker machines (bare ec2 spot instances), run: `snsatnow ansible-playbook ~/code/ansible/create_worker.yml --extra-vars=\"count=1\"`
+* In the Registry, edit the collection and check the box "Ready for publication" and save the collection.
+* Then select "Queue Sync to production CouchDB for collection" from the action on the Collection page.
 
-For on-demand instances, run: `snsatnow ansible-playbook ~/code/ansible/create_worker_ondemand.yml --extra-vars=\"count=1\"`
 
-The `count=##` parameter will set the number of instances to create. For harvesting one small collection you can set this to `count=1`. To re-harvest all collections, you can set this to `count=20`. For anything in between, use your judgment.
+### 10. <a name="synccdb">Sync the collection from CouchDB production to Solr production</a>
 
-Again, with the `snsatnow` command, the result of this will be messaged to dsc_harvesting_report on Slack.
+This process will update the Solr production index ("candidate Solr index") with records from CouchDB production:
 
-#### 2.2. <a name="provisionprd">Provision production workers to act on sync</a>
+* From the Collection Registry, select `Queue sync from CouchDB production to Solr production` 
+* You should then get feedback message verifying that the collections have been queued
+* You can track the progress through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>; once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
 
-*If you restarted a stopped instance, you don't need to do the steps below*
 
-Once this is done and the production worker instances are in a state of "running", you'll need to provision the workers by installing required software, configurations and start running Akara and the worker processes that listen on the queues specified:
 
-* Log onto blackstar & sudo su - hrv-prd
-* To provision the workers, run: `snsatnow ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker.yml`
-* Wait for the provisioning to finish; this can take a while, 15-20 minutes is not unusual.
+### 11. <a name="solrprodreport">Generate and review QA report for candidate Solr index</a>
 
-**NOTE:** if you already have provisioned worker machines running jobs, use the
---limit=<ip range> eg. --limit=10.60.22.\* to make sure you don't reprovision 
-a currently running machine. Otherwise rerunning the provisioning will put the 
-current running workers in a bad state, and you will then have to log on to the 
-worker and restart the worker process or terminate the machine.  Example of full command: `ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker.yml --limit=10.60.29.*`
-
-AWS assigns unique subnets to the groups of workers you start, so in general,
-different generations of machines will be distinguished by the different C class
-subnet. This makes the --limit parameter quite useful.
-
-### 3. <a name="solrprod">Update Solr production</a>
-
-#### 3.1. <a name="solrcandidate">Create a new candidate Solr index, based on what's in CouchDB production</a>
-
-* Synchronize the production couchdb collection to the production solr index by choosing "Queue sync solr index for collection(s) on normal-production" with a production worker instance running.
-
-#### 3.2. <a name="solrproddelete">Delete a collection from candidate Solr index</a>
-
-From the collection registry page, select "Queue delete solr documents for collection(s) on normal-production" and have a worker running
-
-### 4. <a name="solrprodreport">Generate and review QA report for candidate Solr index</a>
 Generate and review a QA report for the candidate Solr index, following [these steps](https://github.com/mredar/ucldc_api_data_quality/tree/master/reporting).  The main QA report in particular summarizes differences in item counts in the candidate Solr index compared with the current production index.
 
 
-### 5. <a name="solrprodqa">QA check candidate Solr index in Calisphere UI</a>
+### 12. <a name="solrprodqa">QA check candidate Solr index in Calisphere UI</a>
 
 You can preview the candidate Solr index in the Calisphere UI at <a href="http://calisphere-test.cdlib.org/">http://calisphere-test.cdlib.org/</a>. 
 
@@ -615,22 +585,6 @@ To immediately view results, you can QA the Solr stage index on your local works
 In the run.bat configuration file, point UCLDC_SOLR_URL to `https://harvest-prd.cdlib.org/solr_api`.
 
 
-### 6. <a name="terminateprod">Stop or Terminate production worker instances</a>
-
-Once you've completed syncing, you'll need to terminate the worker instances.
-
-* Log into blackstart and sudo to hrv-prd
-* Run: `ansible-playbook -i ~/code/ec2.py ~/code/ansible/terminate_workers.yml <--limit=10.60.?.?>` . You can use the `limit` parameter to specify a range of IP addresses for deletion.
-* To force terminate an instance, append `--tags=terminate-instances`
-* You'll receive a prompt to confirm that you want to spin down the intance; hit Return to confirm.
-
-We should now leave *one* instance in a "stopped" state. Terminate all but one of the instances then run:
-
-```sh
-ansible-playbook -i ~/code/ec2.py ~/code/ansible/stop_workers.yml
-```
-
-This will stop the instance so it can be brought up easily. `get_worker_info.sh` should report the instance as "stopping" or "stopped".
 
 
 <a name="beanstalk">Updating Elastic Beanstalk with candidate Solr index</a>
@@ -646,12 +600,26 @@ This section describes how to update an Elastic Beanstalk configuration to point
 TODO: add how to run the QA spreadsheet generating code
 
 
-<a name="removals">Removing items (takedown requests)</a> 
+<a name="removals">Removing items or collections (takedown requests)</a> 
 --------------------------
 
-* Through the Collection Registry, delete the collection from CouchDB/Solr stage and production environments
+Removing collections involves deleting records from CouchDB stage and production environments, as well as Solr stage and production environments; and then updating the Elastic Beanstalk:
+
+#### <a name="removalitem">Individual items</a>
+
+* Log into CouchDB stage; search for and delete the specific item record. Repeat the process on CouchDB production
+-or-
+* Create a list of the CouchDB identifiers for the items, and add them to a file (one per line). Then run `delete_couchdb_id_list.py` with the file as input:`delete_couchdb_id_list.py <file with list of ids>`
+* From the Collection Registry, select `Queue sync from from CouchDB stage to Solr stage` and `Queue sync from CouchDB production to Solr production`
+* Update Elastic Beanstalk with the updated Solr index
+
+
+#### <a name="removalcollection">Entire collection</a>
+
+* From the Collection Registry, select `Queue deletion of documents from CouchDB stage`, `Queue deletion of documents from Solr stage`, `Queue deletion of documents from CouchDB production`, and `Queue deletion of documents from Solr production`
 * Update the Collection Registry entry, setting "Ready to publish" to "None" -- and change the harvesting endpoint to "None"
 * Update Elastic Beanstalk with the updated Solr index
+
 
 
 <a name="restores">Restoring collections from production</a>
@@ -679,6 +647,7 @@ To check the processing status for a given worker, log into Blackstar and SSH to
 * cd to `/var/local/rqworker` and locate the worker.log file.
 * Run `tail -f worker.log` to view the logs.
 
+
 ### <a name="longprocess">Running long processes</a>
 
 The `snsatnow` wrapper script may be used to run *any* long running process. It will background and detach the process so you can log out. When the process finishes or fails, a message will be sent to the dsc_harvesting_repot Slack channel.
@@ -688,26 +657,6 @@ To use the script, just add it to your script invocation
 snsatnow <cmd> --<options> <arg1> <arg2>....
 ```
 NOTE: if your command has arguments that are surrounded by quotes (") you'll need to escape those by putting a backslash (\) in front of them.
-
-### <a name="removals">Removing collections/items from publication</a>
-
-#### <a name="removalitem">Individual items</a>
-
-* Log into CouchDB stage; search for and delete the specific item record
-* Then run this command, to update Solr stage: `/usr/local/bin/solr-update.sh`
-* Repeat the process on CouchDB production
-
--or-
-
-* Create a list of the CouchDB identifiers for the items, and add them to a file (one per line)
-* Run `delete_couchdb_id_list.py` with the file as input:`delete_couchdb_id_list.py <file with list of ids>`
-
-#### <a name="removalcollection">Entire collection</a>
-
-* Log onto blackstar & sudo su - hrv-prd
-* Run this command to remove the collection from CouchDB stage, adding the key for the collection at the end: `delete_couchdb_collection.py 23065`.
-* Then from the registry "Queue delete solr documents for collection(s) on normal-production"
-* Follow the process of sync'ing the collection through to CouchDB production
 
 
 ### <a name="newcode">Picking up new harvester or ingest code</a>
@@ -744,6 +693,7 @@ https://harvest-stg.cdlib.org/solr/dc-collection/select?q=32e2220c1e918cf17f0597
 Find the `harvest_id_s` value, in this case "26094--LAPL00050887". Then plug this into CouchDB for the ucldc database:
 https://harvest-stg.cdlib.org/couchdb/ucldc/26094--LAPL00050887 (or with the UI - https://harvest-stg.cdlib.org/couchdb/_utils/document.html?ucldc/26094--LAPL00050887)
 
+
 <a name="commonfixes">Fixes for Common Problems</a>
 -------------------------
 
@@ -775,9 +725,10 @@ If this doesn't get you enough information, you can ssh to a worker instance and
 watch the logs real time if you like. tail -f /var/local/rqworker/worker.log or
 /var/local/akara/logs/error.log.
 
+
 ### <a name="imagefix">Image problems</a>
 
-#### 1. Verify if and what files were harvested, for a given object 
+#### Verify if and what files were harvested, for a given object 
 
 Use the following script in the `ucldc_api_data_quality/reporting directory` (following the steps at https://github.com/mredar/ucldc_api_data_quality/tree/master/reporting) to generate a report for the object. The <ID> value is the *id* for the object, as reflected in Solr or CouchDB (e.g., 6d445613-63d3-4144-a530-718900676db9):
 
@@ -796,36 +747,34 @@ preview: https://calisphere.org/clip/500x500/ce843950f622d303b83256add5b19d34
 ===========================================================================
 ```
 
-The URL in `isShownBy` points to what was pulled from Nuxeo and stashed in S3, and used to create fuller-sized display images in Calisphere. 
+The URL in `isShownBy` reflects the endpoint to an file, which is used by the harvesting code ("Queue image harvest to CouchDB stage" action) to derive a small preview image (used for the object landing page); that preview image is also used for thumbnails in search/browse and related item results.  Note that you can also verify `isShownBy` by [looking up the object in CouchDB](#cdbsearch).
 
-The URL in `preview` points to what was pulled from Nuxeo, and used as a thumbnail image for Calisphere search/browse results (as well as the thumbnail image in the related items carousel)
-
-
-Note that you can also verify `isShownBy` by [looking up the object in CouchDB](#cdbsearch).
-
-#### 2. Double-check the URL `isShownBy` and `preview` fields
-
-If there's no functional URL (value is "None"), then an image was not successfully harvested. If the URL retrieves an incorrect image, you'll need to re-fecth the images from Nuxeo.
+The URL in `preview` points to the resulting preview image.
 
 
-##### No URL for `isShownBy`
+#### No preview image, or thumbnail in search/browse results? (Nuxeo and non-Nuxeo sources)
 
-Run a [deep harvest for the single object](#deepharvest) to pick up the file, and check the results again.
+Double-check the URL in the `preview` field.
 
-
-##### No URL for `preview`
-
-Run the image harvest for the collection from the Collection Registry ("Queue image harvest to CouchDB stage" action), and check the results again.
+If there's no functional URL in `preview` (value indicates "None"), then an image was not successfully harvested. To fix, try re-running the [process to derive the preview](#harvestpreview) image.
 
 
-##### URLs resolve to incorrect version of files in either `isShownAt` or `preview`
+##### No access files, preview image (for PDF or video objects), or complex object component thumbnails? (Nuxeo only)
 
-If incorrect images were downloaded, you must manually queue the image harvest to force it to re-fetch images from Nuxeo. First, you need to clear the "CouchDB ID -> image url" cache and then set the image harvest to run with the flag --get_if_object (so get the image even if the "object" field exists in the CouchDB document)
+The media.json output created through the ["deep harvest"](#deepharvest) process references URL links back to the source files in Nuxeo.  If those links are missing, then the files could not be successfully harvested.
+
+To fix, try re-running the [deep harvest for a single object](#deepharvest) to regenerate the media.json and files.
+
+
+##### Persistent older versions of access files, preview image (for PDF or video objects), or complex object component thumbnails? (Nuxeo only)
+
+If older versions of the files don't clear out after re-running a deep harvest, you can manually queue the image harvest to force it to re-fetch images from Nuxeo. First, you need to clear the "CouchDB ID -> image url" cache and then set the image harvest to run with the flag --get_if_object (so get the image even if the "object" field exists in the CouchDB document)
 
 * Log onto blackstar & sudo su - hrv-stg
 * Run `python ~/bin/redis_delete_harvested_images_script.py <collection_id>`. This will produce a file called `delete_image_cache-<collection_id>` in the current directory.
 * Run `redis.sh < delete_image_cache-<collection_id>`. This will clear the cache of previously harvested URLs.
 * Run `python ~/bin/queue_image_harvest.py mredar@gmail.com normal-stage https://registry.cdlib.org/api/v1/collection/<collection_id>/ --get_if_object`
+
 
 Development
 -----------
