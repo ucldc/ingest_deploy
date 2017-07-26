@@ -41,8 +41,7 @@ UCLDC Harvesting operations guide
 * [Adding an admin user  (one time set up)](#useradmin)
 
 [Preliminary setup](#prelim)
-* [1. Add collection to the Registry and define harvesting endpoint](#registrycollection)
-* [2. Pre-processing files from Nuxeo ("deep harvesting")](#deepharvest)
+* [Add collection to the Registry and define harvesting endpoint](#registrycollection)
 
 [Conducting a harvest to stage](#harvestconducting)
 * [1. Managing workers to process harvesting jobs](#workeroverview)
@@ -145,46 +144,11 @@ the ingest front machine.
 
 <a name="prelim">Preliminary setup</a> 
 --------------------------
-### 1. <a name="registrycollection">Add collection to the Registry and define harvesting endpoint</a>
+### <a name="registrycollection">Add collection to the Registry and define harvesting endpoint</a>
 
 The first step in the harvesting process is to add the collection(s) for harvesting into the <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a>.  This process is described further in Section 8 of our <a href="https://sp.ucop.edu/sites/cdl/apg/_layouts/15/WopiFrame.aspx?sourcedoc=/sites/cdl/apg/OACCalisphere%20docs/dsc_maintenance_procedures.doc&action=default&DefaultItemOpen=1">OAC/Calisphere Operations and Maintenance Procedures</a>. 
 
 When establishing the entries, you'll need to determine the harvesting endpoint: Nuxeo, OAC, or an external source.
-
-
-### 2. <a name="deepharvest">Pre-processing files from Nuxeo ("deep harvesting")</a>
-
-If harvesting from Nuxeo: once you've added the collection(s) to the Collection Registry, you'll need to complete the following "deep harvesting" steps. The process processes files from the "Main Content File" section in Nuxeo, to prepare the resulting formats for display in Calisphere. Here's what the process does:
-
-1. It stashes a high quality copy of any associated media or text files on S3:
-* If image, creates a zoomable jp2000 version and stash it on S3 for use with our IIIF-compatible Loris server. Tools used to convert the image include ImageMagick and Kakadu
-* If audio, stashes mp3 on s3.
-* If file (i.e. PDF), stashes on s3
-
-2. Creates thumbnail and stash on S3:
-* If video, creates a thumbnail and stash on S3. Thumbnail is created by capturing the middle frame of the video using the ffmpeg tool.
-* If PDF, creates a thumbnail and stash on S3. Thumbnail is created by creating an image of the first page of the PDF, using ImageMagick.
-
-In addition, the process compiles full metadata and structural information (such as component order) for all complex objects, in the form of a `media.json` file. 
-
-To run the "deep harvest" process:
-
-* Log into the <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> and look up the collection
-* Choose `Queue Nuxeo deep harvest` drop-down. 
-
-You can monitor the deep harvesting process through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>. At this stage, you'll see the harvest job listed in the queue.
-
-If there are problems with individual items, you can do a deep harvest for just one object by it's Nuxeo path. You need to log onto dsc-blackstar and sudo to the hrv-stg role account. Then:
-
-```shell
-queue_deep_harvest_single_object.py "<path to assest wrapped with quotes>"
-```
-e.g. 
-```shell
-queue_deep_harvest_single_object.py "/asset-library/UCR/Manuscript Collections/Godoi/box_01/curivsc_003_001_005.pdf"
-```
-
-This will run 4 jobs, one for grabbing files, one for creating jp2000 for access & IIIF, one to create thumbs and finally a job to produce the media_json file.
 
 
 <a name="harvestconducting">Conducting a harvest to stage</a> 
