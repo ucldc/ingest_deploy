@@ -631,7 +631,7 @@ of worker machines to pick up the new code:
 * Then go through the worker create process again, creating and provisioning
 machines as needed.
 
-###<a name="solrscratch">Recreating the Solr Index from scratch</a>
+### <a name="solrscratch">Recreating the Solr Index from scratch</a>
 
 The solr index is run in a docker container. To make changes to the schema or
 other configurations, you need to recreate the docker image for the container.
