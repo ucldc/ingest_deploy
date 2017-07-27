@@ -162,7 +162,7 @@ We use "transient" <a href="http://python-rq.org/">Redis Queue</a>-managed (RQ) 
 * See if any "stopped" worker instances are present: run `get_worker_info.sh` If you see an instance with state "stopped" it can be started much more easily than creating new ones: `snsatnow --ignore-stderr ansible-playbook -i ~/code/ec2.py ~/code/ansible/start_workers.yml` *If this works, you do not need to create workers unless you have a lot of jobs to run*
 * To create some worker machines (bare ec2 spot instances), run: `snsatnow ansible-playbook ~/code/ansible/create_worker.yml --extra-vars=\"count=1\"` . 
   * For on-demand instances, run: `snsatnow ansible-playbook ~/code/ansible/create_worker_ondemand.yml --extra-vars=\"count=1\"`
-  * For an extra large (and costly!) on-demand instance (e.g., m4.2xlarge, m4.4xlarge), run: `ansible-playbook ~/code/ansible/create_worker_ondemand.yml --extra-vars="worker_instance_type=m4.2xlarge"`
+  * For an extra large (and costly!) on-demand instance (e.g., m4.2xlarge, m4.4xlarge), run: `ansible-playbook ~/code/ansible/create_worker_ondemand.yml --extra-vars="worker_instance_type=m4.2xlarge"` .  *If you create an extra large instance, make sure you terminate it after the harvesting job is completed!*
 
 The `count=##` parameter will set the number of instances to create. For harvesting one small collection you can set this to `count=1`. To re-harvest all collections, you can set this to `count=20`. For anything in between, use your judgment.
 
