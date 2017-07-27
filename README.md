@@ -693,9 +693,10 @@ The URL in `preview` points to the resulting preview image.
 
 #### No preview image, or thumbnail in search/browse results? (Nuxeo and non-Nuxeo sources)
 
-Double-check the URL in the `preview` field.
+Double-check the URL in the `preview` field. If there's no functional URL in `preview` (value indicates "None"), then a file was not successfully harvested. To fix: 
 
-If there's no functional URL in `preview` (value indicates "None"), then a file was not successfully harvested. To fix, try re-running the [process to harvest preview and thumbnail images](#harvestpreview) image.
+* Try re-running the [process to harvest preview and thumbnail images](#harvestpreview) image
+* Check again to see if the URL now shows up in the `preview` field. If so, sync from CouchDB stage to Solr stage
 
 For Nuxeo-based objects, the following logic is baked into the process for harvesting preview and thumbnail images:
 1. If object has an image at the parent level, use that. Otherwise, if component(s) have images, use the first one we can find
@@ -705,9 +706,10 @@ For Nuxeo-based objects, the following logic is baked into the process for harve
 
 #### No access files, preview image (for PDF or video objects), or complex object component thumbnails? (Nuxeo only)
 
-The media.json output created through the ["deep harvest"](#deepharvest) process references URL links back to the source files in Nuxeo.  If those links are missing, then the files could not be successfully harvested.
+The `media.json` output created through the ["deep harvest"](#deepharvest) process references URL links back to the source files in Nuxeo.  If there's no `media.json` file -- or if the media.json has broken or missing URLs -- then the files could not be successfully harvested. To fix:
 
-To fix, try re-running the [deep harvest for a single object](#deepharvest) to regenerate the media.json and files.
+* Try re-running the [deep harvest for a single object](#deepharvest) to regenerate the media.json and files.
+* Check the media.json again, to confirm that it was generated and/or its URLs resolve to files. If AOK, sync from CouchDB stage to Solr stage
 
 
 #### Persistent older versions of access files, preview image (for PDF or video objects), or complex object component thumbnails? (Nuxeo only)
