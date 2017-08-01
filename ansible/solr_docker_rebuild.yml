@@ -8,6 +8,7 @@
     docker_image_name: ucldc/solr
     dir_code: code/solr_api
     dir_index: /opt/solr/data
+    java_heap_max: "{{ (ansible_memtotal_mb * 0.75)|int|abs }}"
   roles:
     - solr5_docker_rm
     - solr5_docker
