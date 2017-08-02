@@ -13,7 +13,6 @@ kill -s SIGTERM $PID_RQW
 
 #verfy that worker is in ps table
 rq_running=`ps -fA | grep ${PID_RQW} | awk -- '{print $2}'`
-
 if [[ $PID_RQW == $rq_running ]]; then
     kill -s SIGTERM $PID_RQW
 fi
@@ -26,4 +25,7 @@ while test -d "/proc/$PID_RQW"; do
   sleep 1
   let i+=1
 done
-/bin/rm {{ dir_run_rqworker }}/rqworker.pid
+rq_running=`ps -fA | grep ${PID_RQW} | awk -- '{print $2}'`
+if [[ $PID_RQW != $rq_running ]]; then
+	/bin/rm {{ dir_run_rqworker }}/rqworker.pid
+fi
