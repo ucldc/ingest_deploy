@@ -12,7 +12,7 @@ PID_RQW=`/bin/cat {{ dir_run_rqworker }}/rqworker.pid`
 kill -s SIGTERM $PID_RQW
 
 #verfy that worker is in ps table
-rq_running=`ps -fA | grep ${PID_RQW} | awk -- '{print $2}'`
+rq_running=`ps -fA | grep ${PID_RQW} | awk -- '{print $2}' | grep ${PID_RQW}`
 if [[ $PID_RQW == $rq_running ]]; then
     kill -s SIGTERM $PID_RQW
 fi
