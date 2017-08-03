@@ -33,7 +33,16 @@
     src: "/home/{{ role_user }}/tmp/harvester/harvester/{{ item }}"
   with_items:
     - grab-solr-index-playbook.yml
+    - solr_updater.py
   when: data_branch == "production"
+- name: copy solr_updater.py
+  copy:
+    remote_src: yes
+    mode: u+r
+    dest: "/home/{{ role_user }}/bin/{{ item }}"
+    src: "/home/{{ role_user }}/tmp/harvester/harvester/{{ item }}"
+  with_items:
+    - solr_updater.py
 - name: copy couchdb backup
   copy:
     remote_src: yes
