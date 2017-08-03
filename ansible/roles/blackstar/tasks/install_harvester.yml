@@ -24,6 +24,7 @@
     - queue_sync_couchdb_collection.py
     - sync_couch_collection_to_solr.py
     - sync_solr_documents.py
+    - queue_deep_harvest_single_object_jobs.py
 - name: copy index grab to s3 playbook
   copy:
     remote_src: yes
