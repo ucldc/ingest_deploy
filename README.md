@@ -78,7 +78,6 @@ UCLDC Harvesting operations guide
 [Restoring collections from production](#restores)
 
 [Additional resources](#addtl)
-* [Checking worker processing status](#checkworker)
 * [Running long processes](#longprocess)
 * [Picking up new harvester or ingest code](#newcode)
 * [Recreating the Solr Index from scratch](#solrscratch)
@@ -206,7 +205,12 @@ subnet. This makes the --limit parameter quite useful.
 
 Sometimes the status of the worker instances is unclear.
 
-You can use the ec2.py dynamic ansible inventory script with jq to parse the json to find info about the state of the worker instances.
+To check the processing status for a given worker, log into Blackstar and SSH to the particular stage or prod machine.
+
+    cd to /var/local/rqworker and locate the worker.log file.
+    Run tail -f worker.log to view the logs.
+
+You can also use the ec2.py dynamic ansible inventory script with jq to parse the json to find info about the state of the worker instances.
 
 
 First, refresh the cache for the dynamic inventory:
@@ -580,14 +584,6 @@ This script can be run from the hrv-stg or hrv-prd account. For each, the source
 
 <a name="addtl">Additional resources</a> 
 --------------------------
-
-### <a name="checkworker">Checking worker processing status</a>
-
-To check the processing status for a given worker, log into Blackstar and SSH to the particular stage or prod machine.  
-
-* cd to `/var/local/rqworker` and locate the worker.log file.
-* Run `tail -f worker.log` to view the logs.
-
 
 ### <a name="longprocess">Running long processes</a>
 
