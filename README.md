@@ -83,6 +83,7 @@ UCLDC Harvesting operations guide
 * [Picking up new harvester or ingest code](#newcode)
 * [Recreating the Solr Index from scratch](#solrscratch)
 * [How to find a CouchDB source document for an item in Calisphere](#cdbsearch)
+* [Creating/Harvesting with High Stage Workers](#highstage)
 
 [Fixes for Common Problems](#commonfixes)
 * [What to do when harvests fail](#failures)
@@ -253,8 +254,6 @@ ansible-playbook -i ~/code/ec2.py ~/code/ansible/stop_workers.yml
 ```
 
 This will stop the instance so it can be brought up easily. `get_worker_info.sh` should report the instance as "stopping" or "stopped".
-
-
 
 ### 2. <a name="harvestregistry">Run harvest jobs from Registry: non-Nuxeo sources</a>
 
@@ -634,6 +633,21 @@ https://harvest-stg.cdlib.org/solr/dc-collection/select?q=32e2220c1e918cf17f0597
 Find the `harvest_id_s` value, in this case "26094--LAPL00050887". Then plug this into CouchDB for the ucldc database:
 https://harvest-stg.cdlib.org/couchdb/ucldc/26094--LAPL00050887 (or with the UI - https://harvest-stg.cdlib.org/couchdb/_utils/document.html?ucldc/26094--LAPL00050887)
 
+### <a name="highstage">Creating/Harvesting with High Stage Workers</a>
+
+Sometimes you may need to create one or more "High Stage" workers, for example if the normal stage worker queue is very full and you need to run a harvest job without waiting for the queue to empty. The process is performed from the `hrv-stg` command line as follows.
+
+**Creating high stage workers:**
+* Log onto blackstar and run `sudo su - hrv-stg`
+* Create one or more worker machines just as you would in the "normal" process: `snsatnow ansible-playbook ~/code/ansible/create_worker.yml --extra-vars=\"count=1\"` .
+* After workers are created, run `get_worker_info.sh` and compare results to currently provisioned/running "normal" workers RQ dashboard to determine the IP addresses of new workers. 
+* Provision with `--extra-vars="rq_work_queues=['high-stage']"` switch to make new workers high stage workers. Also use `--limit` switch with IP addresses of new workers from step above to only provision new workers. Do NOT re-provision running workers! Full example command: `snsatnow ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker.yml --limit=10.60.29.* --extra-vars="rq_work_queues=['high-stage']"`
+
+**Running jobs on high stage workers:**
+* From `hrv-stg` command line, run the following command to queue a high-stage harvest, providing your `EMAIL` address and collection # to harvest for `XXXXX` where appropriate: `./bin/queue_harvest.py EMAIL@ucop.edu high-stage https://registry.cdlib.org/api/v1/collection/XXXXX/`
+* To queue an image harvest or solr sync, replace the first part of the command above with `./bin/queue_image_harvest.py` or `./bin/queue_sync_to_solr.py`, respectively
+* More commands can be found in the bin folder by running `ls ./bin` from command line. Most are self-explanatory from the script titles. Again, just replace the first part of the full command above with `./bin/other-script-here.py` as needed
+* When finished harvesting, terminate the high-stage workers as you would any other. EX: `ansible-playbook -i ~/code/ec2.py ~/code/ansible/terminate_workers.yml <--limit=10.60.?.?>`
 
 <a name="commonfixes">Fixes for Common Problems</a>
 -------------------------
