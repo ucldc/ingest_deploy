@@ -191,7 +191,7 @@ Once this is done and the stage worker instances are in a state of "running", yo
 unusual. If the provisioning process stalls, use `ctrl-C` to end the process then re-do the ansible command.
 * Check the status of the the harvesting process through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>.  You should now see the provisioned workers listed, and acting on the jobs in the queue. You will be able to see the workers running jobs (indicated by a "play" triangle icon) and then finishing (indicated by a "pause" icon).
 
-#### Limiting provisioning by IP
+*Limiting provisioning by IP*
 If you already have provisioned worker machines running jobs, use the
 `--limit=<ip range>` eg. --limit=10.60.22.\* or `--limit=<ip>,<ip>` eg. --limit=10.60.29.109,10.60.18.34 to limit the provisioning to the IPs of the newly-provisioned machines (and so you don't reprovision 
 a currently running machine). Otherwise rerunning the provisioning will put the 
@@ -202,7 +202,7 @@ AWS assigns unique subnets to the groups of workers you start, so in general,
 different generations of machines will be distinguished by the different C class
 subnet. This makes the --limit parameter quite useful.
 
-#### Provisioning workers to specific queues
+*Provisioning workers to specific queues*
 
 By default, stage workers will be provisioned to a "normal-stage" queue. To provision them to a different queue -- e.g., "high-stage", use the following command with the --extra-vars parameter:
 
