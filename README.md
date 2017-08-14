@@ -476,6 +476,13 @@ This process will update the Solr stage index with records from CouchDB stage:
 * You can track the progress through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>; once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
 
 
+If you need more control of the process (i.e. to put on a different queue),
+you can run the queue_sync_to_solr.py on dsc-blackstar role account:
+
+```shell
+queue_sync_to_solr.py mredar@gmail.com high-stage 26943
+```
+
 ### 6. <a name="solrqa">QA check collection in Solr stage</a>
 
 You can view the raw results in Solr stage; this may be helpful to verify mapping issues or discrepancies in data between CouchDB and Solr stage.  
