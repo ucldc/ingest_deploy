@@ -291,7 +291,7 @@ This process will harvest metadata from the target system into a resulting Couch
 * You can track the progress through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>; once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
 
 If you need more control of the process (i.e. to put on a different queue),
-you can run the following command on dsc-blackstar role account:
+you can use the following command syntax on the dsc-blackstar role account:
 
 `./bin/queue_harvest.py adrian.turner@ucop.edu high-stage https://registry.cdlib.org/api/v1/collection/26943`
 
@@ -305,9 +305,9 @@ This process will hit the URL referenced in `isShownAt` in the CouchDB record to
 * You can track the progress through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>; once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
 
 If you need more control of the process (i.e. to put on a different queue),
-you can run the following command on dsc-blackstar role account:
+you can run use the following command syntax on the dsc-blackstar role account:
 
-`./bin/queue_image_harvest.py adrian.turner high-stage https://registry.cdlib.org/api/v1/collection/26943`
+`./bin/queue_image_harvest.py adrian.turner@ucop.edu high-stage https://registry.cdlib.org/api/v1/collection/26943`
 
 
 
@@ -368,6 +368,10 @@ This process will harvest metadata from Nuxeo into a resulting CouchDB record.
 * You should then get feedback message verifying that the collections have been queued
 * You can track the progress through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>; once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
 
+If you need more control of the process (i.e. to put on a different queue),
+you can use the following command syntax on the dsc-blackstar role account:
+
+`./bin/queue_harvest.py adrian.turner@ucop.edu high-stage https://registry.cdlib.org/api/v1/collection/26943`
 
 #### 3.4. <a name="harvestnuxpreview">Harvest preview image, also used for thumbnails</a>
 
@@ -377,6 +381,10 @@ This process will hit the URL referenced in `isShownBy` in the CouchDB record to
 * You should then get feedback message verifying that the collections have been queued
 * You can track the progress through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>; once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
 
+If you need more control of the process (i.e. to put on a different queue),
+you can run use the following command syntax on the dsc-blackstar role account:
+
+`./bin/queue_image_harvest.py adrian.turner@ucop.edu high-stage https://registry.cdlib.org/api/v1/collection/26943`
 
 ### 4. <a name="harvestcdbqa">QA check collection in CouchDB stage</a>
 
