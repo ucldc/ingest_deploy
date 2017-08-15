@@ -48,11 +48,11 @@ UCLDC Harvesting operations guide
 * [1.2. Provision stage workers to act on harvesting jobs](#harvestprovisionstg)
 * [1.3. Checking the status of a worker](#workerstatus)
 * [1.4. Stop or terminate stage worker instances](#terminatestg)
-* [2. Run harvest jobs from Registry: non-Nuxeo sources](#harvestregistry)
+* [2. Run harvest jobs: non-Nuxeo sources](#harvestregistry)
 * [2.1. New harvest or re-harvest?](#harvestnew)
 * [2.2. Harvest metadata to CouchDB stage](#harvestcdbstg)
 * [2.3. Harvest preview and thumbnail images](#harvestpreview)
-* [3. Run harvest jobs from Registry: Nuxeo](#harvestnuxeostg)
+* [3. Run harvest jobs: Nuxeo](#harvestnuxeostg)
 * [3.1. New harvest or re-harvest?](#harvestnew1)
 * [3.2. Harvest and process access files from Nuxeo ("deep harvesting")](#deepharvest)
 * [3.3. Harvest metadata to CouchDB stage](#harvestnuxmdstg)
@@ -192,7 +192,8 @@ Once this is done and the stage worker instances are in a state of "running", yo
 unusual. If the provisioning process stalls, use `ctrl-C` to end the process then re-do the ansible command.
 * Check the status of the the harvesting process through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>.  You should now see the provisioned workers listed, and acting on the jobs in the queue. You will be able to see the workers running jobs (indicated by a "play" triangle icon) and then finishing (indicated by a "pause" icon).
 
-**NOTE:** if you already have provisioned worker machines running jobs, use the
+#### Limiting provisioning by IP
+If you already have provisioned worker machines running jobs, use the
 `--limit=<ip range>` eg. --limit=10.60.22.\* or `--limit=<ip>,<ip>` eg. --limit=10.60.29.109,10.60.18.34 to limit the provisioning to the IPs of the newly-provisioned machines (and so you don't reprovision 
 a currently running machine). Otherwise rerunning the provisioning will put the 
 current running workers in a bad state, and you will then have to log on to the 
@@ -201,6 +202,13 @@ worker and restart the worker process or terminate the machine.  Example of full
 AWS assigns unique subnets to the groups of workers you start, so in general,
 different generations of machines will be distinguished by the different C class
 subnet. This makes the --limit parameter quite useful.
+
+#### Provisioning workers to specific queues
+
+By default, stage workers will be provisioned to a "normal-stage" queue. To provision them to a different queue -- e.g., "high-stage", use the following command with the --extra-vars parameter:
+
+`ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker.yml --limit=10.60.22.123 --extra-vars="rq_work_queues=['high-stage']"`
+
 
 #### 1.3. <a name="workerstatus">Checking the status of a worker</a>
 
@@ -259,7 +267,7 @@ ansible-playbook -i ~/code/ec2.py ~/code/ansible/stop_workers.yml
 
 This will stop the instance so it can be brought up easily. `get_worker_info.sh` should report the instance as "stopping" or "stopped".
 
-### 2. <a name="harvestregistry">Run harvest jobs from Registry: non-Nuxeo sources</a>
+### 2. <a name="harvestregistry">Run harvest jobs: non-Nuxeo sources</a>
 
 
 #### 2.1. <a name="harvestnew">New harvest or re-harvest?</a>
@@ -282,6 +290,11 @@ This process will harvest metadata from the target system into a resulting Couch
 * You should then get feedback message verifying that the collections have been queued
 * You can track the progress through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>; once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
 
+If you need more control of the process (i.e. to put on a different queue),
+you can run the following command on dsc-blackstar role account:
+
+`./bin/queue_harvest.py adrian.turner@ucop.edu high-stage https://registry.cdlib.org/api/v1/collection/26943`
+
 
 #### 2.3. <a name="harvestpreview">Harvest preview and thumbnail images</a>
 
@@ -291,9 +304,14 @@ This process will hit the URL referenced in `isShownAt` in the CouchDB record to
 * You should then get feedback message verifying that the collections have been queued
 * You can track the progress through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>; once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
 
+If you need more control of the process (i.e. to put on a different queue),
+you can run the following command on dsc-blackstar role account:
+
+`./bin/queue_image_harvest.py adrian.turner high-stage https://registry.cdlib.org/api/v1/collection/26943`
 
 
-### 3. <a name="harvestnuxeostg">Run harvest jobs from Registry: Nuxeo</a>
+
+### 3. <a name="harvestnuxeostg">Run harvest jobs: Nuxeo</a>
 
 #### 3.1. <a name="harvestnew1">New harvest or re-harvest?</a>
 
@@ -513,7 +531,7 @@ Follow the steps outlined above for [creating and managing worker instances](#wo
 Once the CouchDB and Solr stage data looks good and the collection looks ready to publish to Calisphere, start by syncing CouchDB stage to the CouchDB production:
 
 * In the Registry, edit the collection and check the box "Ready for publication" and save the collection.
-* Then select "Queue Sync to production CouchDB for collection" from the action on the Collection page.
+* Then select `Queue Sync to production CouchDB for collection` from the action on the Collection page.
 
 
 ### 10. <a name="synccdb">Sync the collection from CouchDB production to Solr production</a>
@@ -523,6 +541,13 @@ This process will update the Solr production index ("candidate Solr index") with
 * From the Collection Registry, select `Queue sync from CouchDB production to Solr production` 
 * You should then get feedback message verifying that the collections have been queued
 * You can track the progress through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>; once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
+
+If you need more control of the process (i.e. to put on a different queue),
+you can run the queue_sync_to_solr.py on dsc-blackstar role account:
+
+```shell
+queue_sync_to_solr.py mredar@gmail.com high-stage 26943
+```
 
 
 ### 11. <a name="solrprodqa">QA check candidate Solr index in Calisphere UI</a>
