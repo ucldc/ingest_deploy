@@ -281,6 +281,11 @@ If the collection has previously been harvested and is viewable in the Calispher
 * Then run `Queue deletion of documents from Solr stage`.
 * You can track the progress through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>; once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
 
+If you need more control of the process (i.e. to put on a different queue),
+you can use the following command syntaxes on the dsc-blackstar role account:
+
+`./bin/delete_couchdb_collection.py adrian.turner@ucop.edu high-stage https://registry.cdlib.org/api/v1/collection/26275`
+`./bin/queue_delete_solr_collection.py adrian.turner@ucop.edu high-stage 26275`
 
 #### 2.2. <a name="harvestcdbstg">Harvest metadata to CouchDB stage</a>
 
@@ -324,6 +329,11 @@ If the collection has previously been harvested and is viewable in the Calispher
 * Then run `Queue deletion of documents from Solr stage`.
 * You can track the progress through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>; once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
 
+If you need more control of the process (i.e. to put on a different queue),
+you can use the following command syntaxes on the dsc-blackstar role account:
+
+`./bin/delete_couchdb_collection.py adrian.turner@ucop.edu high-stage https://registry.cdlib.org/api/v1/collection/26275`
+`./bin/queue_delete_solr_collection.py adrian.turner@ucop.edu high-stage 26275`
 
 #### 3.2. <a name="deepharvest">Harvest and process access files from Nuxeo ("deep harvesting")</a>
 
@@ -603,6 +613,12 @@ Removing collections involves deleting records from CouchDB stage and production
 * From the Collection Registry, select `Queue deletion of documents from CouchDB stage`, `Queue deletion of documents from Solr stage`, `Queue deletion of documents from CouchDB production`, and `Queue deletion of documents from Solr production`
 * Update the Collection Registry entry, setting "Ready to publish" to "None" -- and change the harvesting endpoint to "None"
 * Update Elastic Beanstalk with the updated Solr index
+
+If you need more control of the process (i.e. to put on a different queue),
+you can use the following command syntaxes on the dsc-blackstar role account:
+
+`./bin/delete_couchdb_collection.py adrian.turner@ucop.edu high-stage https://registry.cdlib.org/api/v1/collection/26275`
+`./bin/queue_delete_solr_collection.py adrian.turner@ucop.edu high-stage 26275`
 
 
 
