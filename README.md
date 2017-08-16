@@ -551,6 +551,12 @@ Once the CouchDB and Solr stage data looks good and the collection looks ready t
 * In the Registry, edit the collection and check the box "Ready for publication" and save the collection.
 * Then select `Queue Sync to production CouchDB for collection` from the action on the Collection page.
 
+If you need more control of the process (i.e. to put on a different queue),
+you can run the queue_sync_couchdb_collection.py on dsc-blackstar role account:
+
+```shell
+./bin/queue_sync_couchdb_collection.py mredar@gmail.com high-stage https://registry.cdlib.org/api/v1/collection/26681/
+```
 
 ### 10. <a name="synccdb">Sync the collection from CouchDB production to Solr production</a>
 
