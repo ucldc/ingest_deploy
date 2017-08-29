@@ -63,6 +63,7 @@
   service:
     name: monit
     enabled: yes
+  become: yes
 - name: make virtualenv directory
   file: path={{ dir_venv }} state=directory
 - name: pull ingest harvester code to local box
