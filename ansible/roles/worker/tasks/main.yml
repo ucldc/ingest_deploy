@@ -59,6 +59,10 @@
     dest: /etc/monit.d/handle-termination.monit
   become: yes
   notify: reload monit
+- name: make monit startup on reboot
+  service:
+    name: monit
+    enabled: yes
 - name: make virtualenv directory
   file: path={{ dir_venv }} state=directory
 - name: pull ingest harvester code to local box
