@@ -1,4 +1,4 @@
 check process akara
     with pidfile "{{ dir_run_akara }}/logs/akara.pid"
-    start program "/bin/su - {{ ansible_user }} -c '{{ dir_venv }}/bin/akara -f {{ dir_code }}/dpla/ingestion/akara.conf start'" with timeout 10 seconds
-    stop program "/bin/su - {{ ansible_user }} -c '{{ dir_venv }}/bin/akara -f {{ dir_code }}/dpla/ingestion/akara.conf stop'"
+    start program "/bin/su - {{ ansible_user }} -c 'cd {{ dir_run_akara }}; {{ dir_venv }}/bin/akara -f {{ dir_code }}/dpla/ingestion/akara.conf start'" with timeout 10 seconds
+    stop program "/bin/su - {{ ansible_user }} -c 'cd {{ dir_run_akara }}; {{ dir_venv }}/bin/akara -f {{ dir_code }}/dpla/ingestion/akara.conf stop'"
