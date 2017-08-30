@@ -17,6 +17,7 @@ while test -d "/proc/$PID_RQW"; do
 	if [ $i -gt 30 ]; then
 		break
 	fi
+  echo 'Waiting 1s'
   sleep 1
   let i+=1
 done
@@ -25,6 +26,4 @@ if test -d "/proc/$PID_RQW"; then
     kill -s SIGTERM $PID_RQW
 fi
 
-if test -d "/proc/$PID_RQW"; then
-	/bin/rm {{ dir_run_rqworker }}/rqworker.pid
-fi
+/bin/rm {{ dir_run_rqworker }}/rqworker.pid
