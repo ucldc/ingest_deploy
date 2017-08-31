@@ -9,11 +9,11 @@
       image: "{{ worker_ami }}"
       instance_type: "{{ worker_instance_type }}"
       vpc_subnet_id: "{{ subnet_id_private }}"
-      group: "ingest-{{ DATA_BRANCH }}-private"
+      group: "{{ name_env }}-private"
       spot_price: "{{ spot_bid_price }}"
       wait: yes
       instance_tags: 
-        Name: "ingest-{{ DATA_BRANCH }}-worker"
+        Name: "{{ name_env }}-worker"
         Environment: production
         Program: dsc
         Service: calisphere
