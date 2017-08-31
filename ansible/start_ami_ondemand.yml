@@ -1,0 +1,19 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+  - name: start instance
+    ec2:
+      region: us-west-2
+      image: "{{ worker_ami }}"
+      instance_type: "{{ worker_instance_type }}"
+      vpc_subnet_id: "{{ subnet_id_private }}"
+      group: "ingest-{{ DATA_BRANCH }}-private"
+      instance_tags: 
+        Name: "ingest-{{ DATA_BRANCH }}-worker"
+        Environment: production
+        Program: dsc
+        Service: calisphere
+        project: ucldc
+        subproject: ingest
