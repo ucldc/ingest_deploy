@@ -2,6 +2,8 @@
 - hosts: localhost
   connection: local
   gather_facts: no
+  vars:
+    count: 1
   tasks:
   - name: start instance
     ec2:
@@ -12,6 +14,7 @@
       group: "{{ name_env }}-private"
       spot_price: "{{ spot_bid_price }}"
       wait: yes
+      count: "{{ count }}"
       instance_tags: 
         Name: "{{ name_env }}-worker"
         Environment: production
