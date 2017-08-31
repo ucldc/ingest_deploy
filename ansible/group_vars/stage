@@ -1,4 +1,5 @@
 ---
+name_suffix: -stage
 redis_host: x.swle7i.ng.0001.usw2.cache.amazonaws.com
 subnet_id_public: subnet-b07689e9
 subnet_id_private: subnet-56758a0f
