@@ -159,7 +159,7 @@ We use "transient" <a href="http://python-rq.org/">Redis Queue</a>-managed (RQ) 
 #### 1.1. <a name="startstageworker">Start stage workers</a>
 
 * Log onto blackstar and run `sudo su - hrv-stg`
-* To start some worker machines (bare ec2 spot instances), run: `ansible-playbook ~/code/ansible/start_ami.yml --extra-vars=\"count=1\"` . 
+* To start some worker machines (bare ec2 spot instances), run: `ansible-playbook ~/code/ansible/start_ami.yml --extra-vars="count=1"` . 
   * For on-demand instances, run: `snsatnow ansible-playbook ~/code/ansible/start_ami_ondemand.yml --extra-vars="count=1"`
   * For an extra large (and costly!) on-demand instance (e.g., m4.2xlarge, m4.4xlarge), run: `ansible-playbook ~/code/ansible/start_ami_ondemand.yml --extra-vars="worker_instance_type=m4.2xlarge"` .  *If you create an extra large instance, make sure you terminate it after the harvesting job is completed!*
 
@@ -841,7 +841,7 @@ By default, stage workers will be provisioned to a "normal-stage" queue. To prov
 Once you have a new worker up and running with the new code, you need to create an image from it. From the appropriate environment:
 
 ```bash
-ansible-playbook -i hosts ~/code/ansible/create_worker_ami.yml --extra-vars="instnace_id=<running worker instance id>"
+ansible-playbook -i hosts ~/code/ansible/create_worker_ami.yml --extra-vars="instance_id=<running worker instance id>"
 ```
 
 You can get the instance_id by running `get_worker_info.sh`.
