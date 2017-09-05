@@ -214,6 +214,7 @@
   copy:
     src: rqworker-stop.init.d
     dest: /etc/init.d/rqworker-stop
+    mode: "0775"
   become: yes
 - name: make stop rqworker service startup on reboot
   service:
