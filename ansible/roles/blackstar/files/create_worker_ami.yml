@@ -2,6 +2,8 @@
 - hosts: localhost
   connection: local
   gather_facts: no
+  vars:
+    image_name: "worker-{{ DATA_BRANCH }}-{{ ansible_date_time.date }}"
   tasks:
     - debug: var=instance_id
     - debug: var=image_name
