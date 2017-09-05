@@ -16,14 +16,14 @@ As of February 2016, the process to publish a collection to production is as fol
 
 1. Create collection, add harvest URL & mapping/enrichment chain
 2. Select "Queue harvest for collection on normal queue" on the registry page for the collection
-3. Check that there is a worker listening on the queue. If not start one. [Stage Worker](#createstageworker)
+3. Check that there is a worker listening on the queue. If not start one. [Stage Worker](#startstageworker)
 4. Wait until the harvest job finishes, hopefully without error.  Now the collection has been harvested to the **stage CouchDB**.
 5. The first round of QA in CouchDB can be performed there <a href="https://harvest-stg.cdlib.org/couchdb/_utils/database.html?ucldc/_all_docs">CouchDB stage</a>
 6. Push the new CouchDB docs into the stage Solr index. Select "Queue sync solr index for collection(s) on normal-stage" on the registry page for the colleciotn [Updating Solr](#solrupdate)
 7. QA **stage Solr** index in the public interface <a href="https://harvest-stg.cdlib.org/solr/#/dc-collection/query">Solr stage</a>
 8. When ready to publish to production, edit Collection in the registry and check the "Ready for publication" box and save.
 9. Select the "Queue sync to production couchdb for collection" [Syncing CouchDB](#synccouch)
-10. Check that there is a worker in the production environment listening on the normal prod queue, if not start one. [Production Worker](#createprodworker)
+10. Check that there is a worker in the production environment listening on the normal prod queue, if not start one. [Production Worker](#startprodworker)
 11. Wait until the sync job finishes.  Now the collection has been harvested to the **production CouchDB**.
 12. Sync the new docs to the **production Solr** by starting the sync from the registry for the new collections. At this point the Collection is in the *<a href="https://harvest-prd.cdlib.org/solr/#/dc-collection/query">new, candidate Calisphere Solr index</a>*
 13. Once QA is done on the candidate index and ready to push new one to Calisphere, [push the index to S3](#s3index)
@@ -44,10 +44,9 @@ UCLDC Harvesting operations guide
 
 [Conducting a harvest to stage](#harvestconducting)
 * [1. Managing workers to process harvesting jobs](#workeroverview)
-* [1.1. Start or create stage workers](#createstageworker)
-* [1.2. Provision stage workers to act on harvesting jobs](#harvestprovisionstg)
-* [1.3. Checking the status of a worker](#workerstatus)
-* [1.4. Stop or terminate stage worker instances](#terminatestg)
+* [1.1. Start stage workers](#startstageworker)
+* [1.2. Checking the status of a worker](#workerstatus)
+* [1.3. Stop or terminate stage worker instances](#terminatestg)
 * [2. Run harvest jobs: non-Nuxeo sources](#harvestregistry)
 * [2.1. New harvest or re-harvest?](#harvestnew)
 * [2.2. Harvest metadata to CouchDB stage](#harvestcdbstg)
@@ -65,7 +64,7 @@ UCLDC Harvesting operations guide
 * [7. QA check in Calisphere stage UI](#calisphereqa) 
 
 [Moving a harvest to production](#harvestprod)
-* [8. Manage workers to process harvesting jobs](#createprodworker)
+* [8. Manage workers to process harvesting jobs](#startprodworker)
 * [9. Sync the collection from CouchDB stage to CouchDB production](#synccouch)
 * [10. Sync the collection from CouchDB production to Solr production](#synccdb)
 * [11. QA check candidate Solr index in Calisphere UI](#solrprodqa)
@@ -88,6 +87,7 @@ UCLDC Harvesting operations guide
 * [What to do when harvests fail](#failures)
 * [Image problems](#imagefix)
 
+[Addendum: Creating new AMI images - Developers only]
 
 
 <a name="users">User accounts</a>
@@ -156,17 +156,15 @@ When establishing the entries, you'll need to determine the harvesting endpoint:
 
 We use "transient" <a href="http://python-rq.org/">Redis Queue</a>-managed (RQ) worker instances to process harvesting jobs in either a staging or production environment. They can be created as needed and then deleted after use. Once the workers have been created and provisioned, they will automatically look for jobs in the queue and run the full harvester code for those jobs.
 
-#### 1.1. <a name="createstageworker">Start or create stage workers</a>
+#### 1.1. <a name="startstageworker">Start stage workers</a>
 
 * Log onto blackstar and run `sudo su - hrv-stg`
-* See if any "stopped" worker instances are present: run `get_worker_info.sh` If you see an instance with state "stopped" it can be started much more easily than creating new ones: `snsatnow --ignore-stderr ansible-playbook -i ~/code/ec2.py ~/code/ansible/start_workers.yml` *If this works, you do not need to create workers unless you have a lot of jobs to run*
-* To create some worker machines (bare ec2 spot instances), run: `snsatnow ansible-playbook ~/code/ansible/create_worker.yml --extra-vars=\"count=1\"` . 
-  * For on-demand instances, run: `snsatnow ansible-playbook ~/code/ansible/create_worker_ondemand.yml --extra-vars=\"count=1\"`
-  * For an extra large (and costly!) on-demand instance (e.g., m4.2xlarge, m4.4xlarge), run: `ansible-playbook ~/code/ansible/create_worker_ondemand.yml --extra-vars="worker_instance_type=m4.2xlarge"` .  *If you create an extra large instance, make sure you terminate it after the harvesting job is completed!*
+* To start some worker machines (bare ec2 spot instances), run: `ansible-playbook ~/code/ansible/start_ami.yml --extra-vars=\"count=1\"` . 
+  * For on-demand instances, run: `snsatnow ansible-playbook ~/code/ansible/start_ami_ondemand.yml --extra-vars="count=1"`
+  * For an extra large (and costly!) on-demand instance (e.g., m4.2xlarge, m4.4xlarge), run: `ansible-playbook ~/code/ansible/start_ami_ondemand.yml --extra-vars="worker_instance_type=m4.2xlarge"` .  *If you create an extra large instance, make sure you terminate it after the harvesting job is completed!*
 
 The `count=##` parameter will set the number of instances to create. For harvesting one small collection you can set this to `count=1`. To re-harvest all collections, you can set this to `count=20`. For anything in between, use your judgment.
 
-With the `snsatnow` wrapper, the results will be messaged to the dsc_harvesting_report Slack channel when the instances are created.
 
 The default instance creation will attempt to get instances from the "spot" market so that it is cheaper to run the workers. Sometimes the spot market price can get very high and the spot instances won't work. You can check the pricing by issuing the following command on blackstar, hrv-stg user:
 
@@ -177,40 +175,12 @@ aws ec2 describe-spot-price-history --instance-types m3.large --availability-zon
 Our spot bid price is set to .133 which is the current (20160803) on demand price. If the history of spot prices is greater than that or if you see large fluctuations in the pricing, you can request an on-demand instance instead by running the ondemand playbook : (NOTE: the backslash \ is required)
 
 ```sh
-snsatnow ansible-playbook ~/code/ansible/create_worker_ondemand.yml --extra-vars=\"count=3\"
+ansible-playbook ~/code/ansible/start_ami_ondemand.yml --extra-vars="count=3"
 ```
 
-#### 1.2. <a name="harvestprovisionstg">Provision stage workers to act on harvesting jobs</a>
-
-*If you restarted a stopped instance, you don't need to do the steps below*
-
-Once this is done and the stage worker instances are in a state of "running", you'll need to provision the workers by installing required software, configurations and start running Akara and the worker processes that listen on the queues specified:
-
-* Log onto blackstar and run `sudo su - hrv-stg`
-* To provision the workers, run: `snsatnow ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker.yml`
-* Wait for the provisioning to finish; this can take a while, 5-10 minutes is not
-unusual. If the provisioning process stalls, use `ctrl-C` to end the process then re-do the ansible command.
-* Check the status of the the harvesting process through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>.  You should now see the provisioned workers listed, and acting on the jobs in the queue. You will be able to see the workers running jobs (indicated by a "play" triangle icon) and then finishing (indicated by a "pause" icon).
-
-#### Limiting provisioning by IP
-If you already have provisioned worker machines running jobs, use the
-`--limit=<ip range>` eg. --limit=10.60.22.\* or `--limit=<ip>,<ip>` eg. --limit=10.60.29.109,10.60.18.34 to limit the provisioning to the IPs of the newly-provisioned machines (and so you don't reprovision 
-a currently running machine). Otherwise rerunning the provisioning will put the 
-current running workers in a bad state, and you will then have to log on to the 
-worker and restart the worker process or terminate the machine.  Example of full command: `snsatnow ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker.yml --limit=10.60.29.*`
-
-AWS assigns unique subnets to the groups of workers you start, so in general,
-different generations of machines will be distinguished by the different C class
-subnet. This makes the --limit parameter quite useful.
-
-#### Provisioning workers to specific queues
-
-By default, stage workers will be provisioned to a "normal-stage" queue. To provision them to a different queue -- e.g., "high-stage", use the following command with the --extra-vars parameter:
-
-`ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker.yml --limit=10.60.22.123 --extra-vars="rq_work_queues=['high-stage']"`
 
 
-#### 1.3. <a name="workerstatus">Checking the status of a worker</a>
+#### 1.2. <a name="workerstatus">Checking the status of a worker</a>
 
 Sometimes the status of the worker instances is unclear.
 
@@ -249,7 +219,7 @@ To get more information about the instance, just do less filtering:
 ~/code/ec2.py | jq -C '._meta.hostvars["<ip address for instance>"]' | less -R
 ```
 
-#### 1.4. <a name="terminatestg">Stop or terminate stage worker instances</a>
+#### 1.3. <a name="terminatestg">Stop or terminate stage worker instances</a>
 
 Once harvesting jobs are completed (see steps below), terminate the worker instances.
 
@@ -539,9 +509,9 @@ To immediately view results, you can QA the Solr stage index on your local works
 <a name="harvestprod">Moving a harvest to production</a>
 --------------------------
 
-### 8. <a name="createprodworker">Manage workers to process harvesting jobs</a>
+### 8. <a name="startprodworker">Manage workers to process harvesting jobs</a>
 
-Follow the steps outlined above for [creating and managing worker instances](#workeroverview) -- but once logged into blackstar, use `sudo su - hrv-prd` to create workers in the production environment.
+Follow the steps outlined above for [starting and managing worker instances](#workeroverview) -- but once logged into blackstar, use `sudo su - hrv-prd` to create workers in the production environment.
 
 
 ### 9. <a name="synccouch">Sync the collection from CouchDB stage to CouchDB production</a>
@@ -697,7 +667,7 @@ Sometimes you may need to create one or more "High Stage" workers, for example i
 
 **Creating high stage workers:**
 * Log onto blackstar and run `sudo su - hrv-stg`
-* Create one or more worker machines just as you would in the "normal" process: `snsatnow ansible-playbook ~/code/ansible/create_worker.yml --extra-vars=\"count=1\"` .
+* Create one or more worker machines just as you would in the "developer" (see below) process: `snsatnow ansible-playbook ~/code/ansible/create_worker.yml --extra-vars=\"count=1\"` .
 * After workers are created, run `get_worker_info.sh` and compare results to currently provisioned/running "normal" workers RQ dashboard to determine the IP addresses of new workers. 
 * Provision with `--extra-vars="rq_work_queues=['high-stage']"` switch to make new workers high stage workers. Also use `--limit` switch with IP addresses of new workers from step above to only provision new workers. Do NOT re-provision running workers! Full example command: `snsatnow ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker.yml --limit=10.60.29.* --extra-vars="rq_work_queues=['high-stage']"`
 
@@ -812,6 +782,78 @@ working....
 #### Tools
 
 - [Ansible](http://www.ansible.com/home) (Version X.X)
+
+### Addendum: Building new worker images - For Developers
+
+
+* Log onto blackstar and run `sudo su - hrv-stg`
+* To start some worker machines (bare ec2 spot instances), run: `snsatnow ansible-playbook ~/code/ansible/create_worker.yml --extra-vars=\"count=1\"` . 
+  * For on-demand instances, run: `snsatnow ansible-playbook ~/code/ansible/create_worker_ondemand.yml --extra-vars=\"count=1\"`
+  * For an extra large (and costly!) on-demand instance (e.g., m4.2xlarge, m4.4xlarge), run: `ansible-playbook ~/code/ansible/create_worker_ondemand.yml --extra-vars="worker_instance_type=m4.2xlarge"` .  *If you create an extra large instance, make sure you terminate it after the harvesting job is completed!*
+
+The `count=##` parameter will set the number of instances to create. For harvesting one small collection you can set this to `count=1`. To re-harvest all collections, you can set this to `count=20`. For anything in between, use your judgment.
+
+With the `snsatnow` wrapper, the results will be messaged to the dsc_harvesting_report Slack channel when the instances are created.
+
+The default instance creation will attempt to get instances from the "spot" market so that it is cheaper to run the workers. Sometimes the spot market price can get very high and the spot instances won't work. You can check the pricing by issuing the following command on blackstar, hrv-stg user:
+
+```sh
+aws ec2 describe-spot-price-history --instance-types m3.large --availability-zone us-west-2c --product-description "Linux/UNIX (Amazon VPC)" --max-items 2
+```
+
+Our spot bid price is set to .133 which is the current (20160803) on demand price. If the history of spot prices is greater than that or if you see large fluctuations in the pricing, you can request an on-demand instance instead by running the ondemand playbook : (NOTE: the backslash \ is required)
+
+```sh
+snsatnow ansible-playbook ~/code/ansible/create_worker_ondemand.yml --extra-vars=\"count=3\"
+```
+
+#### <a name="harvestprovisionstg">Provision stage workers to act on harvesting jobs</a>
+
+*If you restarted a stopped instance, you don't need to do the steps below*
+
+Once this is done and the stage worker instances are in a state of "running", you'll need to provision the workers by installing required software, configurations and start running Akara and the worker processes that listen on the queues specified:
+
+* Log onto blackstar and run `sudo su - hrv-stg`
+* To provision the workers, run: `snsatnow ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker.yml`
+* Wait for the provisioning to finish; this can take a while, 5-10 minutes is not
+unusual. If the provisioning process stalls, use `ctrl-C` to end the process then re-do the ansible command.
+* Check the status of the the harvesting process through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>.  You should now see the provisioned workers listed, and acting on the jobs in the queue. You will be able to see the workers running jobs (indicated by a "play" triangle icon) and then finishing (indicated by a "pause" icon).
+
+#### Limiting provisioning by IP
+If you already have provisioned worker machines running jobs, use the
+`--limit=<ip range>` eg. --limit=10.60.22.\* or `--limit=<ip>,<ip>` eg. --limit=10.60.29.109,10.60.18.34 to limit the provisioning to the IPs of the newly-provisioned machines (and so you don't reprovision 
+a currently running machine). Otherwise rerunning the provisioning will put the 
+current running workers in a bad state, and you will then have to log on to the 
+worker and restart the worker process or terminate the machine.  Example of full command: `snsatnow ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker.yml --limit=10.60.29.*`
+
+AWS assigns unique subnets to the groups of workers you start, so in general,
+different generations of machines will be distinguished by the different C class
+subnet. This makes the --limit parameter quite useful.
+
+#### Provisioning workers to specific queues
+
+By default, stage workers will be provisioned to a "normal-stage" queue. To provision them to a different queue -- e.g., "high-stage", use the following command with the --extra-vars parameter:
+
+`ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker.yml --limit=10.60.22.123 --extra-vars="rq_work_queues=['high-stage']"`
+
+### Creating new worker AMI
+
+Once you have a new worker up and running with the new code, you need to create an image from it. From the appropriate environment:
+
+```bash
+ansible-playbook -i hosts ~/code/ansible/create_worker_ami.yml --extra-vars="instnace_id=<running worker instance id>"
+```
+
+You can get the instance_id by running `get_worker_info.sh`.
+
+This will produce a new image named <env>_worker_YYYYMMDD. Note the image id that is returned by this command.
+
+You now need to update the image id for the environment. Edit the file ~/code/ansible/group_vars/<env> (either stage or prod). Change the worker_ami value to the new image id e.g:
+
+```
+worker_ami: ami-XXXXXX
+```
+
 
 License
 =======
