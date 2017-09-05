@@ -1,0 +1,14 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+    - debug: var=instance_id
+    - debug: var=image_name
+    - name: create image of current worker instance
+      ec2_ami:
+        instance_id: "{{ instance_id }}"
+        name: "{{ image_name }}"
+        region: us-west-2
+      register: image
+    - debug: var=image

@@ -53,12 +53,22 @@
     dest: /etc/monit.conf
   become: yes
   notify: reload monit
-- name: install handle-termination monit script
+- name: install monit scripts for running worker code & handling termination
   template:
-    src: handle-termination.monit.j2
-    dest: /etc/monit.d/handle-termination.monit
+    src: "{{ item }}.j2"
+    dest: "/etc/monit.d/{{ item }}"
+  with_items:
+    - handle-termination.monit
+    - worker.monit
+    - akara.monit
   become: yes
+
   notify: reload monit
+- name: make monit startup on reboot
+  service:
+    name: monit
+    enabled: yes
+  become: yes
 - name: make virtualenv directory
   file: path={{ dir_venv }} state=directory
 - name: pull ingest harvester code to local box

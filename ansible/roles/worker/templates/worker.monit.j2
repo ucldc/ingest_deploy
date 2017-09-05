@@ -1,0 +1,4 @@
+check process worker
+    with pidfile "{{ dir_run_rqworker }}/bin/rqworker.pid"
+    start program "/bin/su - {{ ansible_user }} -c '/usr/local/bin/start-rqworker.sh'" with timeout 10 seconds
+	stop program = "/usr/local/bin/stop-rqworker.sh"

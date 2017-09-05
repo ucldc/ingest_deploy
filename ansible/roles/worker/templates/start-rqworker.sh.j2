@@ -3,7 +3,6 @@
 if [[ -n "$DEBUG" ]]; then 
   set -x
 fi
-set -x
 
 set -o pipefail  # trace ERR through pipes
 set -o errtrace  # trace ERR through 'time command' and other functions
@@ -13,10 +12,9 @@ set -o errexit   ## set -e : exit the script if any statement returns a non-true
 if [ -e {{ dir_run_rqworker }}/rqworker.pid ]; then
     #is running already?
     worker_pid=`/bin/cat {{ dir_run_rqworker }}/rqworker.pid`
-    if ps -A | grep -q "$worker_pid"; then
-	echo "worker appears to be running at PID $worker_pid"
-        exit 13
-    fi
+	if [ -d "/proc/${worker_pid}" ]; then # already running
+		exit 13
+	fi
 fi
 
 . {{ dir_run_rqworker }}/.harvester-env
