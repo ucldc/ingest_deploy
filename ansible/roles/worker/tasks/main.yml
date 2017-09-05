@@ -204,12 +204,22 @@
     mode: "0775"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
-- name: halt.local to call stop rqworker in place
+- name: halt.local to call stop rqworker in place # does this work?
   become: yes
   template:
     src: halt.local.j2
     dest: /sbin/halt.local
     mode: "0775"
+- name: put the stop rqworker service in place
+  copy:
+    src: rqworker-stop.init.d
+    dest: /etc/init.d/rqworker-stop
+  become: yes
+- name: make stop rqworker service startup on reboot
+  service:
+    name: rqworker-stop
+    enabled: yes
+  become: yes
 - name: start rqworker
   become: no
   shell: "{{ dir_bin }}start-rqworker.sh"
