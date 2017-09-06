@@ -152,11 +152,11 @@
   command: "{{ dir_venv}}/bin/akara -f {{ dir_code }}/dpla/ingestion/akara.conf setup"
   args:
     chdir:  "{{ dir_run_akara }}"
-- name: run akara
-  command: "{{ dir_venv}}/bin/akara -f {{ dir_code }}/dpla/ingestion/akara.conf start"
-  args:
-    chdir:  "{{ dir_run_akara }}"
-    creates: "{{ dir_run_akara }}/logs/akara.pid"
+###- name: run akara
+###  command: "{{ dir_venv}}/bin/akara -f {{ dir_code }}/dpla/ingestion/akara.conf start"
+###  args:
+###    chdir:  "{{ dir_run_akara }}"
+###    creates: "{{ dir_run_akara }}/logs/akara.pid"
 ################################################################################
 #configure rq worker
 ################################################################################
@@ -221,11 +221,11 @@
     name: rqworker-stop
     enabled: yes
   become: yes
-- name: start rqworker
-  become: no
-  shell: "{{ dir_bin }}start-rqworker.sh"
-  args:
-    creates: "{{ dir_run_rqworker}}/rqworker.pid"
+###- name: start rqworker
+###  become: no
+###  shell: "{{ dir_bin }}start-rqworker.sh"
+###  args:
+###    creates: "{{ dir_run_rqworker}}/rqworker.pid"
 - name: monit validate
   command: monit validate
   become: yes
