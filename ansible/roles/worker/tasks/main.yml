@@ -226,6 +226,9 @@
 ###  shell: "{{ dir_bin }}start-rqworker.sh"
 ###  args:
 ###    creates: "{{ dir_run_rqworker}}/rqworker.pid"
+- name: monit stop all
+  command: monit stop all
+  become: yes
 - name: monit validate
   command: monit validate
   become: yes
