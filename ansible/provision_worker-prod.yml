@@ -6,7 +6,7 @@
     dir_role_templates: "roles/{{ role }}/templates"
     name_suffix: -prod
     name_env: "ingest{{ name_suffix }}"
-    num_hosts: "{{ groups['tag_Name_ingest_prod_worker'] | length }}"
+    num_hosts: "{{ groups['tag_Name_ingest_production_worker'] | length }}"
   pre_tasks:
     - debug: var=num_hosts
   roles:
