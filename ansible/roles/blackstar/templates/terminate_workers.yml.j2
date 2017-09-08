@@ -2,7 +2,6 @@
 # terminate workers for this environment
 ---
 - hosts: tag_Name_ingest_[% data_branch %]_worker
-  gather_facts: yes
   vars:
     region: us-west-2
   tasks:

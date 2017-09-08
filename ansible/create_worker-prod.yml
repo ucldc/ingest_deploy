@@ -8,7 +8,7 @@
   connection: local
   gather_facts: no
   vars:
-      name_suffix: -prod
+      name_suffix: -production
       sec_grp_ingest_private_id: sg-95b298f0
       subnet_id_private: subnet-1bbe676c
       worker_instance_type: t2.micro

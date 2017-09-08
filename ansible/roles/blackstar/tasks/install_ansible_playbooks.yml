@@ -87,7 +87,11 @@
   template:
     src: start_workers.yml.j2
     dest: "/home/{{ role_user }}/code/ansible/start_workers.yml"
-- name: put check_ssh in place
+- name: copy start and create worker ami playbooks
   copy:
-    src: ../roles/create_worker_instance/tasks/check_ssh.yml
-    dest: "/home/{{ role_user }}/code/ansible/check_ssh.yml"
+    src: "{{ item }}"
+    dest: "/home/{{ role_user }}/code/ansible/{{ item }}"
+  with_items:
+    - start_ami.yml
+    - start_ami_ondemand.yml
+    - create_worker_ami.yml

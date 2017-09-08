@@ -19,6 +19,9 @@
         project: "{{ tag_project }}"
         subproject: "{{ tag_subproject }}"
         Name: "{{ name_env}}-worker"
+        Program: "{{ tag_cdl_program }}"
+        Environment: "{{ tag_cdl_env }}"
+        Service: "{{ tag_cdl_service }}"
     volumes:
     - device_name: /dev/xvda
       device_type: gp2
@@ -26,4 +29,5 @@
       delete_on_termination: yes
   register: ec2_info
   tags: ondemand
+- include: tag_volumes.yml
 - include: check_ssh.yml

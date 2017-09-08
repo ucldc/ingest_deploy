@@ -1,4 +1,5 @@
 ---
+name_suffix: -stage
 redis_host: x.swle7i.ng.0001.usw2.cache.amazonaws.com
 subnet_id_public: subnet-b07689e9
 subnet_id_private: subnet-56758a0f
@@ -17,3 +18,5 @@ eip_ingest_front: 52.11.194.40
 worker_instance_type: m4.large 
 spot_bid_price: .108
 front_ip: 10.60.1.122
+
+worker_ami: ami-325fab4a

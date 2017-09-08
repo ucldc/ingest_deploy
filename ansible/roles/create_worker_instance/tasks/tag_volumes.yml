@@ -1,0 +1,23 @@
+---
+# there should be registered variable ec2_info that is the result of a
+# call to the ec2 module creating instances
+- name: get associated volume for created instance
+  ec2_vol:
+    region: "{{ region }}"
+    instance: "{{ item }}"
+    state: list
+  register: volumes_out
+  with_items: "{{ ec2_info.instance_ids }}"
+- name: tag associated volume
+  ec2_tag:
+    resource: "{{ item.volumes[0].id }}"
+    region: "{{ region }}"
+    tags:
+        project: "{{ tag_project }}"
+        subproject: "{{ tag_subproject }}"
+        Name: "{{ name_env }}-worker"
+        Program: "{{ tag_cdl_program }}"
+        Environment: "{{ tag_cdl_env }}"
+        Service: "{{ tag_cdl_service }}"
+  with_items: "{{ volumes_out.results }}"
+

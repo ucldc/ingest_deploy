@@ -9,20 +9,12 @@ set -o nounset   ## set -u : exit the script if you try to use an uninitialised 
 set -o errexit   ## set -e : exit the script if any statement returns a non-true return value
 
 PID_RQW=`/bin/cat {{ dir_run_rqworker }}/rqworker.pid`
-PID_RQW=`/bin/cat {{ dir_run_rqworker }}/rqworker.pid`
-#verfy that worker is in ps table
-rq_running=`ps -fA | grep rq | grep python | awk -- '{print $2}'`
+kill -s SIGTERM $PID_RQW
 
-if [[ $PID_RQW == $rq_running ]]; then
-    kill $PID_RQW
+sleep 1
+
+if test -d "/proc/$PID_RQW"; then
+    kill -s SIGTERM $PID_RQW
 fi
 
-i=0
-while test -d "/proc/$PID_RQW"; do
-	if [ $i -gt 30 ]; then
-		exit 11
-	fi
-  sleep 1
-  let i+=1
-done
 /bin/rm {{ dir_run_rqworker }}/rqworker.pid

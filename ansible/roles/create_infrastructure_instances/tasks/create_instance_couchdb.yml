@@ -16,6 +16,9 @@
         project: "{{ tag_project }}"
         subproject: "{{ tag_subproject }}"
         Name: "{{ name_env }}-couchdb"
+        Program: "{{ tag_cdl_program }}"
+        Environment: "{{ tag_cdl_env }}"
+        Service: "{{ tag_cdl_service }}"
     volumes:
     - device_name: /dev/xvda
       device_type: gp2

@@ -53,12 +53,22 @@
     dest: /etc/monit.conf
   become: yes
   notify: reload monit
-- name: install handle-termination monit script
+- name: install monit scripts for running worker code & handling termination
   template:
-    src: handle-termination.monit.j2
-    dest: /etc/monit.d/handle-termination.monit
+    src: "{{ item }}.j2"
+    dest: "/etc/monit.d/{{ item }}"
+  with_items:
+    - handle-termination.monit
+    - worker.monit
+    - akara.monit
   become: yes
+
   notify: reload monit
+- name: make monit startup on reboot
+  service:
+    name: monit
+    enabled: yes
+  become: yes
 - name: make virtualenv directory
   file: path={{ dir_venv }} state=directory
 - name: pull ingest harvester code to local box
@@ -142,11 +152,11 @@
   command: "{{ dir_venv}}/bin/akara -f {{ dir_code }}/dpla/ingestion/akara.conf setup"
   args:
     chdir:  "{{ dir_run_akara }}"
-- name: run akara
-  command: "{{ dir_venv}}/bin/akara -f {{ dir_code }}/dpla/ingestion/akara.conf start"
-  args:
-    chdir:  "{{ dir_run_akara }}"
-    creates: "{{ dir_run_akara }}/logs/akara.pid"
+###- name: run akara
+###  command: "{{ dir_venv}}/bin/akara -f {{ dir_code }}/dpla/ingestion/akara.conf start"
+###  args:
+###    chdir:  "{{ dir_run_akara }}"
+###    creates: "{{ dir_run_akara }}/logs/akara.pid"
 ################################################################################
 #configure rq worker
 ################################################################################
@@ -194,17 +204,31 @@
     mode: "0775"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
-- name: halt.local to call stop rqworker in place
+- name: halt.local to call stop rqworker in place # does this work?
   become: yes
   template:
     src: halt.local.j2
     dest: /sbin/halt.local
     mode: "0775"
-- name: start rqworker
-  become: no
-  shell: "{{ dir_bin }}start-rqworker.sh"
-  args:
-    creates: "{{ dir_run_rqworker}}/rqworker.pid"
+- name: put the stop rqworker service in place
+  copy:
+    src: rqworker-stop.init.d
+    dest: /etc/init.d/rqworker-stop
+    mode: "0775"
+  become: yes
+- name: make stop rqworker service startup on reboot
+  service:
+    name: rqworker-stop
+    enabled: yes
+  become: yes
+###- name: start rqworker
+###  become: no
+###  shell: "{{ dir_bin }}start-rqworker.sh"
+###  args:
+###    creates: "{{ dir_run_rqworker}}/rqworker.pid"
+- name: monit stop all
+  command: monit stop all
+  become: yes
 - name: monit validate
   command: monit validate
   become: yes
