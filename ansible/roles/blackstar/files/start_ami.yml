@@ -12,6 +12,7 @@
       instance_type: "{{ worker_instance_type }}"
       vpc_subnet_id: "{{ subnet_id_private }}"
       group: "{{ name_env }}-private"
+      instance_profile_name: ingest-worker
       spot_price: "{{ spot_bid_price }}"
       wait: yes
       count: "{{ count }}"
