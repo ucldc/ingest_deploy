@@ -307,7 +307,7 @@ you can use the following command syntaxes on the dsc-blackstar role account:
 
 #### 3.2. <a name="deepharvest">Harvest and process access files from Nuxeo ("deep harvesting")</a>
 
-The process pulls files from the "Main Content File" section in Nuxeo, and formats them into access files for display in Calisphere. Here's what the process does:
+The process pulls files from the "Main Content File" section in Nuxeo, and formats them into access files for display in Calisphere. If you only need to pick up metadata changes in Nuxeo, skip this step. Here's what the process does:
 
 1. It stashes a high quality copy of any associated media or text files on S3.  These files appear on the object landing page, for interactive viewing:
 * If image, creates a zoomable jp2000 version and stash it on S3 for use with our IIIF-compatible Loris server. Tools used to convert the image include ImageMagick and Kakadu
