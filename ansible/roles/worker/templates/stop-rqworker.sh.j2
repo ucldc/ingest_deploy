@@ -11,7 +11,7 @@ set -o errexit   ## set -e : exit the script if any statement returns a non-true
 PID_RQW=`/bin/cat {{ dir_run_rqworker }}/rqworker.pid`
 kill -s SIGTERM $PID_RQW
 
-sleep 1
+sleep 15 # give time for HerokuWorker to send exception
 
 if test -d "/proc/$PID_RQW"; then
     kill -s SIGTERM $PID_RQW
