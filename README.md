@@ -221,7 +221,7 @@ To get more information about the instance, just do less filtering:
 
 #### Common worker error messages
 
-* Worker forcibly terminate, while job was in-progress: ``ShutDownImminentException('shut down imminent (signal: %s)' % signal_name(signum), info) ShutDownImminentException: shut down imminent (signal: SIGALRM)`
+* Worker forcibly terminate, while job was in-progress: `ShutDownImminentException('shut down imminent (signal: %s)' % signal_name(signum), info) ShutDownImminentException: shut down imminent (signal: SIGALRM)`
 
 #### 1.3. <a name="terminatestg">Stop or terminate stage worker instances</a>
 
