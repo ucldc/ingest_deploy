@@ -689,7 +689,7 @@ going wrong.
 
 #### Common worker error messages
 
-* Worker forcibly terminate, while job was in-progress: `ShutDownImminentException('shut down imminent (signal: %s)' % signal_name(signum), info) ShutDownImminentException: shut down imminent (signal: SIGALRM)`
+* Worker forcibly terminated, while job was in-progress: `ShutDownImminentException('shut down imminent (signal: %s)' % signal_name(signum), info) ShutDownImminentException: shut down imminent (signal: SIGALRM)`
 * (More forthcoming...)
 
 #### Checking the logs
