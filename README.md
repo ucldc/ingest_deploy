@@ -219,10 +219,6 @@ To get more information about the instance, just do less filtering:
 ~/code/ec2.py | jq -C '._meta.hostvars["<ip address for instance>"]' | less -R
 ```
 
-#### Common worker error messages
-
-* Worker forcibly terminate, while job was in-progress: `ShutDownImminentException('shut down imminent (signal: %s)' % signal_name(signum), info) ShutDownImminentException: shut down imminent (signal: SIGALRM)`
-
 #### 1.3. <a name="terminatestg">Stop or terminate stage worker instances</a>
 
 Once harvesting jobs are completed (see steps below), terminate the worker instances.
@@ -689,6 +685,14 @@ Sometimes you may need to create one or more "High Stage" workers, for example i
 First take a look at the RQ Dashboard. There will be a bit of the error message
 there. Hopefully this would identify the error and you can modify whatever is
 going wrong.
+
+
+#### Common worker error messages
+
+* Worker forcibly terminate, while job was in-progress: `ShutDownImminentException('shut down imminent (signal: %s)' % signal_name(signum), info) ShutDownImminentException: shut down imminent (signal: SIGALRM)`
+* (More forthcoming...)
+
+#### Checking the logs
 
 If you need more extensive access to logs, they are all stored on the AWS
 CloudWatch platform. 
