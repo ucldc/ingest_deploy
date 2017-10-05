@@ -327,6 +327,11 @@ To run the "deep harvest" process:
 * Run `Queue Nuxeo deep harvest` drop-down. 
 * You can track the progress through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>; once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
 
+If you need more control of the process (i.e. to put on a different queue),
+you can run use the following command syntax on the dsc-blackstar role account:
+
+`./bin/queue_deep_harvest.py adrian.turner@ucop.edu high-stage 26959`
+
 If there are problems with individual items, you can do a deep harvest for just one object by its Nuxeo path. You need to log onto dsc-blackstar and sudo to the hrv-stg role account. Then:
 
 ```shell
