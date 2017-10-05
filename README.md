@@ -268,7 +268,7 @@ This process will harvest metadata from the target system into a resulting Couch
 If you need more control of the process (i.e. to put on a different queue),
 you can use the following command syntax on the dsc-blackstar role account:
 
-`./bin/queue_harvest.py adrian.turner@ucop.edu high-stage https://registry.cdlib.org/api/v1/collection/26943`
+`queue_harvest.py adrian.turner@ucop.edu high-stage https://registry.cdlib.org/api/v1/collection/26943`
 
 
 #### 2.3. <a name="harvestpreview">Harvest preview and thumbnail images</a>
@@ -356,7 +356,7 @@ This process will harvest metadata from Nuxeo into a resulting CouchDB record.
 If you need more control of the process (i.e. to put on a different queue),
 you can use the following command syntax on the dsc-blackstar role account:
 
-`./bin/queue_harvest.py adrian.turner@ucop.edu high-stage https://registry.cdlib.org/api/v1/collection/26943`
+`queue_harvest.py adrian.turner@ucop.edu high-stage https://registry.cdlib.org/api/v1/collection/26943`
 
 #### 3.4. <a name="harvestnuxpreview">Harvest preview image, also used for thumbnails</a>
 
