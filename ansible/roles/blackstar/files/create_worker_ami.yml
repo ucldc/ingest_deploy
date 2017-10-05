@@ -12,5 +12,12 @@
         instance_id: "{{ instance_id }}"
         name: "{{ image_name }}"
         region: us-west-2
+        tags:
+          Name: "{{ image_name }}"
+          Environment: production
+          Program: dsc
+          Service: calisphere
+          project: ucldc
+          subproject: ingest
       register: image
     - debug: var=image
