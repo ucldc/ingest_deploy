@@ -19,5 +19,17 @@
           Service: calisphere
           project: ucldc
           subproject: ingest
-      register: image
-    - debug: var=image
+      register: new_image
+    - name: find older AMIs
+      shell: "aws ec2 describe-images --filters Name=name,Values=worker-{{ DATA_BRANCH }}* | jq '.Images| sort_by(\"CreationDate\")[:length-1][].ImageId'"
+      register: ami_ids
+    - debug:
+        msg: "Deleting amis : {{ ami_ids }}"
+    - ec2_ami:
+        region: "{{ region }}"
+        image_id: "{{ item }}"
+        delete_snapshot: True
+        state: absent
+      with_items:
+        - "{{ ami_ids.stdout_lines | replace('\"', '')}}"
+    - debug: var=new_image
