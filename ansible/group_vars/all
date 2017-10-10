@@ -1,4 +1,5 @@
 ---
+region: us-west-2
 image_hvm:  ami-aa5ebdd2
 tag_project: "{{ project | default('ucldc') }}"
 tag_subproject: "{{ subproject | default('ingest') }}"
