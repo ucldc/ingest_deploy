@@ -19,4 +19,4 @@ worker_instance_type: t2.small
 spot_bid_price: .023
 front_ip: 10.60.2.105
 
-worker_ami: ami-6540bd1d
+worker_ami: ami-a73cfbdf
