@@ -371,6 +371,14 @@ you can run use the following command syntax on the dsc-blackstar role account:
 
 `queue_image_harvest.py adrian.turner@ucop.edu high-stage https://registry.cdlib.org/api/v1/collection/26943`
 
+If there are problems with individual items, you can run the process on a specific object (or multiple objects) by referencing the harvest ID. You need to log onto dsc-blackstar and sudo to the hrv-stg role account. Then:
+
+`python ~/bin/queue_image_harvest_for_doc_ids.py mredar@gmail.com normal-stage 23065--http://ark.cdlib.org/ark:/13030/k600073n`
+
+For multiple items, separate the harvest IDs with commas:
+
+`python ~/bin/queue_image_harvest_for_doc_ids.py mredar@gmail.com normal-stage 23065--http://ark.cdlib.org/ark:/13030/k600073n,23065--http://ark.cdlib.org/ark:/13030/k6057mxb`
+
 ### 4. <a name="harvestcdbqa">QA check collection in CouchDB stage</a>
 
 
