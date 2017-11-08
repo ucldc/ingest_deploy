@@ -19,4 +19,4 @@ worker_instance_type: m4.large
 spot_bid_price: .108
 front_ip: 10.60.1.122
 
-worker_ami: ami-d23dfaaa
+worker_ami: ami-a62df9de
