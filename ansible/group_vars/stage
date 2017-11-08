@@ -16,7 +16,7 @@ solr_ip: 10.60.24.83
 solr_url: http://{{ solr_ip }}:8983/solr
 eip_ingest_front: 52.11.194.40
 worker_instance_type: m4.large 
-spot_bid_price: .108
+spot_bid_price: .1
 front_ip: 10.60.1.122
 
-worker_ami: ami-a62df9de
+worker_ami: ami-3a479342
