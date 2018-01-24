@@ -586,7 +586,9 @@ TODO: add how to run the QA spreadsheet generating code
 <a name="removals">Removing items or collections (takedown requests)</a> 
 --------------------------
 
-Removing collections involves deleting records from CouchDB stage and production environments, as well as Solr stage and production environments; and then updating the Elastic Beanstalk:
+Removing collections involves deleting records from CouchDB stage and production environments, as well as Solr stage and production environments; and then updating the Elastic Beanstalk.
+
+In addition to removing the item from Calisphere, notify DPLA to remove the item from there.
 
 #### <a name="removalitem">Individual items</a>
 
