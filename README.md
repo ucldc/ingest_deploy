@@ -335,7 +335,7 @@ you can run use the following command syntax on the dsc-blackstar role account:
 
 `queue_deep_harvest.py adrian.turner@ucop.edu high-stage 26959`
 
-If there are problems with individual items, you can do a deep harvest for just one object by its Nuxeo path. You need to log onto dsc-blackstar and sudo to the hrv-stg role account. Then:
+If there are problems with individual items, you can do a deep harvest for just one doc (not including any components) by its Nuxeo path. You need to log onto dsc-blackstar and sudo to the hrv-stg role account. Then:
 
 ```shell
 queue_deep_harvest_single_object.py "<path to assest wrapped with quotes>"
@@ -347,6 +347,11 @@ queue_deep_harvest_single_object.py "/asset-library/UCR/Manuscript Collections/G
 
 This will run 4 jobs, one for grabbing files, one for creating jp2000 for access & IIIF, one to create thumbs and finally a job to produce the media_json file.
 
+You can also do a deep harvest for one Nuxeo object, including any components, by providing its Nuxeo path. You need to log onto dsc-blackstar and sudo to the hrv-stg role account. Then:
+
+```shell
+python queue_deep_harvest_single_object_with_components.py adrian.turner@ucop.edu normal-stage "<path to asset wrapped with quotes>"
+```
 
 #### 3.3. <a name="harvestnuxmdstg">Harvest metadata to CouchDB stage</a>
 
