@@ -22,6 +22,7 @@
     - queue_deep_harvest.py
     - queue_deep_harvest_single_object.py
     - queue_sync_couchdb_collection.py
+    - queue_deep_harvest_single_object_with_components.py
     - sync_couch_collection_to_solr.py
     - sync_solr_documents.py
     - queue_deep_harvest_single_object_jobs.py
