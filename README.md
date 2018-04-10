@@ -812,8 +812,14 @@ If older versions of the files don't clear out after re-running a deep harvest, 
 * Log onto blackstar & sudo su - hrv-stg
 * Run `python ~/bin/redis_delete_harvested_images_script.py <collection_id>`. This will produce a file called `delete_image_cache-<collection_id>` in the current directory.
 * Run `redis.sh < delete_image_cache-<collection_id>`. This will clear the cache of previously harvested URLs.
-* Run `python ~/bin/queue_image_harvest.py mredar@gmail.com normal-stage https://registry.cdlib.org/api/v1/collection/<collection_id>/ --get_if_object`
+* Run `python ~/bin/queue_image_harvest.py <your email> normal-stage https://registry.cdlib.org/api/v1/collection/<collection_id>/ --get_if_object`
 
+#### Akara Log reporting "Not an Image" for collection object(s), even though you are certain the object file(s) are image(s)?
+
+By default, the image harvester checks the value of `content-type` within the HTML headers of the `isShownBy` URL when retrieving preview images, and if the `content-type` is not some type of image or is missing, the object is skipped and no image is harvested. However, sometimes the `content-type` value is missing or erroneous when the file is clearly an image that can be harvested. If you're sure the files are indeed images, run image harvest with the *--ignore_content_type* to bypass the `content-type` check and grab the image file anyway.
+
+* Log onto blackstar & sudo su - hrv-stg
+* Run `python ~/bin/queue_image_harvest.py <your email> normal-stage https://registry.cdlib.org/api/v1/collection/<collection_id>/ --ignore_content_type`
 
 Development
 -----------
