@@ -891,6 +891,8 @@ By default, stage workers will be provisioned to a "normal-stage" queue. To prov
 
 `ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker.yml --limit=10.60.22.123 --extra-vars="rq_work_queues=['high-stage']"`
 
+### Creating new worker AMI
+
 #### Recommended: Add Swap Space
 
 To help with memory issues when harvesting large collections, it can be a good idea to add swap space, or extra virtual memory in case the worker gets close to running out of it's allotted memory. 
