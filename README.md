@@ -814,6 +814,12 @@ If older versions of the files don't clear out after re-running a deep harvest, 
 * Run `redis.sh < delete_image_cache-<collection_id>`. This will clear the cache of previously harvested URLs.
 * Run `python ~/bin/queue_image_harvest.py mredar@gmail.com normal-stage https://registry.cdlib.org/api/v1/collection/<collection_id>/ --get_if_object`
 
+#### Akara Log reporting "Not an Image" for collection object(s), even though you are certain the object file(s) are image(s)?
+
+By default, the image harvester checks the value of `content-type` within the HTML headers of the isShownBy URL when retrieving preview images, and if the content-type is not some type of image or is missing, the object is skipped and no image is harvested. However, sometimes the content-type value is missing or erroneous when the file is clearly an image that can be harvested. If you're sure the files are indeed images, run image harvest with the `--ignore_content_type` to bypass the content-type check and grab the image file anyway.
+
+* Log onto blackstar & sudo su - hrv-stg
+* Run `python ~/bin/queue_image_harvest.py <your email> normal-stage https://registry.cdlib.org/api/v1/collection/<collection_id>/ --ignore_content_type`
 
 Development
 -----------
@@ -886,6 +892,23 @@ By default, stage workers will be provisioned to a "normal-stage" queue. To prov
 `ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker.yml --limit=10.60.22.123 --extra-vars="rq_work_queues=['high-stage']"`
 
 ### Creating new worker AMI
+
+#### Recommended: Add Swap Space
+
+To help with memory issues when harvesting large collections, it can be a good idea to add swap space, or extra virtual memory in case the worker gets close to running out of it's allotted memory. 
+
+To add 1 Gb swap space, ssh to the worker and run:
+
+```sudo fallocate -l 1G /mnt/1GB.swap
+sudo mkswap /mnt/1GB.swap
+sudo chmod 0600 /mnt/1GB.swap
+sudo swapon /mnt/1GB.swap
+```
+And add the following line to the end of `/etc/fstab`:
+
+`/mnt/1GB.swap  none  swap  sw 0  0`
+
+#### Creating new AMI/Updating Image ID
 
 Once you have a new worker up and running with the new code, you need to create an image from it. From the appropriate environment:
 
