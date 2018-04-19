@@ -81,6 +81,7 @@ UCLDC Harvesting operations guide
 * [Picking up new harvester or ingest code](#newcode)
 * [Recreating the Solr Index from scratch](#solrscratch)
 * [How to find a CouchDB source document for an item in Calisphere](#cdbsearch)
+* [Editing individual items](#editnforgetit)
 * [Creating/Harvesting with High Stage Workers](#highstage)
 
 [Fixes for Common Problems](#commonfixes)
@@ -237,6 +238,9 @@ ansible-playbook -i ~/code/ec2.py ~/code/ansible/stop_workers.yml
 
 This will stop the instance so it can be brought up easily. `get_worker_info.sh` should report the instance as "stopping" or "stopped".
 
+As a last option for terminating unresponsive workers, run `get_worker_info.sh` to get the worker ID (i-[whatever]) then use the following command `aws ec2 terminate-instances --instance-ids "[XXXXX]"`
+
+
 ### 2. <a name="harvestregistry">Run harvest jobs: non-Nuxeo sources</a>
 
 
@@ -332,7 +336,7 @@ you can run use the following command syntax on the dsc-blackstar role account:
 
 `queue_deep_harvest.py adrian.turner@ucop.edu high-stage 26959`
 
-If there are problems with individual items, you can do a deep harvest for just one object by its Nuxeo path. You need to log onto dsc-blackstar and sudo to the hrv-stg role account. Then:
+If there are problems with individual items, you can do a deep harvest for just one doc (not including any components) by its Nuxeo path. You need to log onto dsc-blackstar and sudo to the hrv-stg role account. Then:
 
 ```shell
 queue_deep_harvest_single_object.py "<path to assest wrapped with quotes>"
@@ -344,6 +348,11 @@ queue_deep_harvest_single_object.py "/asset-library/UCR/Manuscript Collections/G
 
 This will run 4 jobs, one for grabbing files, one for creating jp2000 for access & IIIF, one to create thumbs and finally a job to produce the media_json file.
 
+You can also do a deep harvest for one Nuxeo object, including any components, by providing its Nuxeo path. You need to log onto dsc-blackstar and sudo to the hrv-stg role account. Then:
+
+```shell
+python queue_deep_harvest_single_object_with_components.py adrian.turner@ucop.edu normal-stage "<path to asset wrapped with quotes>"
+```
 
 #### 3.3. <a name="harvestnuxmdstg">Harvest metadata to CouchDB stage</a>
 
@@ -586,7 +595,9 @@ TODO: add how to run the QA spreadsheet generating code
 <a name="removals">Removing items or collections (takedown requests)</a> 
 --------------------------
 
-Removing collections involves deleting records from CouchDB stage and production environments, as well as Solr stage and production environments; and then updating the Elastic Beanstalk:
+Removing collections involves deleting records from CouchDB stage and production environments, as well as Solr stage and production environments; and then updating the Elastic Beanstalk.
+
+In addition to removing the item from Calisphere, notify DPLA to remove the item from there.
 
 #### <a name="removalitem">Individual items</a>
 
@@ -673,6 +684,23 @@ https://harvest-stg.cdlib.org/solr/dc-collection/select?q=32e2220c1e918cf17f0597
 
 Find the `harvest_id_s` value, in this case "26094--LAPL00050887". Then plug this into CouchDB for the ucldc database:
 https://harvest-stg.cdlib.org/couchdb/ucldc/26094--LAPL00050887 (or with the UI - https://harvest-stg.cdlib.org/couchdb/_utils/document.html?ucldc/26094--LAPL00050887)
+
+### <a name="editnforgetit">Editing individual items</a>
+
+It may be handy to edit an individual object, in cases where key information in the source metadata -- such as a date -- was entered in error, and is throwing off the Solr date facet. In these cases, you should notify the contributor to update the source metadata, and re-harvest. In parallel (and so not to hold up publication of the collection), you can selectively edit the object in CouchDB:
+
+1. Locate the CouchDB ID for the object that needs editing (look it up in Solr).
+2. Log on to blackstar and run `sudo` and then `echo "$COUCHDB_PASSWORD"` to obtain the password for the `harvester` account.
+3. Access the CouchDB stage UI.
+4. On the bottom right corner, click on Login.
+5. Enter `harvester` as the Username and copy in the password obtained in step #2.
+6. Retrieve the record and double click the field in the sourceResource section to edit the value (e.g., the incorrect date).
+7. Click on the green check mark to the right of the edit box.
+8. Click on Save Document on the upper left hand corner.
+9. Re-synch CouchdB stage to Solr stage.
+10. Re-synch CouchDB stage to CouchDB prod.
+11. Re-synch CouchDB prod to Solr prod.
+
 
 ### <a name="highstage">Creating/Harvesting with High Stage Workers</a>
 
@@ -786,6 +814,12 @@ If older versions of the files don't clear out after re-running a deep harvest, 
 * Run `redis.sh < delete_image_cache-<collection_id>`. This will clear the cache of previously harvested URLs.
 * Run `python ~/bin/queue_image_harvest.py mredar@gmail.com normal-stage https://registry.cdlib.org/api/v1/collection/<collection_id>/ --get_if_object`
 
+#### Akara Log reporting "Not an Image" for collection object(s), even though you are certain the object file(s) are image(s)?
+
+By default, the image harvester checks the value of `content-type` within the HTML headers of the isShownBy URL when retrieving preview images, and if the content-type is not some type of image or is missing, the object is skipped and no image is harvested. However, sometimes the content-type value is missing or erroneous when the file is clearly an image that can be harvested. If you're sure the files are indeed images, run image harvest with the `--ignore_content_type` to bypass the content-type check and grab the image file anyway.
+
+* Log onto blackstar & sudo su - hrv-stg
+* Run `python ~/bin/queue_image_harvest.py <your email> normal-stage https://registry.cdlib.org/api/v1/collection/<collection_id>/ --ignore_content_type`
 
 Development
 -----------
@@ -858,6 +892,23 @@ By default, stage workers will be provisioned to a "normal-stage" queue. To prov
 `ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker.yml --limit=10.60.22.123 --extra-vars="rq_work_queues=['high-stage']"`
 
 ### Creating new worker AMI
+
+#### Recommended: Add Swap Space
+
+To help with memory issues when harvesting large collections, it can be a good idea to add swap space, or extra virtual memory in case the worker gets close to running out of it's allotted memory. 
+
+To add 1 Gb swap space, ssh to the worker and run:
+
+```sudo fallocate -l 1G /mnt/1GB.swap
+sudo mkswap /mnt/1GB.swap
+sudo chmod 0600 /mnt/1GB.swap
+sudo swapon /mnt/1GB.swap
+```
+And add the following line to the end of `/etc/fstab`:
+
+`/mnt/1GB.swap  none  swap  sw 0  0`
+
+#### Creating new AMI/Updating Image ID
 
 Once you have a new worker up and running with the new code, you need to create an image from it. From the appropriate environment:
 

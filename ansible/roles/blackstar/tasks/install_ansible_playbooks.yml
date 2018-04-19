@@ -92,6 +92,15 @@
     src: "{{ item }}"
     dest: "/home/{{ role_user }}/code/ansible/{{ item }}"
   with_items:
-    - start_ami.yml
     - start_ami_ondemand.yml
     - create_worker_ami.yml
+- name: copy spot start ami when on stage
+  copy:
+    src: start_ami.yml
+    dest: "/home/{{ role_user }}/code/ansible/start_ami.yml"
+  when: DATA_BRANCH == "stage"
+- name: copy ondemand start ami when on production
+  copy:
+    src: start_ami_ondemand.yml
+    dest: "/home/{{ role_user }}/code/ansible/start_ami.yml"
+  when: DATA_BRANCH == "production"
