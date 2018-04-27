@@ -701,6 +701,16 @@ It may be handy to edit an individual object, in cases where key information in 
 10. Re-synch CouchDB stage to CouchDB prod.
 11. Re-synch CouchDB prod to Solr prod.
 
+### <a name="batchediting">Batch replacing CouchDB field values by collection</a>
+
+For relatively simple find-and-replace tasks across an entire CouchDB collection, where a full re-harvest is too time-consuming/cumbersome, use this script. **NOTE:** Use carefully, as this will alter the CouchDB records for an entire collection, with the only way to 'restore' being a full re-harvest. **ALSO**, this script will replace whatever is in the given [fieldName] with the given "newValue". It does NOT yet add/append a new value on to existing values--therefore not suitable for editing fields with multiple values.
+
+* Log onto blackstar & sudo su - hrv-stg
+* Run `python ~/bin/queue_batch_update_couchdb.py <email> normal-stage <collection ID> <fieldName> <newValue>`
+    * <email> EX: mmckinle@ucop.edu
+    * <collection ID> EX: 26957
+    * <fieldName> The field containing value that needs replacing. Use / to delimit nested fields EX: sourceResource/stateLocatedIn/name
+    * <newValue> New value to add to field. If multiple words, surround with quotes EX: "UCSF Medical Center at Mount Zion Archives"
 
 ### <a name="highstage">Creating/Harvesting with High Stage Workers</a>
 
