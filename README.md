@@ -577,6 +577,7 @@ To immediately view results, you can QA the Solr stage index on your local works
 
 Generate and review a QA report for the candidate Solr index, following [these steps](https://github.com/mredar/ucldc_api_data_quality/tree/master/reporting).  The main QA report in particular summarizes differences in item counts in the candidate Solr index compared with the current production index.
 
+If there is a *drop* in the number of objects for a given collection, we need to be able to justify why that happened -- e.g., contributor intentionally needed to remove items. If there is a justified reason for the removal of objects, we also need to double check if those removed items are associated with any Calisphere exhibitions. (Need info. here on how to generate link report for exhibitions).
 
 
 <a name="beanstalk">Updating Elastic Beanstalk with candidate Solr index</a>
