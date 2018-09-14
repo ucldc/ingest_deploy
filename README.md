@@ -691,7 +691,7 @@ https://harvest-stg.cdlib.org/couchdb/ucldc/26094--LAPL00050887 (or with the UI 
 It may be handy to edit an individual object, in cases where key information in the source metadata -- such as a date -- was entered in error, and is throwing off the Solr date facet. In these cases, you should notify the contributor to update the source metadata, and re-harvest. In parallel (and so not to hold up publication of the collection), you can selectively edit the object in CouchDB:
 
 1. Locate the CouchDB ID for the object that needs editing (look it up in Solr).
-2. Log on to blackstar and run `sudo` and then `echo "$COUCHDB_PASSWORD"` to obtain the password for the `harvester` account.
+2. Log on to blackstar and run `sudo su - hrv-stg` and then `echo "$COUCHDB_PASSWORD"` to obtain the password for the `harvester` account.
 3. Access the CouchDB stage UI.
 4. On the bottom right corner, click on Login.
 5. Enter `harvester` as the Username and copy in the password obtained in step #2.
