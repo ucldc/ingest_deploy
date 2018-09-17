@@ -7,7 +7,7 @@ redis_connect_timeout: 10
 
 solr_url: http://10.60.24.83:8983/solr/dc-collection
 
-couchdb_url: http://10.60.27.222:5984
+couchdb_url: http://10.60.17.134:5984
 couchdb_username: "{{ couchdb_username_stage }}"
 couchdb_password: "{{ couchdb_password_stage }}"
 
