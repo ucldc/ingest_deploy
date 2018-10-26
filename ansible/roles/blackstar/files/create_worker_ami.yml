@@ -21,7 +21,7 @@
           subproject: ingest
       register: new_image
     - name: find older AMIs
-      shell: "aws ec2 describe-images --filters Name=name,Values=worker-{{ DATA_BRANCH }}* | jq '.Images| sort_by(\"CreationDate\")[:length-1][].ImageId'"
+      shell: "aws ec2 describe-images --filters Name=name,Values=worker-{{ DATA_BRANCH }}* | jq '.Images| sort_by(.CreationDate)[:length-1][].ImageId'"
       register: ami_ids
     - debug:
         msg: "Deleting amis : {{ ami_ids }}"
