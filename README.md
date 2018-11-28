@@ -81,7 +81,7 @@ UCLDC Harvesting operations guide
 * [Picking up new harvester or ingest code](#newcode)
 * [Recreating the Solr Index from scratch](#solrscratch)
 * [How to find a CouchDB source document for an item in Calisphere](#cdbsearch)
-* [Editing individual items](#editnforgetit)
+* [Editing or deleting individual items](#editnforgetit)
 * [Creating/Harvesting with High Stage Workers](#highstage)
 
 [Fixes for Common Problems](#commonfixes)
@@ -686,7 +686,7 @@ https://harvest-stg.cdlib.org/solr/dc-collection/select?q=32e2220c1e918cf17f0597
 Find the `harvest_id_s` value, in this case "26094--LAPL00050887". Then plug this into CouchDB for the ucldc database:
 https://harvest-stg.cdlib.org/couchdb/ucldc/26094--LAPL00050887 (or with the UI - https://harvest-stg.cdlib.org/couchdb/_utils/document.html?ucldc/26094--LAPL00050887)
 
-### <a name="editnforgetit">Editing individual items</a>
+### <a name="editnforgetit">Editing or deleting individual items</a>
 
 It may be handy to edit an individual object, in cases where key information in the source metadata -- such as a date -- was entered in error, and is throwing off the Solr date facet. In these cases, you should notify the contributor to update the source metadata, and re-harvest. In parallel (and so not to hold up publication of the collection), you can selectively edit the object in CouchDB:
 
@@ -702,6 +702,7 @@ It may be handy to edit an individual object, in cases where key information in 
 10. Re-synch CouchDB stage to CouchDB prod.
 11. Re-synch CouchDB prod to Solr prod.
 
+This also applies to cases where a contributor removes an object from their source collection. In lieu of reharvesting the entire collection, you can selectively delete an item from CouchDB (then synch from CouchDB to Solr).
 
 ### <a name="highstage">Creating/Harvesting with High Stage Workers</a>
 
