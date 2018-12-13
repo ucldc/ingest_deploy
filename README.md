@@ -602,7 +602,7 @@ In addition to removing the item from Calisphere, notify DPLA to remove the item
 
 #### <a name="removalitem">Individual items</a>
 
-* Follow this process: <a name="editnforgetit">Editing or deleting individual items</a>
+* Follow this process: [Editing or deleting individual items](#editnforgetit)
 -or-
 * Create a list of the CouchDB identifiers for the items, and add them to a file (one per line). Then run `delete_couchdb_id_list.py` with the file as input:`delete_couchdb_id_list.py <file with list of ids>`
 * From the Collection Registry, select `Queue sync from from CouchDB stage to Solr stage` and `Queue sync from CouchDB production to Solr production`
