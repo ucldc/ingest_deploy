@@ -238,7 +238,7 @@ ansible-playbook -i ~/code/ec2.py ~/code/ansible/stop_workers.yml
 
 This will stop the instance so it can be brought up easily. `get_worker_info.sh` should report the instance as "stopping" or "stopped".
 
-As a last option for terminating unresponsive workers, run `get_worker_info.sh` to get the worker ID (i-[whatever]) then use the following command `aws ec2 terminate-instances --instance-ids "[XXXXX]"`
+As a last option for terminating unresponsive workers, run `get_worker_info.sh` to get the worker ID (i-[whatever]) then use the following command `aws ec2 terminate-instances --instance-ids "[XXXXX]"` . If you can SSH to the worker, you can also use `ec2-metadata` to determine the worker ID.
 
 
 ### 2. <a name="harvestregistry">Run harvest jobs: non-Nuxeo sources</a>
