@@ -698,9 +698,11 @@ It may be handy to edit an individual object, in cases where key information in 
 6. Retrieve the record and double click the field in the sourceResource section to edit the value (e.g., the incorrect date).
 7. Click on the green check mark to the right of the edit box.
 8. Click on Save Document on the upper left hand corner.
-9. Re-synch CouchdB stage to Solr stage.
-10. Re-synch CouchDB stage to CouchDB prod.
-11. Re-synch CouchDB prod to Solr prod.
+9. Delete collection from Solr stage.
+10. Delete collection from Solr prod.
+11. Re-synch collection from CouchdB stage to Solr stage.
+12. Re-synch collection from CouchDB stage to CouchDB prod.
+13. Re-synch collection from CouchDB prod to Solr prod.
 
 This also applies to cases where a contributor removes an object from their source collection. In lieu of reharvesting the entire collection, you can selectively delete an item from CouchDB (then synch from CouchDB to Solr).
 
