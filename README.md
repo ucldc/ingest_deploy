@@ -56,6 +56,7 @@ UCLDC Harvesting operations guide
 * [3.2. Harvest and process access files from Nuxeo ("deep harvesting")](#deepharvest)
 * [3.3. Harvest metadata to CouchDB stage](#harvestnuxmdstg)
 * [3.4. Harvest preview image, also used for thumbnails](#harvestnuxpreview)
+* [3.5. QA check number of objects harvested from Nuxeo](#nuxeoqa)
 * [4. QA check collection in CouchDB stage](#harvestcdbqa)
 * [4.1. Check the number of records in CouchDB](#harvestcdbcomplete)
 * [4.2. Additional QA checking](#couchdbaddqa)
@@ -387,6 +388,14 @@ If there are problems with individual items, you can run the process on a specif
 For multiple items, separate the harvest IDs with commas:
 
 `python ~/bin/queue_image_harvest_for_doc_ids.py mredar@gmail.com normal-stage 23065--http://ark.cdlib.org/ark:/13030/k600073n,23065--http://ark.cdlib.org/ark:/13030/k6057mxb`
+
+### 3.5. <a name="nuxeoqa">QA check number of objects harvested from Nuxeo</a>
+
+To generate a count of the total number of Nuxeo objects harvested (simple objects + complex objects, minus components):
+
+* Log into blackstar and run `sudo su - hrv-stg`
+* Run `python /home/hrv-stg/code/nuxeo-calisphere/utils/get_collection_object_count.py '/asset-library/UCM/Ramicova'`. (Replace the path with the particular project folder for the harvested collection)
+
 
 ### 4. <a name="harvestcdbqa">QA check collection in CouchDB stage</a>
 
