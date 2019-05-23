@@ -817,7 +817,6 @@ The `media.json` output created through the ["deep harvest"](#deepharvest) proce
 * Try re-running the [deep harvest for a single object](#deepharvest) to regenerate the media.json and files.
 * Check the media.json again, to confirm that it was generated and/or its URLs resolve to files. If AOK, sync from CouchDB stage to Solr stage
 
-
 #### Persistent older versions of access files, preview image (for PDF or video objects), or complex object component thumbnails? (Nuxeo only)
 
 If older versions of the files don't clear out after re-running a deep harvest, you can manually queue the image harvest to force it to re-fetch images from Nuxeo. First, you need to clear the "CouchDB ID -> image url" cache and then set the image harvest to run with the flag --get_if_object (so get the image even if the "object" field exists in the CouchDB document)
@@ -826,6 +825,19 @@ If older versions of the files don't clear out after re-running a deep harvest, 
 * Run `python ~/bin/redis_delete_harvested_images_script.py <collection_id>`. This will produce a file called `delete_image_cache-<collection_id>` in the current directory.
 * Run `redis.sh < delete_image_cache-<collection_id>`. This will clear the cache of previously harvested URLs.
 * Run `python ~/bin/queue_image_harvest.py mredar@gmail.com normal-stage https://registry.cdlib.org/api/v1/collection/<collection_id>/ --get_if_object`
+
+#### Removing multiple objects from collection with the same generic placeholder image file
+
+Sometimes a collection will be harvested with multiple metadata-only records with an associated 'placeholder' file, but nothing within the metadata denoting the record's metadata-only status. In these cases, the only way to identify and remove these metadata-only records is by determining the placeholder file's 'Object' value in CouchDB. This script will find and remove such records given the Collection ID and the associated 'bogus' Object value from CouchDB.
+
+Note that this will only work if every metadata-only record has the exact same placeholder image, as only an identical file will generate the same 'Object' value in CouchDB.
+
+* Delete collection from SOLR stage
+* Get 'Object' value from one of the metadata-only CouchDB records you wish to remove
+* Log onto blackstar & sudo su - hrv-stg
+* Run `delete_couchdocs_by_obj_checksum.py [Collection ID] [Bogus Object value]`
+* Script will return number of matching records found and ask for confirmation before deleting. Type `yes` and script will delete records from CouchDB
+* Re-sync collection from CouchDB stage to SOLR stage
 
 #### Akara Log reporting "Not an Image" for collection object(s), even though you are certain the object file(s) are image(s)?
 
