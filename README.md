@@ -337,6 +337,12 @@ you can run use the following command syntax on the dsc-blackstar role account:
 
 `queue_deep_harvest.py adrian.turner@ucop.edu high-stage 26959`
 
+If you want to deep harvest content from a folder in Nuxeo that isn't set up in the Registry as a collection, you can run the following command on the dsc-blackstar role account. Omit the `--replace` flag if you don't want to replace existing files on S3:
+
+```shell
+python queue_deep_harvest_folder.py adrian.turner@ucop.edu high-stage '/asset-library/UCOP/Folder Name' --replace
+```
+
 If there are problems with individual items, you can do a deep harvest for just one doc (not including any components) by its Nuxeo path. You need to log onto dsc-blackstar and sudo to the hrv-stg role account. Then:
 
 ```shell
