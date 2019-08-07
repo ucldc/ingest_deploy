@@ -116,6 +116,3 @@ Once that is run, you can swap CNAMEs to the updated environment.
 
 Then the ucldc-solr environment is once again be the production environment with the CNAME ucdlc-solr.us-west-2.elasticbeanstalk.com attached to it.
 
-As a very last step, delete the cloned environment:
-
-`eb terminate ucldc-solr-clone`
