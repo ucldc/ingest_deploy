@@ -2,7 +2,7 @@
 
 The Solr index that powers the Calisphere website is hosted on the AWS Elastic Beanstalk platform.
 
-The CNAME `solr.calisphere.org` points to https://ucldc-solr.us-west-2.elasticbeanstalk.com, whichever Beanstalk environment which is at this address will be the server for our search requests.
+The CNAME `solr.calisphere.org` points to https://ucldc-solr.us-west-2.elasticbeanstalk.com, whichever Beanstalk environment is at this address will be the server for our search requests--i.e. the backbone of production Calisphere.
 
 The Beanstalk is hosted in the Oregon (us-west-2) AWS region. The application name is `ucldc-solr`. Currently it runs on only one micro EC2 instance.
 
@@ -45,8 +45,11 @@ The script `clone-with-new-s3-index.sh` will do steps 3 to 5 above.
 ```shell
 eb list
 ```
-
-* Now run the following, where the `<new index path>` is the value from Step #1 (e.g., s3://solr.ucldc/indexes/production/2016/06/solr-index.2016-06-21-19_53_40.tar.bz2). *This process will take a while*.  Again, by convention, we name the existing environment (`<old env name>`) `ucldc-solr`.  By convention, we have been naming the new environment (`<new env name>`) `ucldc-solr-clone`.   
+* If there are two enviroments, determine which one is serving as the production environment by running: `eb status [environment name]` on each. Whichever environment has a `CNAME` value of `https://ucldc-solr.us-west-2.elasticbeanstalk.com` is the production index, so run the following terminate command on the OTHER environment (be sure to not terminate the production environment with the `ucldc-solr` only CNAME!):
+```shell
+eb terminate [environment name]
+```
+* Now run the following, where the `<new index path>` is the value from Step #1 (e.g., s3://solr.ucldc/indexes/production/2016/06/solr-index.2016-06-21-19_53_40.tar.bz2). *This process will take a while*.  Again, by convention, we name the existing environment (`<old env name>`) `ucldc-solr-prod`.  By convention, we have been naming the new environment (`<new env name>`) `ucldc-solr-clone`. HOWEVER, these names may be switched, depending on which which enviroment was the production environment in the step above. So it may be the case the production environment is `ucldc-solr-clone` and the new environment will be `ucldc-solr-prod`   
 ```shell
 snsatnow clone-with-new-s3-index.sh <old env name> <new env name> <new index path>
 ```
@@ -65,7 +68,7 @@ Check the new environments URL for the proper search results:
 cname_for_env.sh <new env name>
 ```
 
-* You can check that the URL is up by running:
+* You can check that the URL is up (and verify that the total object count matches QA reports) by running:
 ```shell
 check_solr_api_for_env.sh <new env name>
 ```
