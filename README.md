@@ -924,24 +924,16 @@ By default, stage workers will be provisioned to a "normal-stage" queue. To prov
 
 ### Creating new worker AMI
 
-#### Recommended: Add Swap Space
-
-To help with memory issues when harvesting large collections, it can be a good idea to add swap space, or extra virtual memory in case the worker gets close to running out of it's allotted memory. 
-
-To add 1 Gb swap space, ssh to the worker and run:
-
-```sudo fallocate -l 1G /mnt/1GB.swap
-sudo mkswap /mnt/1GB.swap
-sudo chmod 0600 /mnt/1GB.swap
-sudo swapon /mnt/1GB.swap
-```
-And add the following line to the end of `/etc/fstab`:
-
-`/mnt/1GB.swap  none  swap  sw 0  0`
-
 #### Creating new AMI/Updating Image ID
 
-Once you have a new worker up and running with the new code, you need to create an image from it. From the appropriate environment:
+Once you have a new worker up and running with the new code, you need to create an image from it.
+
+First SSH to the worker, run security updates and restart:
+* `yum update --security -y`
+* `/usr/local/bin/stop-rqworker.sh`
+* `/usr/local/bin/start-rqworker.sh`
+
+Then back on `hrv-stg`:
 
 ```bash
 ansible-playbook -i hosts ~/code/ansible/create_worker_ami.yml --extra-vars="instance_id=<running worker instance id>"
