@@ -669,12 +669,10 @@ NOTE: if your command has arguments that are surrounded by quotes (") you'll nee
 
 ### <a name="newcode">Picking up new harvester or ingest code</a>
 
-When new harvester or ingest code is pushed, you need to create a new generation
-of worker machines to pick up the new code:
+When new harvester or ingest code is pushed, you need to create a new AMI to pick up the new code:
 
 * First, terminate the existing machines: `ansible-playbook -i ~/code/ec2.py ~/code/ingest_deploy/ansible/terminate_workers.yml <--limit=10.60.?.?>`
-* Then go through the worker create process again, creating and provisioning
-machines as needed.
+* Then follow steps/contact harvest programmer to follow steps in "create a new AMI", below
 
 ### <a name="solrscratch">Recreating the Solr Index from scratch</a>
 
@@ -686,6 +684,8 @@ To do so in the ingest environment, run `ansible-playbook -i hosts solr_docker_r
 
 You will then have to run `/usr/local/solr-update.sh --since=0` to reindex the
 whole couchdb database.
+
+See 'Harvest Dockers' notes for more details on Docker usage/configuration: https://docs.google.com/document/d/1TYaKQtg-FNfoIUmYykqfml6fKn3gthRTb2cv_Tyuclc/edit#
 
 ### <a name="cdbsearch">How to find a CouchDB source document for an item in Calisphere</a>
 
@@ -736,6 +736,21 @@ Sometimes you may need to create one or more "High Stage" workers, for example i
 * To queue an image harvest or solr sync, replace the first part of the command above with `./bin/queue_image_harvest.py` or `./bin/queue_sync_to_solr.py`, respectively
 * More commands can be found in the bin folder by running `ls ./bin` from command line. Most are self-explanatory from the script titles. Again, just replace the first part of the full command above with `./bin/other-script-here.py` as needed
 * When finished harvesting, terminate the high-stage workers as you would any other. EX: `ansible-playbook -i ~/code/ec2.py ~/code/ansible/terminate_workers.yml <--limit=10.60.?.?>`
+
+### <a name="redirects">Generating Redirects when Record Page URLs change</a>
+
+When an Institution migrates to a new repository system, or if the record page URL for an object already in Calisphere changes for any other reason, this will change the Calisphere URL for that object--since the IDs used to build Calisphere URLs are based off the repository/local record page URL. We need to do our best to match and redirect from the 'old' Calisphere URL to the 'new', so that someone following the 'old' Calisphere URL link won't get a 404 by default.
+
+<b>IMPORTANT:</b>So that you don't accidentally delete the 'old' URL IDs, ONLY run this AFTER collection is synced, QA’ed and approved on SOLR TEST but BEFORE syncing to SOLR PROD
+
+1. Compare a few "old" and "new" version of records between SOLR/Couch PROD and SOLR/Couch TEST to determine match field to best match records between SOLR PROD and SOLR TEST--ideally an object-unique and unchanging value between records sets on PROD and TEST such as `identifier`
+2. Run external-redirect-get-solr_prod-id.py [Collection ID] [match field] , with appropriate [Collection ID] and pre-determined [match field], which will generate a JSON [output file] with the “old” harvest IDs from SOLR PROD and corresponding [match field] value
+3. Make any edits necessary to JSON [output file] to better match [match field] value between SOLR PROD and SOLR TEST
+4. Run external-redirect-generate-URL-redirect-map.py [output file] , with [output file] from external-redirect-get-solr_prod-id.py as input. This will use [match field] value to generate a list of “old” harvest IDs from SOLR PROD paired with corresponding “new” harvest IDs from SOLR TEST. This list will then be appended to the master CSPHERE_IDS.txt redirect file. NOTE: If you know the match field you are using may have multiple matches (i.e. using `title` field when some records have identical titles), add the `--exact_match` switch at the end, which will change the SOLR query which normally employs wildcards for approximate searching, to an exact match. If more than one SOLR records are found when an `--exact_match` switch is used, the original record will redirect to a SOLR search query for that match value within the Calisphere UI--not ideal but better than having SOLR just pick the same record over and over for an exact-value-match redirect.
+5. Use cp to make CSPHERE_IDS_BACKUP[date].txt file. Remove any previous backups. Move the [output file] to the `redirectQueries` directory
+6. Copy CSPHERE_IDS.txt to S3: `aws s3 cp /home/hrv-prd/CSPHERE_IDS.txt s3://static-ucldc-cdlib-org/redirects/`
+7. Sync collection to Couch/SOLR Prod
+8. Work with Calisphere UI programmer to make sure new redirects are deployed as soon as new index containing new URLS goes live
 
 <a name="commonfixes">Fixes for Common Problems</a>
 -------------------------
