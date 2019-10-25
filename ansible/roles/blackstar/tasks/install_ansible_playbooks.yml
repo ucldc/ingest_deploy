@@ -46,8 +46,6 @@
   copy:
     src: roles/awslogs
     dest: "/home/{{ role_user }}/code/ansible/roles/"
-- name: install nightly security role
-  shell: "/home/{{ role_user }}/python2/bin/ansible-galaxy install mredar.nightly_security_update_yum"
 - name: copy all group vars
   copy:
     src: group_vars/all
