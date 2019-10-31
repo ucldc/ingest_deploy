@@ -948,6 +948,8 @@ First SSH to the worker, run security updates and restart:
 * `/usr/local/bin/stop-rqworker.sh`
 * `/usr/local/bin/start-rqworker.sh`
 
+Then run `crontab -e` on the worker, remove the nightly security update cronjob in the crontab, and save.
+
 Then back on `hrv-stg`:
 
 ```bash
