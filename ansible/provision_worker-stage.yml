@@ -10,6 +10,5 @@
   pre_tasks:
     - debug: var=num_hosts
   roles:
-    - { role: mredar.nightly_security_update_yum, tags: security-up }
     - { role: common, become: yes }
     - worker
