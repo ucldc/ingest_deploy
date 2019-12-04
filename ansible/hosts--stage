@@ -2,7 +2,7 @@
 localhost
 
 [couchdb]
-couchdb0 ansible_host=10.60.27.222 ansible_user=ec2-user ansible_private_key_file=~/.ssh/ingest-west-2.pem
+couchdb0 ansible_host=10.60.17.134 ansible_user=ec2-user ansible_private_key_file=~/.ssh/ingest-west-2.pem
 
 [solr]
 solr0 ansible_host=10.60.20.55 ansible_user=ec2-user ansible_private_key_file=~/.ssh/ingest-west-2.pem

@@ -32,7 +32,7 @@ majorTom-stage
 majorTom-prod
 
 [couchdb-stage]
-couchdb-stage-0 ansible_host=10.60.27.222 ansible_user=ec2-user ansible_private_key_file=~/.ssh/ingest-west-2.pem
+couchdb-stage-0 ansible_host=10.60.17.134 ansible_user=ec2-user ansible_private_key_file=~/.ssh/ingest-west-2.pem
 
 [solr-stage]
 solr-stage ansible_host=10.60.24.83 ansible_user=ec2-user ansible_private_key_file=~/.ssh/ingest-west-2.pem
