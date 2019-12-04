@@ -721,6 +721,18 @@ It may be handy to edit an individual object, in cases where key information in 
 
 This also applies to cases where a contributor removes an object from their source collection. In lieu of reharvesting the entire collection, you can selectively delete an item from CouchDB (then synch from CouchDB to Solr).
 
+### <a name="batchediting">Batch replacing CouchDB field values by collection</a>
+
+For relatively simple find-and-replace tasks across an entire CouchDB collection, where a full re-harvest is too time-consuming/cumbersome, use this script. **NOTE:** Use carefully, as this will alter the CouchDB records for an entire collection, with the only way to 'restore' being a full re-harvest. **ALSO**, this script will replace whatever is in the given [fieldName] with the given "newValue" (unless you add a "--substring" value, below). It does NOT yet add/append a new value on to existing values--therefore not suitable for editing fields with multiple values.
+
+* Log onto blackstar & sudo su - hrv-stg
+* Run `python ~/bin/queue_batch_update_couchdb.py <email> normal-stage <collection ID> <fieldName> <newValue> optional:(--substring XXXX)`
+    * <email> EX: mmckinle@ucop.edu
+    * <collection ID> EX: 26957
+    * <fieldName> The field containing value that needs replacing. Use / to delimit nested fields EX: sourceResource/stateLocatedIn/name
+    * <newValue> New value to add to field. If multiple words, surround with quotes EX: "UCSF Medical Center at Mount Zion Archives"
+    * Optional: --substring XXXX Used to specify a particular value or substring WITHIN the entire metadata value to replace. if using, insert substring switch followed by value XXXX to find/replace. 
+
 ### <a name="highstage">Creating/Harvesting with High Stage Workers</a>
 
 Sometimes you may need to create one or more "High Stage" workers, for example if the normal stage worker queue is very full and you need to run a harvest job without waiting for the queue to empty. The process is performed from the `hrv-stg` command line as follows.
