@@ -649,7 +649,7 @@ another solr index.
 This script can be run from the hrv-stg or hrv-prd account. For each, the source documents come from solr.calisphere.org which drives Calisphere. Depending on which role account you are in, it will either update the "stage" or the pre-production solr.
 
 * Log onto the appropriate role account (hrv-stg or hrv-prd).  That will set the context for the *originating* solr index, from which you want to push data.
-* run `sync_solr_documents.py <collection id>` to push the data to the target solr index.
+* run `URL_SOLR=$URL_SOLR/dc-collection sync_solr_documents.py <collection id>` to push the data to the target solr index.
 
 
 
