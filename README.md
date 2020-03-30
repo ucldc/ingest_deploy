@@ -760,10 +760,10 @@ In `hrv-prd` role account:
 2. Run `external-redirect-get-solr_prod-id.py [Collection ID] [match field]` , with appropriate [Collection ID] and pre-determined [match field], which will generate a JSON [output file] with the “old” harvest IDs from SOLR PROD and corresponding [match field] value
 3. Make any edits necessary to JSON [output file] to better match [match field] value between SOLR PROD and SOLR TEST
 4. Run `external-redirect-generate-URL-redirect-map.py [output file]` , with [output file] from external-redirect-get-solr_prod-id.py as input. This will use [match field] value to generate a list of “old” harvest IDs from SOLR PROD paired with corresponding “new” harvest IDs from SOLR TEST. This list will then be appended to the master CSPHERE_IDS.txt redirect file. NOTE: If you know the match field you are using may have multiple matches (i.e. using `title` field when some records have identical titles), add the `--exact_match` switch at the end, which will change the SOLR query which normally employs wildcards for approximate searching, to an exact match. If more than one SOLR records are found when an `--exact_match` switch is used, the original record will redirect to a SOLR search query for that match value within the Calisphere UI--not ideal but better than having SOLR just pick the same record over and over for an exact-value-match redirect.
-5. Use cp to make CSPHERE_IDS_BACKUP[date].txt file. Remove any previous backups. Move the [output file] to the `redirectQueries` directory
-6. Copy CSPHERE_IDS.txt to S3: `aws s3 cp /home/hrv-prd/CSPHERE_IDS.txt s3://static-ucldc-cdlib-org/redirects/`
-7. Sync collection to Couch/SOLR Prod
-8. Work with Calisphere UI programmer to make sure new redirects are deployed as soon as new index containing new URLS goes live
+5. The script in above step will automatically create a CSPHERE_IDS_BACKUP[date].txt file each time it is run. 
+6. When finished with a particular institution, move the [output files] to the `redirectQueries` directory
+7. Sync collection/s to Couch/SOLR Prod
+8. To ensure redirects are not deployed prematurely, only run the following script to copy CSPHERE_IDS.txt to S3 24 HOURS OR LESS before building a new index: `aws s3 cp /home/hrv-prd/CSPHERE_IDS.txt s3://static-ucldc-cdlib-org/redirects/` Work with Calisphere UI programmer to make sure new redirects are deployed as soon as new index containing new URLS goes live
 
 <a name="commonfixes">Fixes for Common Problems</a>
 -------------------------
@@ -956,12 +956,12 @@ By default, stage workers will be provisioned to a "normal-stage" queue. To prov
 
 Once you have a new worker up and running with the new code, you need to create an image from it.
 
-First SSH to the worker, run security updates and restart:
+[NOTE: Now handled automatically by create_worker_ami] First SSH to the worker, run security updates and restart:
 * `yum update --security -y`
 * `/usr/local/bin/stop-rqworker.sh`
 * `/usr/local/bin/start-rqworker.sh`
 
-Then run `crontab -e` on the worker, remove the nightly security update cronjob in the crontab, and save.
+[NOTE: Now handled automatically by create_worker_ami] Then run `crontab -e` on the worker, remove the nightly security update cronjob in the crontab, and save.
 
 Then back on `hrv-stg`:
 
