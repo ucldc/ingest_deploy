@@ -88,6 +88,7 @@ UCLDC Harvesting operations guide
 [Fixes for Common Problems](#commonfixes)
 * [What to do when harvests fail](#failures)
 * [Image problems](#imagefix)
+* [stunnel for registry](#restarttunnel)
 
 [Addendum: Creating new AMI images - Developers only]
 
@@ -811,6 +812,26 @@ If you need to go back further in the log history, for now ask Mark.
 If this doesn't get you enough information, you can ssh to a worker instance and
 watch the logs real time if you like. tail -f /var/local/rqworker/worker.log or
 /var/local/akara/logs/error.log.
+
+#### pull down on registry does not schedule jobs
+
+Sometimes the actions pull down on the collection model becomes disconnected from `rq`. 
+
+Restarting the `stunnel` on both ends often fixes this.
+
+on `registry`
+```sh
+ssh registry.cdlib.org
+sudo su - registry
+monit restart stunnel
+```
+
+on `blackstar`
+```sh
+sudo su - hrv-prd
+ssh front
+sudo /etc/init.d/stunnel restart
+```
 
 
 ### <a name="imagefix">Image problems</a>
