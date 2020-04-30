@@ -361,6 +361,14 @@ You can also do a deep harvest for one Nuxeo object, including any components, b
 python queue_deep_harvest_single_object_with_components.py adrian.turner@ucop.edu normal-stage "<path to asset wrapped with quotes>"
 ```
 
+You can run a deep harvest on one previously harvested Nuxeo object (including components) and replace it by logging into dsc-blackstar with the hrv-stg role account and using the --replace switch (if it doesn't have components, use `queue_deep_harvest_single_object.py`)
+
+e.g. 
+```shell
+python queue_deep_harvest_single_object_with_components.py adrian.turner@ucop.edu normal-stage "<path to asset wrapped quotes>" --replace 
+
+```
+
 #### 3.3. <a name="harvestnuxmdstg">Harvest metadata to CouchDB stage</a>
 
 This process will harvest metadata from Nuxeo into a resulting CouchDB record.
