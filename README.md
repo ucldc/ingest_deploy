@@ -88,7 +88,6 @@ UCLDC Harvesting operations guide
 [Fixes for Common Problems](#commonfixes)
 * [What to do when harvests fail](#failures)
 * [Image problems](#imagefix)
-* [stunnel for registry](#restarttunnel)
 
 [Addendum: Creating new AMI images - Developers only]
 
