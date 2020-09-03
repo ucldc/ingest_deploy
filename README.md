@@ -765,6 +765,12 @@ When an Institution migrates to a new repository system, or if the record page U
 
 <b>IMPORTANT:</b>So that you don't accidentally delete the 'old' URL IDs, ONLY run this AFTER collection is synced, QA’ed and approved on SOLR TEST but BEFORE syncing to SOLR PROD
 
+<b>Matching Tips</b>
+* SOLR has trouble matching values from fields with multiple values, such as `dc.identifier`. If possible, it's best to remove all values from the field OTHER than the one you want to match on. `sed` commands help with this:
+    * To remove a <i>substring</i> from a particular value for a more accurate match (i.e. removing `.libraries` from `clarement.libraries.org/...`), use `s/[value]//g` like so: `sed -i 's/.libraries//g' prod-URLs-26569.json`
+    * To remove an <i>entire line</i> from a file (i.e. removing values beginning with `cavpp` from every multi-value identifier field), use `//d` like so: `sed -i '/cavpp/d' prod-URLs-26569.json`
+* For some reason (especially in cases like the one above), the Redirect Process will sometimes match all records to a single other record in the collection incorrectly. This seems to be solved by using the `--exact_match` switch (see step 4 below)
+
 In `hrv-prd` role account:
 1. Compare a few "old" and "new" version of records between SOLR/Couch PROD and SOLR/Couch TEST to determine match field to best match records between SOLR PROD and SOLR TEST--ideally an object-unique and unchanging value between records sets on PROD and TEST such as `identifier`
 2. Run `external-redirect-get-solr_prod-id.py [Collection ID] [match field]` , with appropriate [Collection ID] and pre-determined [match field], which will generate a JSON [output file] with the “old” harvest IDs from SOLR PROD and corresponding [match field] value
