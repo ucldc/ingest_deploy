@@ -17,4 +17,4 @@ repo_harvester: https://github.com/ucldc/harvester.git
 repo_solr: https://github.com/ucldc/solr_api.git
 repo_ucldc_iiif: https://github.com/barbarahui/ucldc-iiif.git
 repo_nuxeo_calisphere: https://github.com/barbarahui/nuxeo-calisphere.git
-repo_mapping: git@bitbucket.org:matthewjamesmckinley/dpla-ingestion.git
+repo_mapping: https://github.com/calisphere-legacy-harvester/dpla-ingestion.git
