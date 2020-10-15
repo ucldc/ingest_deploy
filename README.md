@@ -608,14 +608,12 @@ If there is a *drop* in the number of objects for a given collection, we need to
 
 This section describes how to update an Elastic Beanstalk configuration to point to a new candidate Solr index stored on S3. This will update the specified Calisphere front-end web application so that it points to the data from Solr:
 
-* Log onto blackstar & sudo su - hrv-prd and then follow the instructions here:
+1. Log onto blackstar & sudo su - hrv-prd and then follow the instructions here:
 [update_beanstalk](update_beanstalk_index)
-* After any new index is moved into publication:
+2. After any new index is moved into publication:
   * Run the following commands, so that ARK URLs correctly resolve for any new incoming harvested objects with embedded ARKs: https://gist.github.com/tingletech/475ff92147b6f93f6c3f60cebdf5e507
   * Run the following command, to generate <a href="https://help.oac.cdlib.org/support/solutions/articles/9000185982-metadata-analysis-reports-for-collections">metadata analysis reports</a> based on the new index: `snsatnow ./bin/solrdump-to-s3.sh`
-* Last, update our Google Sheet that lists out new collections that were published. (The entries can be cut-and-pasted from the <a href="https://github.com/mredar/ucldc_api_data_quality/tree/master/reporting">QA reporting spreadsheet</a>): https://docs.google.com/spreadsheets/d/1FI2h6JXrqUdONDjRBETeQjO_vkusIuG5OR5GWUmKp1c/edit#gid=0 . We use this for CDLINFO postings, highlighting newly-published collections, etc.
-
-TODO: add how to run the QA spreadsheet generating code
+3. Last, update our Google Sheet that lists out new collections that were published. (The entries can be cut-and-pasted from the <a href="https://github.com/mredar/ucldc_api_data_quality/tree/master/reporting">QA reporting spreadsheet</a>): https://docs.google.com/spreadsheets/d/1FI2h6JXrqUdONDjRBETeQjO_vkusIuG5OR5GWUmKp1c/edit#gid=0 . We use this for CDLINFO postings, highlighting newly-published collections, etc.
 
 
 <a name="removals">Removing items or collections (takedown requests)</a> 
