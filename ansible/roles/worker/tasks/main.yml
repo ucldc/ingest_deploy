@@ -81,7 +81,7 @@
     repo: "{{ repo_mapping }}"
     dest: "{{ dir_code }}/dpla/ingestion"
     accept_hostkey: yes
-    version: ucldc
+    version: "{{ branch_mapping }}"
     update: yes
 - name: install akara and harvester dpla dependencies
   pip:
