@@ -753,7 +753,8 @@ Sometimes you may need to create one or more "High Stage" workers, for example i
 
 **Running jobs on high stage workers:**
 * From `hrv-stg` command line, run the following command to queue a high-stage harvest, providing your `EMAIL` address and collection # to harvest for `XXXXX` where appropriate: `./bin/queue_harvest.py EMAIL@ucop.edu high-stage https://registry.cdlib.org/api/v1/collection/XXXXX/`
-* To queue an image harvest or solr sync, replace the first part of the command above with `./bin/queue_image_harvest.py` or `./bin/queue_sync_to_solr.py`, respectively
+* To queue an image harvest:  `./bin/queue_image_harvest.py EMAIL@ucop.edu high-stage https://registry.cdlib.org/api/v1/collection/XXXXX/`
+* To queue a solr sync: `./bin/queue_sync_to_solr.py EMAIL@ucop.edu high-stage XXXXX`(just supply the collectionID, not the whole registry URL!)
 * More commands can be found in the bin folder by running `ls ./bin` from command line. Most are self-explanatory from the script titles. Again, just replace the first part of the full command above with `./bin/other-script-here.py` as needed
 * When finished harvesting, terminate the high-stage workers as you would any other. EX: `ansible-playbook -i ~/code/ec2.py ~/code/ansible/terminate_workers.yml <--limit=10.60.?.?>`
 
