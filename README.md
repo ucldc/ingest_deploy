@@ -991,14 +991,7 @@ By default, stage workers will be provisioned to a "normal-stage" queue. To prov
 
 Once you have a new worker up and running with the new code, you need to create an image from it.
 
-[NOTE: Now handled automatically by create_worker_ami] First SSH to the worker, run security updates and restart:
-* `yum update --security -y`
-* `/usr/local/bin/stop-rqworker.sh`
-* `/usr/local/bin/start-rqworker.sh`
-
-[NOTE: Now handled automatically by create_worker_ami] Then run `crontab -e` on the worker, remove the nightly security update cronjob in the crontab, and save.
-
-Then back on `hrv-stg`:
+On `hrv-stg`:
 
 ```bash
 ansible-playbook -i hosts ~/code/ansible/create_worker_ami.yml --extra-vars="instance_id=<running worker instance id>"
