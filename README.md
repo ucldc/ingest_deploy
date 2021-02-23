@@ -625,10 +625,21 @@ In addition to removing the item from Calisphere, notify DPLA to remove the item
 
 #### <a name="removalitem">Individual items</a>
 
-* Follow this process: [Editing or deleting individual items](#editnforgetit)
--or-
+### Option 1: Follow this process: [Editing or deleting individual items](#editnforgetit)
+
+### Option 2: Delete item(s) from couchdb and then sync to solr
 * Create a list of the CouchDB identifiers for the items, and add them to a file (one per line). Then run `delete_couchdb_id_list.py` with the file as input:`delete_couchdb_id_list.py <file with list of ids>`
 * From the Collection Registry, select `Queue sync from from CouchDB stage to Solr stage` and `Queue sync from CouchDB production to Solr production`
+* Update Elastic Beanstalk with the updated Solr index
+
+### Option 3: Delete item from couchDB and then directly from the solr stage and prod indexes. 
+* Create a list of the CouchDB identifiers for the items, and add them to a file (one per line). Then run `delete_couchdb_id_list.py` with the file as input:`delete_couchdb_id_list.py <file with list of ids>`
+* From the dsc-blackstar role account on stage:
+`./bin/queue_delete_solr_item.py email@ucop.edu <solr ID>`
+* From the dsc-blackstar role account on prod:
+`./bin/queue_delete_solr_item.py email@ucop.edu <solr ID>`
+
+The results for the above 2 commands will be published to the `#dsc_harvesting_report` channel on slack.
 * Update Elastic Beanstalk with the updated Solr index
 
 
