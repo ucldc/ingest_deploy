@@ -89,8 +89,8 @@ UCLDC Harvesting operations guide
 * [What to do when harvests fail](#failures)
 * [Image problems](#imagefix)
 
-[Addendum: Using a High Stage Worker for Development](#starting-a-high-stage-worker)
-[Addendum: Creating new AMI images - Developers only](#creating-new-worker-ami)
+* [Addendum: Using a High Stage Worker for Development](#starting-a-high-stage-worker)
+* [Addendum: Creating new AMI images - Developers only](#creating-new-worker-ami)
 
 
 <a name="users">User accounts</a>
@@ -945,7 +945,7 @@ working....
 
 ### Addendum: Building new worker images - For Developers
 
-*As of February 2021, provisioning workers is no longer an automated process. These steps will still work, but with some caveats. Use at your own risk. To start a high-stage worker for development purposes, see Starting a High Stage Worker*
+*As of February 2021, provisioning workers is no longer an automated process. These steps will still work, but with some caveats. Use at your own risk. To start a high-stage worker for development purposes, see [Starting a High Stage Worker](#starting-a-high-stage-worker)*
 
 * Log onto blackstar and run `sudo su - hrv-stg`
 * To start some worker machines (bare ec2 spot instances), run: `snsatnow ansible-playbook ~/code/ansible/create_worker.yml --extra-vars=\"count=1\"` . 
@@ -997,7 +997,7 @@ By default, stage workers will be provisioned to a "normal-stage" queue. To prov
 
 `ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker.yml --limit=10.60.22.123 --extra-vars="rq_work_queues=['high-stage']"`
 
-### Starting a High Stage Worker
+### <a name="starting-a-high-stage-worker">Starting a High Stage Worker for Development</a>
 
 #### Starting a High Stage Worker from a High Stage AMI
 
@@ -1051,7 +1051,7 @@ Run `source ~/workers_local/bin/activate` then `python setup.py install` from th
 
 Assuming there are no build errors, you can then restart the worker listening to the queue by running `/usr/local/bin/start-rqworker.sh`
 
-### Updating the DPLA Ingestion Code
+#### Updating the DPLA Ingestion Code
 
 Once you have a worker up and running, ssh to the worker - you can get the worker IP address by running `get_worker_info.sh`. 
 
@@ -1071,7 +1071,7 @@ akara -f ~/code/dpla/ingestion/akara.conf restart
 
 #### Creating new AMI/Updating Image ID
 
-Once you have a new high stage worker up and running with the new code, you need to create an image from it - always create the high stage image first! If you don't, the existing high stage image used in `~/code/ansible/start_high_stage_ami.yml` will be deleted by the `~/code/ansible/create_worker_ami.yml` process, and you will be left without a base high stage image. If this happens, you'll have to start a new normal stage worker and move it to listen on the high stage queue. See changing the queue instructions below. 
+Once you have a new high stage worker up and running with the new code, you need to create an image from it - always create the high stage image first! If you don't, the existing high stage image used in `~/code/ansible/start_high_stage_ami.yml` will be deleted by the `~/code/ansible/create_worker_ami.yml` process, and you will be left without a base high stage image. If this happens, you'll have to start a new normal stage worker and move it to listen on the high stage queue. See Changing the Queue instructions above in [Starting a High Stage Worker](#starting-a-high-stage-worker) for Development. 
 
 On `hrv-stg`:
 
