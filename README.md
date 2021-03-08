@@ -89,6 +89,7 @@ UCLDC Harvesting operations guide
 * [What to do when harvests fail](#failures)
 * [Image problems](#imagefix)
 
+Development
 * [Addendum: Using a High Stage Worker for Development](#starting-a-high-stage-worker)
 * [Addendum: Creating new AMI images - Developers only](#creating-new-worker-ami)
 
