@@ -89,7 +89,9 @@ UCLDC Harvesting operations guide
 * [What to do when harvests fail](#failures)
 * [Image problems](#imagefix)
 
-[Addendum: Creating new AMI images - Developers only]
+Development
+* [Addendum: Using a High Stage Worker for Development](#starting-a-high-stage-worker)
+* [Addendum: Creating new AMI images - Developers only](#creating-new-worker-ami)
 
 
 <a name="users">User accounts</a>
@@ -758,9 +760,8 @@ Sometimes you may need to create one or more "High Stage" workers, for example i
 
 **Creating high stage workers:**
 * Log onto blackstar and run `sudo su - hrv-stg`
-* Create one or more worker machines just as you would in the "developer" (see below) process: `snsatnow ansible-playbook ~/code/ansible/create_worker.yml --extra-vars=\"count=1\"` .
+* Create one or more worker machines: `ansible-playbook ~/code/ansible/start_high_stage_ami.yml --extra-vars=\"count=1\"` .
 * After workers are created, run `get_worker_info.sh` and compare results to currently provisioned/running "normal" workers RQ dashboard to determine the IP addresses of new workers. 
-* Provision with `--extra-vars="rq_work_queues=['high-stage']"` switch to make new workers high stage workers. Also use `--limit` switch with IP addresses of new workers from step above to only provision new workers. Do NOT re-provision running workers! Full example command: `snsatnow ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker.yml --limit=10.60.29.* --extra-vars="rq_work_queues=['high-stage']"`
 
 **Running jobs on high stage workers:**
 * From `hrv-stg` command line, run the following command to queue a high-stage harvest, providing your `EMAIL` address and collection # to harvest for `XXXXX` where appropriate: `./bin/queue_harvest.py EMAIL@ucop.edu high-stage https://registry.cdlib.org/api/v1/collection/XXXXX/`
@@ -945,6 +946,7 @@ working....
 
 ### Addendum: Building new worker images - For Developers
 
+*As of February 2021, provisioning workers is no longer an automated process. These steps will still work, but with some caveats. Use at your own risk. To start a high-stage worker for development purposes, see [Starting a High Stage Worker](#starting-a-high-stage-worker)*
 
 * Log onto blackstar and run `sudo su - hrv-stg`
 * To start some worker machines (bare ec2 spot instances), run: `snsatnow ansible-playbook ~/code/ansible/create_worker.yml --extra-vars=\"count=1\"` . 
@@ -996,11 +998,81 @@ By default, stage workers will be provisioned to a "normal-stage" queue. To prov
 
 `ansible-playbook -i ~/code/ec2.py ~/code/ansible/provision_worker.yml --limit=10.60.22.123 --extra-vars="rq_work_queues=['high-stage']"`
 
+### <a name="starting-a-high-stage-worker">Starting a High Stage Worker for Development</a>
+
+#### Starting a High Stage Worker from a High Stage AMI
+
+On 'hrv-stg':
+
+```bash 
+ansible-playbook ~/code/ansible/start_high_stage_ami.yml --extra-vars="count=1"
+```
+
+If, for some reason, the high stage AMI has disappeared, please start a normal worker using 
+
+```bash 
+ansible-playbook ~/code/ansible/start_ami.yml --extra-vars="count=1"
+```
+
+Then follow the steps below in Changing a Worker's Queue to set that worker listening to the `high-stage` queue. 
+
+#### Changing a Worker's Queue
+
+Never change the queue a worker is listening to when there are jobs in that queue! If there are jobs in the normal-stage queue, don't change the queue for any normal-stage workers. If there are jobs in the high-stage queue, don't change the queue for any high-stage workers
+
+If you have a worker currently running and no jobs in its queue, ssh to the IP address for that worker. You can get the IP address by running `get_worker_info.sh`
+
+From the worker instance, run `/usr/local/bin/stop-rqworker.sh`
+
+Modify `/var/local/rqworker/rqw-settings.py` - there you will see a line that looks like: 
+
+```
+QUEUES=[u'normal-stage', u'low-stage']
+```
+
+Modify it to read:
+
+```
+QUEUES=[u'high-stage']
+```
+
+Save rqw-settings.py, then run `usr/local/bin/start-rqworker.sh`
+
+You will now have a worker listening on the new queue. 
+
+#### Updating the Harvester Code
+
+Once you have a worker up and running, ssh to the worker - you can get the worker IP address by running `get_worker_info.sh`. 
+
+From the worker instance, run `/usr/local/bin/stop-rqworker.sh`
+
+Navigate to the harvester codebase and pull down any changes you want to apply.
+
+Run `source ~/workers_local/bin/activate` then `python setup.py install` from the harvester directory. 
+
+Assuming there are no build errors, you can then restart the worker listening to the queue by running `/usr/local/bin/start-rqworker.sh`
+
+#### Updating the DPLA Ingestion Code
+
+Once you have a worker up and running, ssh to the worker - you can get the worker IP address by running `get_worker_info.sh`. 
+
+From the worker instance, navigate to the dpla ingestion codebase and pull down any changes you want to apply. 
+
+Run `source ~/workers_local/bin/activate` then `python setup.py install` from the dpla ingestion directory. 
+
+Assuming there are no build errors, you can then restart akara:
+
+```bash
+cd /var/local/akara
+akara -f ~/code/dpla/ingestion/akara.conf restart
+```
+
+
 ### Creating new worker AMI
 
 #### Creating new AMI/Updating Image ID
 
-Once you have a new worker up and running with the new code, you need to create an image from it.
+Once you have a new high stage worker up and running with the new code, you need to create an image from it - always create the high stage image first! If you don't, the existing high stage image used in `~/code/ansible/start_high_stage_ami.yml` will be deleted by the `~/code/ansible/create_worker_ami.yml` process, and you will be left without a base high stage image. If this happens, you'll have to start a new normal stage worker and move it to listen on the high stage queue. See Changing the Queue instructions above in [Starting a High Stage Worker](#starting-a-high-stage-worker) for Development. 
 
 On `hrv-stg`:
 
@@ -1012,11 +1084,23 @@ You can get the instance_id by running `get_worker_info.sh`.
 
 This will produce a new image named <env>_worker_YYYYMMDD. Note the image id that is returned by this command.
 
-You now need to update the image id for the environment. Edit the file ~/code/ansible/group_vars/<env> (either stage or prod). Change the worker_ami value to the new image id e.g:
+You now need to update the image id for the environment. Edit the file ~/code/ansible/group_vars/stage. Change the high_stage_worker_ami value to the new image id e.g:
 
 ```
-worker_ami: ami-XXXXXX
+high_stage_worker_ami: ami-XXXXXX
 ```
+
+For sanity, then run:
+
+```bash
+aws ec2 create-tags --resources ami-XXXXXX --tags Key=Name,Value=worker-high-stage-YYYY-MM-DD
+```
+
+Once you have a new high stage AMI, you need to create a normal stage image - follow the same process above but get a normal stage worker up and running with the new code, and change the `worker_ami` value in ~/code/ansible/group_vars/stage. The normal worker will be tagged, correctly, so no need to run the last step: `aws ec2 create-tags...`
+
+To create a new production AMI, follow the same steps for a normal stage image from `hrv-prd`, and change the `worker_ami` value in ~/code/ansible/group_vars/prod.
+
+
 
 
 License
