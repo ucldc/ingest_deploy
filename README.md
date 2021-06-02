@@ -1077,7 +1077,7 @@ Once you have a new high stage worker up and running with the new code, you need
 On `hrv-stg`:
 
 ```bash
-ansible-playbook -i hosts ~/code/ansible/create_worker_ami.yml --extra-vars="instance_id=<running worker instance id>"
+ansible-playbook -i hosts ~/code/ansible/create_high_stage_worker_ami.yml --extra-vars="instance_id=<running worker instance id>"
 ```
 
 You can get the instance_id by running `get_worker_info.sh`.
