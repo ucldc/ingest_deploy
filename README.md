@@ -1082,7 +1082,7 @@ ansible-playbook -i hosts ~/code/ansible/create_high_stage_worker_ami.yml --extr
 
 You can get the instance_id by running `get_worker_info.sh`.
 
-This will produce a new image named <env>_worker_YYYYMMDD. Note the image id that is returned by this command.
+This will produce a new image named worker-high-stage-YYYY-MM-DD. Note the image id that is returned by this command.
 
 You now need to update the image id for the environment. Edit the file ~/code/ansible/group_vars/stage. Change the high_stage_worker_ami value to the new image id e.g:
 
