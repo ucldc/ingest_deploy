@@ -1090,12 +1090,6 @@ You now need to update the image id for the environment. Edit the file ~/code/an
 high_stage_worker_ami: ami-XXXXXX
 ```
 
-For sanity, then run:
-
-```bash
-aws ec2 create-tags --resources ami-XXXXXX --tags Key=Name,Value=worker-high-stage-YYYY-MM-DD
-```
-
 Once you have a new high stage AMI, you need to create a normal stage image - follow the same process above but get a normal stage worker up and running with the new code, and change the `worker_ami` value in ~/code/ansible/group_vars/stage. The normal worker will be tagged, correctly, so no need to run the last step: `aws ec2 create-tags...`
 
 To create a new production AMI, follow the same steps for a normal stage image from `hrv-prd`, and change the `worker_ami` value in ~/code/ansible/group_vars/prod.
