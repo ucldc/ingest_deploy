@@ -564,6 +564,8 @@ Collection Registry)
 * Content:
     * Check for missing thumbnail images
     * Any data coming through that looks like it may have underlying copyright issues (e.g., full-text transcriptions)?
+* Counts:
+    * Verify the number of objects harvested vs. the source collection
 * Are there any errors or noticeable problems?
 
 To immediately view results, you can QA the Solr stage index on your local workstation, following <a href="https://github.com/ucldc/public_interface">these steps</a> ("Windows install"). In the run.bat configuration file, point UCLDC_SOLR_URL to `https://harvest-stg.cdlib.org/solr_api`.
