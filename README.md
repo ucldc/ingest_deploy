@@ -428,15 +428,15 @@ To generate a count of the total number of Nuxeo objects harvested (simple objec
 
 The objective of this part of the QA process is to ensure that source metadata (from a harvesting target) is correctly mapped through to CouchDB
 Suggested method is to review the 1) source metadata (e.g., original MARC21  record, original XTF-indexed metadata*) vis-a-vis the 2) a random sample of CouchDB results and 3) <a href="https://docs.google.com/spreadsheets/d/1u2RE9PD0N9GkLQTFNJy3HiH9N5IbKDG52HjJ6JomC9I/edit#gid=265758929">metadata crosswalk</a>. Things to check:
-* Verify if metadata from the source record was carried over into CouchDB correctly: did any metadata get dropped?
-* Verify the metadata mappings: was the mapping handled correctly, going from the source metadata through to CouchDB, as defined in the metadata crosswalk?  
-* Verify if any needed metadata remediation was completed (as defined in the metadata crosswalk) -- e.g., were rights statuses and statements globally applied?
-* Verify DPLA/CDL required data values -- are they present?  If not, we may need to go back to the data provider to supply the information -- or potentially supply it for them (through the Collection Registry)
-* Verify the data values used within the various metadata elements:
- * Do the data values look "correct" (e.g., for Type, data values are drawn from the DCMI Type Vocabulary)?  
- * Any funky characters or problems with formatting of the data?  
- * Any data coming through that looks like it may have underlying copyright issues (e.g., full-text transcriptions)?
- * Are there any errors or noticeable problems? 
+* Mappings:
+    * Verify if metadata from the source record was carried over into CouchDB correctly: did any metadata get dropped?
+    * Verify the metadata mappings: was the mapping handled correctly, going from the source metadata through to CouchDB, as defined in the metadata crosswalk?
+Collection Registry)
+* Metadata values:
+    * Verify if any needed metadata remediation was completed (as defined in the metadata crosswalk) -- e.g., were rights statuses and statements globally applied?
+    * Verify DPLA/CDL required data values -- are they present? If not, we may need to go back to the data provider to supply the information -- or potentially supply it for them (through the 
+    * Do the data values look "correct" (e.g., for Type, data values are drawn from the DCMI Type Vocabulary)?
+    * Are there character display issues or problems with formatting of the data?
    
 NOTE: To view the original XTF-indexed metadata for content harvested from Calisphere:
 * Go to Collection Registry, locate the collection that was harvested from XTF, and skip to the "URL harvest" field -- use that URL to generate a result of the XTF-indexed metadata (view source code to see raw XML)
@@ -548,7 +548,23 @@ You can view the raw results in Solr stage; this may be helpful to verify mappin
 
 ### 7. <a name="calisphereqa">QA check in Calisphere stage UI</a>
 
-You can preview the Solr stage index in the Calisphere UI at <a href="http://calisphere-data.cdlib.org/">http://calisphere-data.cdlib.org/</a>. 
+You can preview the Solr stage index in the Calisphere UI at <a href="http://calisphere-data.cdlib.org/">http://calisphere-data.cdlib.org/</a>. Below is a commplete checklist of QA points (factoring in QA considerations from Section 4.2):
+    
+* Mappings:
+    * Verify if metadata from the source record was carried over into CouchDB correctly: did any metadata get dropped?
+    * Verify the metadata mappings: was the mapping handled correctly, going from the source metadata through to CouchDB, as defined in the metadata crosswalk?
+Collection Registry)
+* Metadata values:
+    * Verify if any needed metadata remediation was completed (as defined in the metadata crosswalk) -- e.g., were rights statuses and statements globally applied?
+    * Verify DPLA/CDL required data values -- are they present? If not, we may need to go back to the data provider to supply the information -- or potentially supply it for them (through the 
+    * Do the data values look "correct" (e.g., for Type, data values are drawn from the DCMI Type Vocabulary)?
+    * Are there character display issues or problems with formatting of the data?
+* Structure:
+    * Are complex object components "atomized" into simple objects (e.g., CONTENTdm)? 
+* Content:
+    * Check for missing thumbnail images
+    * Any data coming through that looks like it may have underlying copyright issues (e.g., full-text transcriptions)?
+* Are there any errors or noticeable problems?
 
 To immediately view results, you can QA the Solr stage index on your local workstation, following <a href="https://github.com/ucldc/public_interface">these steps</a> ("Windows install"). In the run.bat configuration file, point UCLDC_SOLR_URL to `https://harvest-stg.cdlib.org/solr_api`.
 
