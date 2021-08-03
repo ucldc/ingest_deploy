@@ -299,15 +299,24 @@ you can run use the following command syntax on the dsc-blackstar role account:
 
 Before initiating a harvest, confirm if the collection has previously been harvested -- or if it's a new collection.  
 
-If the collection has previously been harvested and is viewable in the Calisphere stage UI (http://calisphere-data.cdlib.org/), then delete the collection from CouchDB stage and Solr stage:
+If the collection has previously been harvested and is viewable in the Calisphere stage UI (http://calisphere-test.cdlib.org/), then delete the collection from CouchDB stage and Solr stage:
 
 * Log into the <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> and look up the collection
 * Run `Queue deletion of documents from CouchDB stage`. 
 * Then run `Queue deletion of documents from Solr stage`.
-* You can track the progress through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>; once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
+* Once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
 
-If you need more control of the process (i.e. to put on a different queue),
-you can use the following command syntaxes on the dsc-blackstar role account:
+If the collection has previously been harvested and is a complex object with metadata updates, to update the component titles you will need to run the deep harvester.
+
+To run the "deep harvest" process:
+
+* Log into the <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> and look up the collection
+* Run `Queue deletion of documents from CouchDB stage`. 
+* Then run `Queue deletion of documents from Solr stage`.
+* Run `Queue Nuxeo deep harvest` drop-down. 
+* Once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
+
+If you need more control of the process (i.e. to put on a different queue), you can use the following command syntaxes on the dsc-blackstar role account:
 
 `./bin/delete_couchdb_collection.py adrian.turner@ucop.edu high-stage https://registry.cdlib.org/api/v1/collection/26275`
 `./bin/queue_delete_solr_collection.py adrian.turner@ucop.edu high-stage 26275`
