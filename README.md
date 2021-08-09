@@ -249,14 +249,14 @@ As a last option for terminating unresponsive workers, run `get_worker_info.sh` 
 
 #### 2.1. <a name="harvestnew">New harvest or re-harvest?</a>
 
-Before initiating a harvest, confirm if the collection has previously been harvested -- or if it's a new collection.  
+Before initiating a harvest, confirm if the collection has previously been harvested, or if it's a new collection.  
 
-If the collection has previously been harvested and is viewable in the Calisphere stage UI (http://calisphere-data.cdlib.org/), then delete the collection from CouchDB stage and Solr stage:
+If the collection has previously been harvested and is viewable in the Calisphere stage UI (http://calisphere-test.cdlib.org/), delete the collection from CouchDB stage and Solr stage:
 
 * Log into the <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> and look up the collection
 * Run `Queue deletion of documents from CouchDB stage`. 
 * Then run `Queue deletion of documents from Solr stage`.
-* You can track the progress through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>; once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
+* Once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
 
 If you need more control of the process (i.e. to put on a different queue),
 you can use the following command syntaxes on the dsc-blackstar role account:
@@ -270,7 +270,7 @@ This process will harvest metadata from the target system into a resulting Couch
 
 * From the Collection Registry, select `Queue harvest to CouchDB stage` 
 * You should then get feedback message verifying that the collections have been queued
-* You can track the progress through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>; once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
+* Once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
 
 If you need more control of the process (i.e. to put on a different queue),
 you can use the following command syntax on the dsc-blackstar role account:
@@ -284,27 +284,25 @@ This process will hit the URL referenced in `isShownAt` in the CouchDB record to
 
 * From the Collection Registry, select `Queue image harvest` 
 * You should then get feedback message verifying that the collections have been queued
-* You can track the progress through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>; once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
+* Once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
 
 If you need more control of the process (i.e. to put on a different queue),
 you can run use the following command syntax on the dsc-blackstar role account:
 
 `queue_image_harvest.py adrian.turner@ucop.edu high-stage https://registry.cdlib.org/api/v1/collection/26943`
 
-
-
 ### 3. <a name="harvestnuxeostg">Run harvest jobs: Nuxeo</a>
 
 #### 3.1. <a name="harvestnew1">New harvest or re-harvest?</a>
 
-Before initiating a harvest, confirm if the collection has previously been harvested -- or if it's a new collection.  
+Before initiating a harvest, confirm if the collection has previously been harvested, or if it's a new collection.  
 
-If the collection has previously been harvested and is viewable in the Calisphere stage UI (http://calisphere-data.cdlib.org/), then delete the collection from CouchDB stage and Solr stage:
+If the collection has previously been harvested and is viewable in the Calisphere stage UI (http://calisphere-test.cdlib.org/), delete the collection from CouchDB stage and Solr stage:
 
 * Log into the <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> and look up the collection
 * Run `Queue deletion of documents from CouchDB stage`. 
 * Then run `Queue deletion of documents from Solr stage`.
-* You can track the progress through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>; once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
+* Once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
 
 If you need more control of the process (i.e. to put on a different queue),
 you can use the following command syntaxes on the dsc-blackstar role account:
@@ -314,7 +312,7 @@ you can use the following command syntaxes on the dsc-blackstar role account:
 
 #### 3.2. <a name="deepharvest">Harvest and process access files from Nuxeo ("deep harvesting")</a>
 
-The process pulls files from the "Main Content File" section in Nuxeo, and formats them into access files for display in Calisphere. If you only need to pick up metadata changes in Nuxeo, skip this step. Here's what the process does:
+The process pulls files from the "Main Content File" section in Nuxeo and formats them into access files for display in Calisphere. If you only need to pick up metadata changes in Nuxeo, skip this step. Here's what the process does:
 
 1. It stashes a high quality copy of any associated media or text files on S3.  These files appear on the object landing page, for interactive viewing:
 * If image, creates a zoomable jp2000 version and stash it on S3 for use with our IIIF-compatible Loris server. Tools used to convert the image include ImageMagick and Kakadu
@@ -333,6 +331,12 @@ To run the "deep harvest" process:
 * Log into the <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> and look up the collection
 * Run `Queue Nuxeo deep harvest` drop-down. 
 * You can track the progress through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>; once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
+
+Metadata harvesting Notes:
+
+* If you only need to pick up metadata changes in Nuxeo, skip the deep harvest step.
+* If we only need to pick up parent level metadata, skip the deep harvest step.
+* If we need to pick up metadata changes at the component level (including titles), we need to run deep harvest to regenerate the media.json.
 
 If you need more control of the process (i.e. to put on a different queue),
 you can run use the following command syntax on the dsc-blackstar role account:
