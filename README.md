@@ -312,7 +312,7 @@ you can use the following command syntaxes on the dsc-blackstar role account:
 
 #### 3.2. <a name="deepharvest">Harvest and process access files from Nuxeo ("deep harvesting")</a>
 
-The process pulls files from the "Main Content File" section in Nuxeo and formats them into access files for display in Calisphere. If you only need to pick up metadata changes in Nuxeo, skip this step. Here's what the process does:
+The process pulls files from the "Main Content File" section in Nuxeo and formats them into access files for display in Calisphere. **If you only need to pick up parent-level metadata changes in Nuxeo, skip the deep harvest step.** (If there are changes to complex object component metadata, you need to run the deep harvest step) Here's what the process does:
 
 1. It stashes a high quality copy of any associated media or text files on S3.  These files appear on the object landing page, for interactive viewing:
 * If image, creates a zoomable jp2000 version and stash it on S3 for use with our IIIF-compatible Loris server. Tools used to convert the image include ImageMagick and Kakadu
@@ -331,12 +331,6 @@ To run the "deep harvest" process:
 * Log into the <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> and look up the collection
 * Run `Queue Nuxeo deep harvest` drop-down. 
 * You can track the progress through the <a href="https://harvest-stg.cdlib.org/rq/">RQ Dashboard</a>; once the jobs are done, a results report will be posted to the #dsc_harvesting_report channel in Slack.
-
-Metadata harvesting Notes:
-
-* If you only need to pick up metadata changes in Nuxeo, skip the deep harvest step.
-* If we only need to pick up parent level metadata, skip the deep harvest step.
-* If we need to pick up metadata changes at the component level (including titles), we need to run deep harvest to regenerate the media.json.
 
 If you need more control of the process (i.e. to put on a different queue),
 you can run use the following command syntax on the dsc-blackstar role account:
