@@ -642,6 +642,7 @@ Removing collections involves deleting records from CouchDB stage and production
 For *immediate* takedown requests, complete the steps outlined below -- and also delete the files associated with the item from S3:
     
 `$ aws s3 rm s3://ucldc-nuxeo-ref-media/12345678-91011-1213-1415-abcdefghijkl`
+    
 `delete: s3://ucldc-nuxeo-ref-media/12345678-91011-1213-1415-abcdefghijkl`
 
 In addition to removing the item from Calisphere, notify DPLA to remove the item from there.
