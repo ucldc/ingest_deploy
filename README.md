@@ -638,6 +638,11 @@ This section describes how to update an Elastic Beanstalk configuration to point
 --------------------------
 
 Removing collections involves deleting records from CouchDB stage and production environments, as well as Solr stage and production environments; and then updating the Elastic Beanstalk.
+    
+For *immediate* takedown requests, complete the steps outlined below -- and also delete the files associated with the item from S3:
+    
+`$ aws s3 rm s3://ucldc-nuxeo-ref-media/12345678-91011-1213-1415-abcdefghijkl`
+`delete: s3://ucldc-nuxeo-ref-media/12345678-91011-1213-1415-abcdefghijkl`
 
 In addition to removing the item from Calisphere, notify DPLA to remove the item from there.
 
