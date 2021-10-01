@@ -1088,7 +1088,12 @@ Assuming there are no build errors, you can then restart akara:
 cd /var/local/akara
 akara -f ~/code/dpla/ingestion/akara.conf restart
 ```
+    
+#### Install security updates
 
+It is also a good idea to install security updates before burning a new AMI:
+    
+```sudo yum update -y --security```
 
 ### Creating new worker AMI
 
