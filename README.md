@@ -638,14 +638,25 @@ This section describes how to update an Elastic Beanstalk configuration to point
 --------------------------
 
 Removing collections involves deleting records from CouchDB stage and production environments, as well as Solr stage and production environments; and then updating the Elastic Beanstalk.
-    
-For *immediate* takedown requests, complete the steps outlined below -- and also delete the files associated with the item from S3:
-    
-`$ aws s3 rm s3://ucldc-nuxeo-ref-media/12345678-91011-1213-1415-abcdefghijkl`
-    
-`delete: s3://ucldc-nuxeo-ref-media/12345678-91011-1213-1415-abcdefghijkl`
 
 In addition to removing the item from Calisphere, notify DPLA to remove the item from there.
+    
+For *immediate* takedown requests of individual items, complete the steps outlined below -- and also delete the files associated with the item from S3:
+
+For Nuxeo items, remove the reference media from s3.
+
+For Nuxeo images:
+`$ aws s3 rm s3://ucldc-nuxeo-ref-images/12345678-91011-1213-1415-abcdefghijkl`
+
+For Nuxeo non-images:
+`$ aws s3 rm s3://ucldc-nuxeo-ref-media/12345678-91011-1213-1415-abcdefghijkl`
+`$ aws s3 rm s3://static.ucldc.cdlib.org/ucldc-nuxeo-thumb-media/12345678-91011-1213-1415-abcdefghijkl`
+
+For all items regardless of harvesting source, remove the harvested md5 image/thumbnail from s3:
+
+`$ aws s3 rm s3://static-ucldc-cdlib-org/harvested_images/<md5hash>`
+
+Once the harvested image(s) have been removed from s3, run cache invalidation for thumbnails in the calisphere.org Cloudfront distribution. This can be done from the AWS console in the "Invalidations" tab for the Cloudfront distribution. Use "/clip/*" as the "Object paths" value.
 
 #### <a name="removalitem">Individual items</a>
 
