@@ -637,12 +637,10 @@ This section describes how to update an Elastic Beanstalk configuration to point
 <a name="removals">Removing items or collections (takedown requests)</a> 
 --------------------------
 
-Removing collections involves deleting records from CouchDB stage and production environments, as well as Solr stage and production environments; and then updating the Elastic Beanstalk.
+Removing collections involves 1) deleting thumbnails (or Nuxeo access files) from S3, 2) deleting records from CouchDB stage and production environments, 3) deleting records from Solr stage and production environments, 4) updating the Elastic Beanstalk, and 5) requesting DPLA to delete the records.
 
-In addition to removing the item from Calisphere, notify DPLA to remove the item from there.
+#### <a name="removals3">Removing thumbnails/access files from S3</a>
     
-For *immediate* takedown requests of individual items, complete the steps outlined below -- and also delete the files associated with the item from S3:
-
 For Nuxeo items, remove the reference media from s3.
 
 For Nuxeo images:
@@ -658,7 +656,7 @@ For all items regardless of harvesting source, remove the harvested md5 image/th
 
 Once the harvested image(s) have been removed from s3, run cache invalidation for thumbnails in the calisphere.org Cloudfront distribution. This can be done from the AWS console in the "Invalidations" tab for the Cloudfront distribution. Use "/clip/*" as the "Object paths" value.
 
-#### <a name="removalitem">Individual items</a>
+#### <a name="removalitem">Removing individual items from CouchDB and Solr</a>
 
 ### Option 1: Follow this process: [Editing or deleting individual items](#editnforgetit)
 
@@ -676,9 +674,10 @@ Once the harvested image(s) have been removed from s3, run cache invalidation fo
 
 The results for the above 2 commands will be published to the `#dsc_harvesting_report` channel on slack.
 * Update Elastic Beanstalk with the updated Solr index
+* Last, notify DPLA to remove the item(s)
 
 
-#### <a name="removalcollection">Entire collection</a>
+#### <a name="removalcollection">Removing entire collections from CouchDB and Solr</a>
 
 * From the Collection Registry, select `Queue deletion of documents from CouchDB stage`, `Queue deletion of documents from Solr stage`, `Queue deletion of documents from CouchDB production`, and `Queue deletion of documents from Solr production`
 * Update the Collection Registry entry, setting "Ready to publish" to "None" -- and change the harvesting endpoint to "None"
@@ -690,6 +689,7 @@ you can use the following command syntaxes on the dsc-blackstar role account:
 `./bin/delete_couchdb_collection.py adrian.turner@ucop.edu high-stage https://registry.cdlib.org/api/v1/collection/26275`
 `./bin/queue_delete_solr_collection.py adrian.turner@ucop.edu high-stage 26275`
 
+* Last, notify DPLA to remove the item(s)
 
 
 <a name="restores">Restoring collections from production</a>
