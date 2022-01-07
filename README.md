@@ -639,7 +639,7 @@ This section describes how to update an Elastic Beanstalk configuration to point
 
 Removing collections involves 1) deleting thumbnails (or Nuxeo access files) from S3, 2) deleting records from CouchDB stage and production environments, 3) deleting records from Solr stage and production environments, 4) updating the Elastic Beanstalk, and 5) requesting DPLA to delete the records.
 
-#### <a name="removals3">Removing thumbnails/access files from S3</a>
+### <a name="removals3">Removing thumbnails/access files from S3</a>
     
 For Nuxeo items, remove the reference media from s3.
 
@@ -656,16 +656,16 @@ For all items regardless of harvesting source, remove the harvested md5 image/th
 
 Once the harvested image(s) have been removed from s3, run cache invalidation for thumbnails in the calisphere.org Cloudfront distribution. This can be done from the AWS console in the "Invalidations" tab for the Cloudfront distribution. Use "/clip/*" as the "Object paths" value.
 
-#### <a name="removalitem">Removing individual items from CouchDB and Solr</a>
+### <a name="removalitem">Removing individual items from CouchDB and Solr</a>
 
-### Option 1: Follow this process: [Editing or deleting individual items](#editnforgetit)
+#### Option 1: Follow this process: [Editing or deleting individual items](#editnforgetit)
 
-### Option 2: Delete item(s) from couchdb and then sync to solr
+#### Option 2: Delete item(s) from couchdb and then sync to solr
 * Create a list of the CouchDB identifiers for the items, and add them to a file (one per line). Then run `delete_couchdb_id_list.py` with the file as input:`delete_couchdb_id_list.py <file with list of ids>`
 * From the Collection Registry, select `Queue sync from from CouchDB stage to Solr stage` and `Queue sync from CouchDB production to Solr production`
 * Update Elastic Beanstalk with the updated Solr index
 
-### Option 3: Delete item from couchDB and then directly from the solr stage and prod indexes. 
+#### Option 3: Delete item from couchDB and then directly from the solr stage and prod indexes. 
 * Create a list of the CouchDB identifiers for the items, and add them to a file (one per line). Then run `delete_couchdb_id_list.py` with the file as input:`delete_couchdb_id_list.py <file with list of ids>`
 * From the dsc-blackstar role account on stage:
 `./bin/queue_delete_solr_item.py email@ucop.edu <solr ID>`
@@ -677,7 +677,7 @@ The results for the above 2 commands will be published to the `#dsc_harvesting_r
 * Last, notify DPLA to remove the item(s)
 
 
-#### <a name="removalcollection">Removing entire collections from CouchDB and Solr</a>
+### <a name="removalcollection">Removing entire collections from CouchDB and Solr</a>
 
 * From the Collection Registry, select `Queue deletion of documents from CouchDB stage`, `Queue deletion of documents from Solr stage`, `Queue deletion of documents from CouchDB production`, and `Queue deletion of documents from Solr production`
 * Update the Collection Registry entry, setting "Ready to publish" to "None" -- and change the harvesting endpoint to "None"
