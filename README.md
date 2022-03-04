@@ -83,7 +83,9 @@ UCLDC Harvesting operations guide
 * [Recreating the Solr Index from scratch](#solrscratch)
 * [How to find a CouchDB source document for an item in Calisphere](#cdbsearch)
 * [Editing or deleting individual items](#editnforgetit)
+* [Batch editing metadata for a collection in CouchDB] (#batchediting)
 * [Creating/Harvesting with High Stage Workers](#highstage)
+* [Generating Redirects when Record Page URLs change](#redirects)
 
 [Fixes for Common Problems](#commonfixes)
 * [What to do when harvests fail](#failures)
@@ -775,7 +777,7 @@ It may be handy to edit an individual object, in cases where key information in 
 
 This also applies to cases where a contributor removes an object from their source collection. In lieu of reharvesting the entire collection, you can selectively delete an item from CouchDB (then synch from CouchDB to Solr).
 
-### <a name="batchediting">Batch replacing CouchDB field values by collection</a>
+### <a name="batchediting">Batch editing metadata for a collection in CouchDB</a>
 
 For relatively simple find-and-replace tasks across an entire CouchDB collection, where a full re-harvest is too time-consuming/cumbersome, use this script. **NOTE:** Use carefully, as this will alter the CouchDB records for an entire collection, with the only way to 'restore' being a full re-harvest. **ALSO**, this script will replace whatever is in the given [fieldName] with the given "newValue" (unless you add a "--substring" value, below). It does NOT yet add/append a new value on to existing values--therefore not suitable for editing fields with multiple values.
 
