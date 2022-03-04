@@ -83,7 +83,7 @@ UCLDC Harvesting operations guide
 * [Recreating the Solr Index from scratch](#solrscratch)
 * [How to find a CouchDB source document for an item in Calisphere](#cdbsearch)
 * [Editing or deleting individual items](#editnforgetit)
-* [Batch editing metadata for a collection in CouchDB] (#batchediting)
+* [Batch editing metadata for a collection in CouchDB](#batchediting)
 * [Creating/Harvesting with High Stage Workers](#highstage)
 * [Generating Redirects when Record Page URLs change](#redirects)
 
