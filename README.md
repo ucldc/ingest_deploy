@@ -840,7 +840,7 @@ going wrong.
 #### Common worker error messages
 
 * Worker forcibly terminated, while job was in-progress: `ShutDownImminentException('shut down imminent (signal: %s)' % signal_name(signum), info) ShutDownImminentException: shut down imminent (signal: SIGALRM)`
-* (More forthcoming...)
+* `No status line received - the server has closed the connection`: check CouchDB/Solr disk space
 
 #### Checking the logs
 
