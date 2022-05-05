@@ -691,7 +691,9 @@ you can use the following command syntaxes on the dsc-blackstar role account:
 `./bin/delete_couchdb_collection.py adrian.turner@ucop.edu high-stage https://registry.cdlib.org/api/v1/collection/26275`
 `./bin/queue_delete_solr_collection.py adrian.turner@ucop.edu high-stage 26275`
 
-* Last, notify DPLA to remove the item(s)
+* Update the Registry entry "Ready for publication" field to "No"
+* Update the description, providing a brief summary that the collection was removed from publication on X date (or was superceded by a different collection, e.g., see https://calisphere.org/collections/26749/).
+* Last, notify DPLA to remove the collection
 
 
 <a name="restores">Restoring collections from production</a>
