@@ -121,7 +121,7 @@ function update_index()
 		post_sns_message "${subject}" "${message}"
         exit 9
     fi
-    if [ "$env_cname" == "ucldc-solr.us-west-2.elasticbeanstalk.com" ]; then
+    if [ "$env_cname" == "eb-ucldc-solr2.us-west-2.elasticbeanstalk.com" ]; then
         (errecho)
         (errecho "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         (errecho "!!!!!!!!!! MASTER ENV ${env_name} !!!!!!")
@@ -132,7 +132,7 @@ function update_index()
         (errecho)
 	subject="Update Beanstalk index for ${env_name} failed"
 	message="THIS ENVIRONMENT \"${env_name}\" is production server.
-THE CNAME ucldc-solr.us-west-2.elasticbeanstalk.com is the URL for the Calisphere index and updating this environment will cause an outage on Calisphere"
+THE CNAME eb-ucldc-solr2.us-west-2.elasticbeanstalk.com is the URL for the Calisphere index and updating this environment will cause an outage on Calisphere"
 	post_sns_message "${subject}" "${message}"
         exit 111
     fi
