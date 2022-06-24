@@ -648,7 +648,7 @@ For Nuxeo items, remove the reference media from s3.
 For Nuxeo images:
 `$ aws s3 rm s3://ucldc-nuxeo-ref-images/12345678-91011-1213-1415-abcdefghijkl`
 
-For Nuxeo non-images:
+For Nuxeo non-image files (PDFs, etc.):
 `$ aws s3 rm s3://ucldc-nuxeo-ref-media/12345678-91011-1213-1415-abcdefghijkl`
 `$ aws s3 rm s3://static.ucldc.cdlib.org/ucldc-nuxeo-thumb-media/12345678-91011-1213-1415-abcdefghijkl`
 
