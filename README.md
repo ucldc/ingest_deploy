@@ -411,6 +411,8 @@ To generate a count of the total number of Nuxeo objects harvested (simple objec
 
 * Log into blackstar and run `sudo su - hrv-stg`
 * Run `python /home/hrv-stg/code/nuxeo-calisphere/utils/get_collection_object_count.py '/asset-library/UCM/Ramicova'`. (Replace the path with the particular project folder for the harvested collection)
+    
+Use the `--components` flag to include complex object components in the total count: `python /home/hrv-stg/code/nuxeo-calisphere/utils/get_collection_object_count.py --components '/asset-library/UCM/UCCE/Fresno'`
 
 
 ### 4. <a name="harvestcdbqa">QA check collection in CouchDB stage</a>
