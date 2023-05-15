@@ -1,6 +1,6 @@
 ## Harvesting infrastructure components
 
-<i>Consult the <a href="https://docs.google.com/drawings/d/18Whi3nZGNgKQ2qh-XnJlV3McItyp-skuGSqH5b_L-X8/edit">harvesting infrastructure diagram</a> for an illustration of the key components.  Ask Mark Redar for access to them; note that you will need to log onto the blackstar machine to run commands, using these <a href="https://sp.ucop.edu/sites/cdl/apg/OACCalisphere%20docs/dsc_putty_connection_instructions.docx">Putty connection  instructions</a> (on Sharepoint)</i>
+<i>Consult the <a href="https://docs.google.com/drawings/d/18Whi3nZGNgKQ2qh-XnJlV3McItyp-skuGSqH5b_L-X8/edit">harvesting infrastructure diagram</a> for an illustration of the key components.  Note that you will need to log onto the blackstar machine to run commands, using these <a href="https://sp.ucop.edu/sites/cdl/apg/OACCalisphere%20docs/dsc_putty_connection_instructions.docx">Putty connection  instructions</a> (on Sharepoint)</i>
 
 * <a href="https://registry.cdlib.org/admin/library_collection/collection/">Collection Registry</a> 
 * ingest front machine (*stage - harvest-stg.cdlib.org*) and ingest front machine (*production - harvest-prd.cdlib.org*), for proxy access to:
@@ -103,7 +103,7 @@ Development
 
 
 pull the ucldc/ingest_deploy project
-Get the ansible vault password from Mark. It's easiest if you create a file
+Get the ansible vault password from CDL development team. It's easiest if you create a file
 (perhaps ~/.vault-password-file) to store it in and alias ansible-playbook to
 ansible-playbook --vault-password-file=~/.vault-password-file. Set mode to 600)
 
@@ -399,11 +399,11 @@ you can run use the following command syntax on the dsc-blackstar role account:
 
 If there are problems with individual items, you can run the process on a specific object (or multiple objects) by referencing the harvest ID. You need to log onto dsc-blackstar and sudo to the hrv-stg role account. Then:
 
-`python ~/bin/queue_image_harvest_for_doc_ids.py mredar@gmail.com normal-stage 23065--http://ark.cdlib.org/ark:/13030/k600073n`
+`python ~/bin/queue_image_harvest_for_doc_ids.py your.name@ucop.edu normal-stage 23065--http://ark.cdlib.org/ark:/13030/k600073n`
 
 For multiple items, separate the harvest IDs with commas:
 
-`python ~/bin/queue_image_harvest_for_doc_ids.py mredar@gmail.com normal-stage 23065--http://ark.cdlib.org/ark:/13030/k600073n,23065--http://ark.cdlib.org/ark:/13030/k6057mxb`
+`python ~/bin/queue_image_harvest_for_doc_ids.py your.name@ucop.edu normal-stage 23065--http://ark.cdlib.org/ark:/13030/k600073n,23065--http://ark.cdlib.org/ark:/13030/k6057mxb`
 
 ### 3.5. <a name="nuxeoqa">QA check number of objects harvested from Nuxeo</a>
 
@@ -592,7 +592,7 @@ If you need more control of the process (i.e. to put on a different queue),
 you can run the queue_sync_couchdb_collection.py on dsc-blackstar role account:
 
 ```shell
-./bin/queue_sync_couchdb_collection.py mredar@gmail.com high-stage https://registry.cdlib.org/api/v1/collection/26681/
+./bin/queue_sync_couchdb_collection.py your.name@ucop.edu high-stage https://registry.cdlib.org/api/v1/collection/26681/
 ```
 
 ### 10. <a name="synccdb">Sync the collection from CouchDB production to Solr production</a>
@@ -607,7 +607,7 @@ If you need more control of the process (i.e. to put on a different queue),
 you can run the queue_sync_to_solr.py on dsc-blackstar role account:
 
 ```shell
-queue_sync_to_solr.py mredar@gmail.com high-stage 26943
+queue_sync_to_solr.py your.name@ucop.edu high-stage 26943
 ```
 
 
@@ -658,7 +658,11 @@ For all items regardless of harvesting source, remove the harvested md5 image/th
 
 `$ aws s3 rm s3://static-ucldc-cdlib-org/harvested_images/<md5hash>`
 
-Once the harvested image(s) have been removed from s3, run cache invalidation for thumbnails in the calisphere.org Cloudfront distribution. This can be done from the AWS console in the "Invalidations" tab for the Cloudfront distribution. Use "/clip/*" as the "Object paths" value.
+Once the harvested image(s) have been removed from s3, run cache invalidation for thumbnails in the calisphere.org Cloudfront distribution:
+    
+`aws cloudfront create-invalidation --distribution-id E1RSO6N0RTXH8X --region us-west-2 --paths "/clip/*" "/crop/*"`
+    
+This can also be done from the AWS console in the "Invalidations" tab for the Cloudfront distribution. Use "/clip/*" as the "Object paths" value.
 
 ### <a name="removalitem">Removing individual items from CouchDB and Solr</a>
 
@@ -944,7 +948,7 @@ If older versions of the files don't clear out after re-running a deep harvest, 
 * Log onto blackstar & sudo su - hrv-stg
 * Run `python ~/bin/redis_delete_harvested_images_script.py <collection_id>`. This will produce a file called `delete_image_cache-<collection_id>` in the current directory.
 * Run `redis.sh < delete_image_cache-<collection_id>`. This will clear the cache of previously harvested URLs.
-* Run `python ~/bin/queue_image_harvest.py mredar@gmail.com normal-stage https://registry.cdlib.org/api/v1/collection/<collection_id>/ --get_if_object`
+* Run `python ~/bin/queue_image_harvest.py your.name@ucop.edu normal-stage https://registry.cdlib.org/api/v1/collection/<collection_id>/ --get_if_object`
 
 #### Removing multiple objects from collection with the same generic placeholder image file
 
@@ -964,7 +968,7 @@ Note that this will only work if every metadata-only record has the exact same p
 By default, the image harvester checks the value of `content-type` within the HTML headers of the isShownBy URL when retrieving preview images, and if the content-type is not some type of image or is missing, the object is skipped and no image is harvested. However, sometimes the content-type value is missing or erroneous when the file is clearly an image that can be harvested. If you're sure the files are indeed images, run image harvest with the `--ignore_content_type` to bypass the content-type check and grab the image file anyway.
 
 * Log onto blackstar & sudo su - hrv-stg
-* Run `python ~/bin/queue_image_harvest.py <your email> normal-stage https://registry.cdlib.org/api/v1/collection/<collection_id>/ --ignore_content_type`
+* Run `python ~/bin/queue_image_harvest.py your.name@ucop.edu normal-stage https://registry.cdlib.org/api/v1/collection/<collection_id>/ --ignore_content_type`
 
 Development
 -----------
