@@ -654,7 +654,7 @@ For Nuxeo non-image files (PDFs, etc.):
 `$ aws s3 rm s3://ucldc-nuxeo-ref-media/12345678-91011-1213-1415-abcdefghijkl`
 `$ aws s3 rm s3://static.ucldc.cdlib.org/ucldc-nuxeo-thumb-media/12345678-91011-1213-1415-abcdefghijkl`
 
-For all items regardless of harvesting source, remove the harvested md5 image/thumbnail from s3:
+For all items regardless of harvesting source, remove the harvested md5 image/thumbnail from s3 (view URL for image/thumbnail, to determine the md5):
 
 `$ aws s3 rm s3://static-ucldc-cdlib-org/harvested_images/<md5hash>`
 
