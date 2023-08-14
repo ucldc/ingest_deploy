@@ -833,7 +833,9 @@ In `hrv-prd` role account:
 5. The script in above step will automatically create a CSPHERE_IDS_BACKUP[date].txt file each time it is run. 
 6. When finished with a particular institution, move the [output files] to the `redirectQueries` directory
 7. Sync collection/s to Couch/SOLR Prod
-8. To ensure redirects are not deployed prematurely, only run the following script to copy CSPHERE_IDS.txt to S3 24 HOURS OR LESS before building a new index: `aws s3 cp /home/hrv-prd/CSPHERE_IDS.txt s3://static-ucldc-cdlib-org/redirects/` Work with Calisphere UI programmer to make sure new redirects are deployed as soon as new index containing new URLS goes live
+8. To ensure redirects are not deployed prematurely, only run the following script to copy CSPHERE_IDS.txt to S3 24 HOURS OR LESS before building a new index: `aws s3 cp /home/hrv-prd/CSPHERE_IDS.txt s3://static-ucldc-cdlib-org/redirects/`
+9. Work with Calisphere UI programmer to make sure the new redirects are deployed in the Calisphere ElasticBeanstalk environment variables as soon as a new index containing new URLS goes live.
+10. Spot check that the old URLs redirect to the new URLs. 
 
 <a name="commonfixes">Fixes for Common Problems</a>
 -------------------------
